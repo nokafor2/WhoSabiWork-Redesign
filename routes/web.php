@@ -9,11 +9,13 @@ use App\Http\Controllers\ContactUsController;
 use App\Http\Controllers\EntrepreneurController;
 use App\Http\Controllers\MobileMarketController;
 use App\Http\Controllers\SearchController;
+use App\Http\Controllers\TechnicalServiceController;
 use App\Http\Controllers\UserCommentController;
 use App\Http\Controllers\UserPhotoController;
 use App\Http\Controllers\UserTagController;
 use App\Http\Controllers\UserController;
 use App\Models\BlogPost;
+use App\Models\TechnicalService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -32,9 +34,9 @@ use Illuminate\Support\Facades\Route;
 //     return inertia('Index/Index');
 // });
 
-Route::get('/whosabiwork', [HomeController::class, 'home']);
+Route::get('/whosabiwork', [HomeController::class, 'index'])->name('home.index');
 
-Route::get('/photofeed', [HomeController::class, 'photoFeeds']);
+Route::get('/photofeed', [HomeController::class, 'photoFeeds'])->name('home.photoFeeds');
 
 Route::get('/mobilemarketer', [MobileMarketController::class, 'index']);
 
@@ -56,15 +58,16 @@ Route::resource('artisans', ArtisanController::class);
 // resource() method is for a resource controller
 Route::resource('mobileMarketers', MobileMarketController::class);
 
+Route::resource('contactUs', ContactUsController::class);
+
+Route::resource('technicalServices', TechnicalServiceController::class)->only('store');
+// Route::post('/technicalServices', [TechnicalService::class, 'store']);
 
 
 
 
 
-// get() method is used with a normal controller
-Route::get('/', [HomeController::class, 'photoFeeds'])->name('home.photoFeeds');
 
-// Route::get('/contactUs', [HomeController::class, 'contactUs'])->name('home.contactUs');
 
 // Using authorization to protect a URL
 // We would use a 'can' middleware to do the protection.
@@ -72,24 +75,12 @@ Route::get('/secret', [HomeController::class, 'secret'])
     ->name('home.secret')  
     ->middleware('can:home.secret');
 
-Route::resource('home', HomeController::class);
-
 // Resource controller for business users
 Route::resource('businessUser', BusinessUserController::class);
 
 Route::resource('mechanics', MechanicsController::class);
 
 Route::resource('entrepreneur', EntrepreneurController::class);
-
-// Route::get('/photosFeeds', [HomeController::class, 'photosFeeds'])->name('photosFeedsPage');
-
-Route::get('/mobileMarket', [HomeController::class, 'mobileMarket'])->name('home.mobileMarket');
-
-// Route::get('/artisans', [HomeController::class, 'artisans'])->name('home.artisans');
-
-Route::get('/services', [HomeController::class, 'services'])->name('home.services');
-
-Route::get('/spareParts', [HomeController::class, 'spareParts'])->name('home.spareParts');
 
 Route::get('/businessPage', function () {
     return "This is a business public page";
