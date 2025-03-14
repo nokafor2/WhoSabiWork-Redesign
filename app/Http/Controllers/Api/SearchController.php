@@ -3,10 +3,14 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Traits\GlobalFunctions;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class SearchController extends Controller
 {
+    use GlobalFunctions;
+    
     /**
      * Display a listing of the resource.
      */
@@ -20,7 +24,11 @@ class SearchController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $searchVal = $request->searchVal;
+
+        $searchedResult = $this->searchData($searchVal, 'artisan');
+        // dd($searchedResult);
+        return Inertia('Artisan/Index', $searchedResult);
     }
 
     /**
