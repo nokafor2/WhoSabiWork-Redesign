@@ -19,17 +19,17 @@ class HomeController extends Controller
 
     public function index()
     {
-
-    }
-    
-    //
-    public function home() {
         // dd(Auth::user());
         // dd(Auth::id());
         // dd(Auth::check());
         // return view('home.index');
 
         return inertia('Index/Index');
+    }
+    
+    //
+    public function home() {
+        
     }
 
     public function photoFeeds() {
