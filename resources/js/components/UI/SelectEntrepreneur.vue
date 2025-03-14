@@ -9,20 +9,44 @@
                         <option v-for="(option, index) in selectArray" :key="index" :value="index">{{ option }}</option>
                     </select>
                 </div>
-                <div class="col-md mb-2">
+                <div v-if="vehServiceVisible" class="col-md mb-2">
+                    <select class="form-select" aria-label="Default select example" v-model="selectedVehService">
+                        <option value="default">Select vehicle service</option>
+                        <option v-for="(techServ, index) in technicalServices" :key="index" :value="index">{{ techServ }}</option>
+                    </select>
+                </div>
+                <div v-if="vehSparePartVisible" class="col-md mb-2">
+                    <select class="form-select" aria-label="Default select example" v-model="selectedVehSparePart">
+                        <option value="default">Select vehicle spare part</option>
+                        <option v-for="(sparePart, index) in spareParts" :key="index" :value="index">{{ sparePart }}</option>
+                    </select>
+                </div>
+                <div v-if="vehTypeVisible" class="col-md mb-2">
+                    <select class="form-select" aria-label="Default select example" v-model="selectedVehType">
+                        <option value="default">Select vehicle type</option>
+                        <option v-for="(vehCategory, index) in vehicleCategories" :key="index" :value="index">{{ vehCategory }}</option>
+                    </select>
+                </div>
+                <div v-if="vehBrandVisible" class="col-md mb-2">
+                    <select class="form-select" aria-label="Default select example" v-model="selectedVehBrand">
+                        <option value="default">Select vehicle brand</option>
+                        <option v-for="(vehBrand, index) in vehicleBrands" :key="index" :value="index">{{ vehBrand }}</option>
+                    </select>
+                </div>
+                <div v-if="stateVisible" class="col-md mb-2">
                     <select class="form-select" aria-label="Default select example" v-model="selectedState">
                         <option value="default">Select state</option>
                         <option v-for="(state, index) in states" :key="index" :value="state">{{ state }}</option>
                     </select>
                 </div>
-                <div class="col-md mb-2">
+                <div v-if="townVisible" class="col-md mb-2">
                     <select class="form-select" aria-label="Default select example" v-model="selectedTown">
                         <option value="default">Select town</option>
                         <option v-for="(town, index) in towns" :key="index" :value="town">{{ town }}</option>
                     </select>
                 </div>
                 <!-- <div class="col-xs-6 col-md-2 col-lg-1 align-middle"> -->
-                <div class="col-md align-middle">
+                <div v-if="submitBtnVisible" class="col-md align-middle">
                     <button class="btn btn-sm btn-outline-danger w-100" type="submit">Search</button>
                 </div>
             </div>
@@ -44,10 +68,25 @@
                 selectedOption: 'default',
                 selectedState: 'default',
                 selectedTown: 'default',
+                selectedVehService: 'default',
+                selectedVehSparePart: 'default',
+                selectedVehType: 'default',
+                selectedVehBrand: 'default',
                 states: [],
                 towns: [],
                 artisans: [],
                 mobileMarketers: [],
+                technicalServices: [],
+                spareParts: [],
+                vehicleCategories: [],
+                vehicleBrands: [],
+                stateVisible: false,
+                townVisible: false,
+                submitBtnVisible: false,
+                vehSparePartVisible: false,
+                vehServiceVisible: false,
+                vehTypeVisible: false,
+                vehBrandVisible: false,
             }
         },
         methods: {
@@ -71,13 +110,23 @@
             },
             async submitForm() {
                 // Set variables to submit
-                const formData = reactive({
+                this.dataToSend = {
                     businessCategory: this.pageName,
                     categoryType: this.selectedOption,
                     state: this.selectedState,
                     town: this.selectedTown,
                     pageName: this.pageName,
-                });
+                };
+                if (this.selectedOption === 'mechanic') {
+                    this.dataToSend.selectedVehService = this.selectedVehService;
+                    this.dataToSend.selectedVehType = this.selectedVehType;
+                    this.dataToSend.selectedVehBrand = this.selectedVehBrand;
+                } else if (this.selectedOption === 'spare_parts') {
+                    this.dataToSend.selectedVehSparePart = this.selectedVehSparePart;
+                    this.dataToSend.selectedVehType = this.selectedVehType;
+                    this.dataToSend.selectedVehBrand = this.selectedVehBrand;
+                }
+                const formData = reactive(this.dataToSend);
 
                 if (this.pageName === 'artisan') {
                     router.post('/artisans', formData, {
@@ -108,6 +157,16 @@
                         }
                     });
                 }
+            },
+
+            resetSelectMenus() {
+                this.vehServiceVisible = false;
+                this.vehSparePartVisible = false;
+                this.vehTypeVisible = false;
+                this.vehBrandVisible = false;
+                this.stateVisible = false;
+                this.townVisible = false;
+                this.submitBtnVisible = false;
             }
         },
         watch: {
@@ -117,14 +176,213 @@
                     'selectedOption': this.selectedOption,
                     'pageName': this.pageName,
                 });
+                this.resetSelectMenus();
                 
+                if (this.selectedOption === 'mechanic') {
+                    const response = await fetch('/api/technicalServices', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(formData)
+                    });
+
+                    if (response.ok) {
+                        const responseData = await response.json();
+                        if (responseData) {
+                            console.log(responseData);
+                            this.technicalServices = responseData;
+                            this.vehServiceVisible = true;
+                        }
+                    } else {
+                        // There is error
+                        console.log('There is an error!');
+                    }
+                } else if (this.selectedOption === 'spare_parts') {
+                    const response = await fetch('/api/spareParts', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(formData)
+                    });
+
+                    if (response.ok) {
+                        const responseData = await response.json();
+                        if (responseData) {
+                            console.log(responseData);
+                            this.spareParts = responseData;
+                            this.vehSparePartVisible = true;
+                        }
+                    } else {
+                        // There is error
+                        console.log('There is an error!');
+                    }
+                } else {
+                    // This method is used when data has to expected back and waited for
+                    const response = await fetch('/api/states', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(formData)
+                    });
+
+                    if (response.ok) {
+                        const responseData = await response.json();
+                        if (responseData) {
+                            console.log(responseData);
+                            this.states = responseData;
+                            this.stateVisible = true;
+                            this.vehSparePartVisible = false;
+                        }
+                    } else {
+                        // There is an error
+                        console.log('There is an error!');
+                    }
+                }
+            },
+
+            async selectedVehService() {
+                console.log(this.selectedVehService);
+                const formData = reactive({
+                    'selectedVehService': this.selectedVehService,
+                    'pageName': this.pageName,
+                });
+                this.vehSparePartVisible = false;
+                this.vehBrandVisible = false;
+                this.stateVisible = false;
+                this.townVisible = false;
+                this.submitBtnVisible = false;
+
+                // router.post('/api/vehicleCategories', formData, {
+                //     preserveState: true, // Prevents a full page reload
+                //     onSuccess: (page) => {
+                //         console.log(page);
+                //     },
+                //     onError: (errors) => {
+                //         console.log('Error: ', errors);
+                //     }
+                // });
+                
+                const response = await fetch('/api/vehicleCategories', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                if (response.ok) {
+                    const responseData = await response.json();
+                    if (responseData) {
+                        console.log(responseData);
+                        this.vehicleCategories = responseData;
+                        this.vehTypeVisible = true;
+                    }
+                } else {
+                    // There is error
+                    console.log('There is an error!');
+                }
+            },
+
+            async selectedVehSparePart() {
+                console.log(this.selectedVehSparePart);
+                const formData = reactive({
+                    'selectedVehSparePart': this.selectedVehSparePart,
+                    'pageName': this.pageName,
+                });
+
+                // Reset visibility select menus
+                this.vehServiceVisible = false;
+                this.vehBrandVisible = false;
+                this.stateVisible = false;
+                this.townVisible = false;
+                this.submitBtnVisible = false;
+                
+                const response = await fetch('/api/vehicleCategories', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                if (response.ok) {
+                    const responseData = await response.json();
+                    if (responseData) {
+                        console.log(responseData);
+                        this.vehicleCategories = responseData;
+                        this.vehTypeVisible = true;
+                    }
+                } else {
+                    // There is error
+                    console.log('There is an error!');
+                }
+            },
+
+            async selectedVehType() {
+                console.log(this.selectedVehType);
+                this.dataToSend = {
+                    'selectedVehType': this.selectedVehType,
+                    'pageName': this.pageName,
+                };
+                if (this.selectedOption === 'mechanic') {
+                    this.dataToSend.selectedVehService = this.selectedVehService;
+                } else if (this.selectedOption === 'spare_parts') {
+                    this.dataToSend.selectedVehSparePart = this.selectedVehSparePart;
+                }
+                const formData = reactive(this.dataToSend);
+
+                // Reset visibility select menus
+                this.stateVisible = false;
+                this.townVisible = false;
+                this.submitBtnVisible = false;
+
+                const response = await fetch('/api/vehicleBrands', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                if (response.ok) {
+                    const responseData = await response.json();
+                    if (responseData) {
+                        console.log(responseData);
+                        this.vehicleBrands = responseData;
+                        this.vehBrandVisible = true;
+                    }
+                } else {
+                    // There is error
+                    console.log('There is an error!');
+                }
+            },
+
+            async selectedVehBrand() {
+                console.log(this.selectedVehBrand);
+                this.dataToSend = {
+                    'selectedOption': this.selectedOption,
+                    'selectedVehType': this.selectedVehType,
+                    'pageName': this.pageName,
+                    'selectedVehBrand': this.selectedVehBrand,
+                };
+                if (this.selectedOption === 'mechanic') {
+                    this.dataToSend.selectedVehService = this.selectedVehService;
+                } else if (this.selectedOption === 'spare_parts') {
+                    this.dataToSend.selectedVehSparePart = this.selectedVehSparePart;
+                }
+                const formData = reactive(this.dataToSend);
+
+                // Reset visibility select menus
+                this.townVisible = false;
+                this.submitBtnVisible = false;
+
                 // router.post('/api/states', formData, {
                 //     preserveState: true, // Prevents a full page reload
                 //     onSuccess: (page) => {
-                //         console.log('Data fetched: ');
-                //         console.log(page.props.states);
-                //         this.states = [];
-                //         this.states = page.props.states;
+                //         console.log(page);
                 //     },
                 //     onError: (errors) => {
                 //         console.log('Error: ', errors);
@@ -143,36 +401,36 @@
                 if (response.ok) {
                     const responseData = await response.json();
                     if (responseData) {
-                        console.log('received states data:')
                         console.log(responseData);
                         this.states = responseData;
+                        this.stateVisible = true;
                     }
                 } else {
-                    // There is error
+                    // There is an error
                     console.log('There is an error!');
                 }
             },
 
             async selectedState() {
                 console.log(this.selectedState);
-                const formData = reactive({
+                this.dataToSend = {
                     'selectedOption': this.selectedOption,
                     'selectedState': this.selectedState,
                     'pageName': this.pageName,
-                });
+                };
+                if (this.selectedOption === 'mechanic') {
+                    this.dataToSend.selectedVehService = this.selectedVehService;
+                    this.dataToSend.selectedVehType = this.selectedVehType;
+                    this.dataToSend.selectedVehBrand = this.selectedVehBrand;
+                } else if (this.selectedOption === 'spare_parts') {
+                    this.dataToSend.selectedVehSparePart = this.selectedVehSparePart;
+                    this.dataToSend.selectedVehType = this.selectedVehType;
+                    this.dataToSend.selectedVehBrand = this.selectedVehBrand;
+                }
+                const formData = reactive(this.dataToSend);
 
-                // router.post('/api/towns', formData, {
-                //     preserveState: true, // Prevents a full page reload
-                //     onSuccess: (page) => {
-                //         console.log('Data fetched: ');
-                //         console.log(page.props.towns);
-                //         // this.states = [];
-                //         // this.states = page.props.towns;
-                //     },
-                //     onError: (errors) => {
-                //         console.log('Error: ', errors);
-                //     }
-                // });
+                // Reset visibility select menus
+                this.submitBtnVisible = false;
 
                 // This method is used when data has to expected back and waited for
                 const response = await fetch('/api/towns', {
@@ -186,15 +444,19 @@
                 if (response.ok) {
                     const responseData = await response.json();
                     if (responseData) {
-                        console.log('received towns data:')
                         console.log(responseData);
                         this.towns = responseData;
+                        this.townVisible = true;
                     }
                 } else {
                     // There is error
                     console.log('There is an error!');
                 }
                 
+            },
+
+            selectedTown() {
+                this.submitBtnVisible = true;
             }
         }
     }
