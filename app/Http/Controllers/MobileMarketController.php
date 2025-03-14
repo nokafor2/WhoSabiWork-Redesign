@@ -30,21 +30,6 @@ class MobileMarketController extends Controller
                 'products' => $sellers
             ]
         );
-
-        // $businessCategory = $request->businessCategory;
-        // $categoryType = $request->categoryType;
-        // $state = $request->state;
-        // $town = $request->town;
-        
-        // $artisans = $this->getSpecifiedUserDetails($businessCategory, $categoryType, $state, $town);
-        // // return ['artisans' => $artisans];
-
-        // return inertia(
-        //     'Artisan/Index', 
-        //     [ 
-        //         'artisans' => $artisans,
-        //     ]
-        // );
     }
 
     /**
@@ -65,7 +50,26 @@ class MobileMarketController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $businessCategory = $request->businessCategory;
+        $categoryType = $request->categoryType;
+        $state = $request->state;
+        $town = $request->town;
+        
+        if ($categoryType === 'spare_parts') {
+            $vehSparePart = $request->selectedVehSparePart;
+            $vehType = $request->selectedVehType;
+            $vehBrand = $request->selectedVehBrand;
+            $pageName = $request->pageName;
+
+            $mobileMarketers = $this->getTechOrSpareUserDetails($pageName, $vehSparePart, $vehType, $vehBrand, $state, $town);
+        } else {
+            $mobileMarketers = $this->getSpecifiedUserDetails($businessCategory, $categoryType, $state, $town);
+        }
+        
+        return inertia(
+            'MobileMarket/Index', 
+            ['mobileMarketers' => $mobileMarketers,]
+        );
     }
 
     /**
