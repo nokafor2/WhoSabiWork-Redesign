@@ -7,6 +7,6 @@
 </template>
 
 <script setup>
-    import Navigation from './Navigation.vue';
-    import FooterLayout from './FooterLayout.vue';
+    import Navigation from '@/components/Layout/Navigation.vue';
+    import FooterLayout from '@/components/Layout/FooterLayout.vue';
 </script>
