@@ -2,10 +2,10 @@ import './bootstrap';
 
 import { createApp, h } from 'vue'
 import { createInertiaApp } from '@inertiajs/vue3'
-import MainLayout from './components/layout/MainLayout.vue'
+import MainLayout from '@/components/Layout/MainLayout.vue'
 // used to inform of named route of laravel to vue and inertia 
-// import { ZiggyVue } from 'ziggy' 
-import store from './Store/index.js'
+import { ZiggyVue } from 'ziggy' 
+import store from '@/Store/index.js'
 
 createInertiaApp({
 //   resolve: name => {
@@ -28,7 +28,7 @@ createInertiaApp({
         createApp({ render: () => h(App, props) })
         .use(plugin)
         .use(store)
-        // .use(ZiggyVue)
+        .use(ZiggyVue)
         .mount(el)
     },
 });
