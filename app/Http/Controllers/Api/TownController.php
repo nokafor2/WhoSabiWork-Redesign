@@ -27,14 +27,21 @@ class TownController extends Controller
         $selectedOption = $request->selectedOption;
         $selectedState = $request->selectedState;
         $pageName = $request->pageName;
+        $selectedVehType = $request->selectedVehType;
+        $selectedVehBrand = $request->selectedVehBrand;
 
-        $towns = $this->getBussUserTown($selectedOption, $selectedState, $pageName);
+        if ($selectedOption === 'mechanic') {
+            $vehServOrSpare = $request->selectedVehService;
+            $towns = $this->getStateTownTechOrSpare($pageName, $vehServOrSpare, $selectedVehType, $selectedVehBrand, $selectedState);
+        } else if ($selectedOption === 'spare_parts') {
+            $vehServOrSpare = $request->selectedVehSparePart;
+            $towns = $this->getStateTownTechOrSpare($pageName, $vehServOrSpare, $selectedVehType, $selectedVehBrand, $selectedState);
+        } else {
+            $towns = $this->getBussUserTown($selectedOption, $selectedState, $pageName);
+        }
 
         // return Inertia::render(
-        //     'Artisan/Index', 
-        //     [
-        //         'towns' => $towns,
-        //     ]
+        //     'Artisan/Index', ['towns' => $towns,]
         // );
 
         // used for manual data request without inertia
