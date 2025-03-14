@@ -5,7 +5,7 @@
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <a class="navbar-brand fw-bolder" href="{{ route('home.photoFeeds') }}">
+            <a class="navbar-brand fw-bolder" :href="route('home.index')">
                 <img src="../../../Images/WhoSabiWorkL1.jpg" alt="Website Logo" class="img-fluid" style="height: 45px;">
                 <!-- WhoSabiWork -->
             </a>
@@ -13,32 +13,22 @@
                 <ul class="navbar-nav nav-pills me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
                         <!-- {{-- <a class="nav-link active" aria-current="page" href="#">Home</a> --}} -->
-                        <a class="nav-link text-danger" href="{{ route('home.photoFeeds') }}">
+                        <a class="nav-link text-danger" :href="route('home.photoFeeds')">
                             <i class="fas fa-users fa-1x"></i> Photo Feed
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-danger" href="{{ route('home.mobileMarket') }}">
+                        <a class="nav-link text-danger" :href="route('mobileMarketers.index')">
                             <i class="fas fa-store fa-1x"></i> Mobile Market                            
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-danger" href="{{ route('artisans.index') }}">
+                        <a class="nav-link text-danger" :href="route('artisans.index')">
                             <i class="fas fa-users-cog fa-1x"></i> Artisans
                         </a>
                     </li>
-                    <!-- <li class="nav-item">
-                        <a class="nav-link text-danger" href="{{ route('mechanics.index') }}">
-                            <i class="fas fa-cogs fa-1x"></i> Mechanics
-                        </a>
-                    </li>
                     <li class="nav-item">
-                        <a class="nav-link text-danger" href="{{ route('home.spareParts') }}">
-                            <i class="fas fa-wrench fa-1x"></i> Spare Parts
-                        </a>
-                    </li> -->
-                    <li class="nav-item">
-                        <a class="nav-link text-danger" href="{{ route('home.contactUs') }}">
+                        <a class="nav-link text-danger" :href="route('contactUs.index')">
                             <i class="fas fa-headset fa-1x"></i> Contact Us
                         </a>
                     </li>
@@ -46,11 +36,11 @@
 
                 <ul class="navbar-nav nav-pills ms-auto me-2 mb-2 mb-xl-0 gap-2 pt-2">
                     <li class="nav-item col-sm-6 justify-content-center">
-                        <a href="{{ route('register') }}" class="btn btn-danger btn-sm text-light w-100">Sign Up</a>
+                        <a :href="route('users.create')" class="btn btn-danger btn-sm text-light w-100">Sign Up</a>
                     </li>
                                             
                     <li class="nav-item col-sm-6">
-                        <a href="{{ route('login') }}" class="btn btn-danger btn-sm text-light w-100">Sign In</a>
+                        <a :href="route('users.index')" class="btn btn-danger btn-sm text-light w-100">Sign In</a>
                     </li>
 
                     <form id="logout-form d-none" method="POST" action="{{ route('logout') }}">
@@ -93,3 +83,7 @@
         </div>
     </nav>
 </template>
+
+<script>
+    import {Link} from '@inertiajs/vue3'
+</script>
