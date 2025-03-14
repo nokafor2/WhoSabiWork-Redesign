@@ -62,9 +62,17 @@ class ArtisanController extends Controller
         $categoryType = $request->categoryType;
         $state = $request->state;
         $town = $request->town;
-        
-        $artisans = $this->getSpecifiedUserDetails($businessCategory, $categoryType, $state, $town);
-        // return ['artisans' => $artisans];
+
+        if ($categoryType === 'mechanic') {
+            $vehService = $request->selectedVehService;
+            $vehType = $request->selectedVehType;
+            $vehBrand = $request->selectedVehBrand;
+            $pageName = $request->pageName;
+
+            $artisans = $this->getTechOrSpareUserDetails($pageName, $vehService, $vehType, $vehBrand, $state, $town);
+        } else {
+            $artisans = $this->getSpecifiedUserDetails($businessCategory, $categoryType, $state, $town);
+        }
 
         return inertia(
             'Artisan/Index', 
