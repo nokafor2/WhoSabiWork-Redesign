@@ -22,18 +22,25 @@ class StateController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
-    {
+    public function store(Request $request) {
         $selectedOption = $request->selectedOption;
         $pageName = $request->pageName;
-
-        $states = $this->getBussUserState($selectedOption, $pageName);
-
+        $vehType = $request->selectedVehType;
+        $vehBrand = $request->selectedVehBrand;
+        if ($selectedOption === 'mechanic') {
+            $vehServOrSpare = $request->selectedVehService;
+            $state = '';
+            $states = $this->getStateTownTechOrSpare($pageName, $vehServOrSpare, $vehType, $vehBrand, $state);
+        } else if ($selectedOption === 'spare_parts') {
+            $vehServOrSpare = $request->selectedVehSparePart;
+            $state = '';
+            $states = $this->getStateTownTechOrSpare($pageName, $vehServOrSpare, $vehType, $vehBrand, $state);
+        } else {
+            $states = $this->getBussUserState($selectedOption, $pageName);
+        }
+        
         // return Inertia::render(
-        //     'Artisan/Index', 
-        //     [
-        //         'states' => $states,
-        //     ]
+        //     'Artisan/Index', ['states' => $states,]
         // );
 
         // used for manual data request without inertia
