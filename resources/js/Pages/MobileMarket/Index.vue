@@ -2,9 +2,9 @@
     <h1 class="display-6 text-center">Welcome! Select the seller category you need</h1>
     <!-- <SearchLayout></SearchLayout> -->
     <search-entrepreneur></search-entrepreneur>
-    <select-entrepreneur :pageName="pageName" :selectArray="products"  @send-category-type="updateMobileMarketers"></select-entrepreneur>
+    <select-entrepreneur :pageName="pageName" :selectArray="products2"  @send-category-type="updateMobileMarketers"></select-entrepreneur>
     <div class="row justify-content-evenly">
-        <BusinessCard v-for="marketer in mobileMarketers" :key="marketer"
+        <BusinessCard v-for="marketer in mobileMarketers2" :key="marketer"
             :firstName=marketer.first_name
             :lastName=marketer.last_name
             :phoneNumber=marketer.phone_number
@@ -29,12 +29,14 @@
         data() {
             return {
                 pageName: 'seller',
+                mobileMarketers2: [],
+                products2: this.products,
             }
         },
         methods: {
             updateMobileMarketers(mobileMarketers) {
-                this.mobileMarketers = mobileMarketers;
-                this.products = this.$store.getters.getProducts;
+                this.mobileMarketers2 = mobileMarketers;
+                this.products2 = this.$store.getters.getProducts;
             }
         },
         provide() {
