@@ -177,6 +177,7 @@
                     'pageName': this.pageName,
                 });
                 this.resetSelectMenus();
+                this.$emit('send-category-type', []);
                 
                 if (this.selectedOption === 'mechanic') {
                     const response = await fetch('/api/technicalServices', {
@@ -254,6 +255,7 @@
                 this.stateVisible = false;
                 this.townVisible = false;
                 this.submitBtnVisible = false;
+                this.$emit('send-category-type', []);
 
                 // router.post('/api/vehicleCategories', formData, {
                 //     preserveState: true, // Prevents a full page reload
@@ -299,6 +301,7 @@
                 this.stateVisible = false;
                 this.townVisible = false;
                 this.submitBtnVisible = false;
+                this.$emit('send-category-type', []);
                 
                 const response = await fetch('/api/vehicleCategories', {
                     method: 'POST',
@@ -338,6 +341,7 @@
                 this.stateVisible = false;
                 this.townVisible = false;
                 this.submitBtnVisible = false;
+                this.$emit('send-category-type', []);
 
                 const response = await fetch('/api/vehicleBrands', {
                     method: 'POST',
@@ -378,6 +382,7 @@
                 // Reset visibility select menus
                 this.townVisible = false;
                 this.submitBtnVisible = false;
+                this.$emit('send-category-type', []);
 
                 // router.post('/api/states', formData, {
                 //     preserveState: true, // Prevents a full page reload
@@ -431,6 +436,7 @@
 
                 // Reset visibility select menus
                 this.submitBtnVisible = false;
+                this.$emit('send-category-type', []);
 
                 // This method is used when data has to expected back and waited for
                 const response = await fetch('/api/towns', {
@@ -457,6 +463,7 @@
 
             selectedTown() {
                 this.submitBtnVisible = true;
+                this.$emit('send-category-type', []);
             }
         }
     }
