@@ -1,7 +1,7 @@
 <template>
     <h1 class="display-6 text-center">Welcome! Select the seller category you need</h1>
     <!-- <SearchLayout></SearchLayout> -->
-    <search-entrepreneur></search-entrepreneur>
+    <search-entrepreneur :pageName="pageName" @send-search-result="updateMobileMarketers"></search-entrepreneur>
     <select-entrepreneur :pageName="pageName" :selectArray="products2"  @send-category-type="updateMobileMarketers"></select-entrepreneur>
     <div class="row justify-content-evenly">
         <BusinessCard v-for="marketer in mobileMarketers2" :key="marketer"
