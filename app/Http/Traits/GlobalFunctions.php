@@ -331,59 +331,75 @@ trait GlobalFunctions {
 
     public function searchData($searchVal, $pageName) {
         $searchedResult = collect();
-        $searchedResult2 = collect();
         if ($pageName === 'artisan') {
             $categoryModels = ['artisan' => 'artisan', 'technician' => 'technicalService'];
             foreach ($categoryModels as $category => $model) {
                 $result = $this->searchBusinessName($searchVal, $category, $model);
-                $searchedResult->push($result);
-                
-                // dd($searchedResult);
+                if ($result->isNotEmpty()) {
+                    $searchedResult->push($result);
+                }
             }
             foreach ($categoryModels as $category => $model) {
                 $result = $this->searchFullName($searchVal, $model);
-                $searchedResult->push($result);
-
-                dd($searchedResult);
+                if ($result->isNotEmpty()) {
+                    $searchedResult->push($result);
+                }
             }
             foreach ($categoryModels as $category => $model) {
-                $result = $this->searchCategory($searchVal, $model);
-                $searchedResult2->push($result);
+                $result = $this->searchCategory($searchedResult, $searchVal, $model);
             }
         } elseif ($pageName === 'seller') {
             $categoryModels = ['seller' => 'product', 'spare_part_seller' => 'sparePart'];
             foreach ($categoryModels as $category => $model) {
                 $result = $this->searchBusinessName($searchVal, $category, $model);
-                $searchedResult->push($result);
+                if ($result->isNotEmpty()) {
+                    $searchedResult->push($result);
+                }
             }
             foreach ($categoryModels as $category => $model) {
                 $result = $this->searchFullName($searchVal, $model);
-                $searchedResult->push($result);
+                if ($result->isNotEmpty()) {
+                    $searchedResult->push($result);
+                }
             }
             foreach ($categoryModels as $category => $model) {
-                $result = $this->searchCategory($searchVal, $model);
-                $searchedResult2->push($result);
+                $this->searchCategory($searchedResult, $searchVal, $model);
             }
         }
-        $searchedResult = $searchedResult->merge($searchedResult2);
         
+        // Convert collection to array and reduce array
+        $searchedResult = $this->reduceArray($searchedResult->toArray());
         
-        return $searchedResult;
+        // return collect($this->eliminateDuplicates($searchedResult));
+        return $this->eliminateDuplicates($searchedResult);
+    }
+
+    public function eliminateDuplicates(Array $inputArray) {
+        $uniqueResults = array();
+        foreach($inputArray as $key => $value) {
+            foreach($value as $key2 => $value2) {
+                if ($key2 === 'id') {
+                    $uniqueResults[$value2] = $value;
+                }
+            }
+        }
+
+        return $uniqueResults;
     }
 
     // Search for business name
     public function searchBusinessName($searchVal, $bussCategory, $categoryTable) {
         // Declare variables
         $searchArray = explode(" ", $searchVal);
-
+        
         // Search for business title
         if (count($searchArray) >= 1) {
             // Search for ids
-            $searchedResultIds = BusinessCategory::where([['business_name', 'LIKE', '%'.$searchVal.'%'], [$bussCategory, '=', 1]])->select('user_id')->get();
+            $searchedResultIds = BusinessCategory::where([['business_name', 'LIKE', '%'.$searchArray[0].'%'], [$bussCategory, '=', 1]])->select('user_id')->get();
             // Use the Ids to get searched data
-            return $searchedResult = User::whereIn('id', $searchedResultIds)->where([['account_type', '=', 'business'], ['account_status', '=', 'active']])->with('address', $categoryTable, 'businessCategory')->get();
+            return User::whereIn('id', $searchedResultIds)->where([['account_type', '=', 'business'], ['account_status', '=', 'active']])->with('address', $categoryTable, 'businessCategory')->get();
         } else {
-            return false;
+            return collect([]);
         }
     }
 
@@ -396,19 +412,21 @@ trait GlobalFunctions {
         if (count($searchArray) > 1) {
             return $searchedResult = User::where([['first_name', 'LIKE', $searchArray[0]], ['last_name', 'LIKE', $searchArray[1]]])->orWhere([['first_name', 'LIKE', $searchArray[1]], ['last_name', 'LIKE', $searchArray[0]]])->where([['account_type', '=', 'business'], ['account_status', '=', 'active']])->with('address', $categoryTable, 'businessCategory')->get();
         } else {
-            return false;
+            return collect([]);
         }
     }
 
     // search for either first name, last name, username, phone number and email 
-    public function searchCategory($searchVal, $categoryTable) {
+    public function searchCategory($searchedResult, $searchVal, $categoryTable) {
         // Declare variables
         $searchArray = explode(" ", $searchVal);
 
-        $searchedResult = collect();
+        // $searchedResult = collect();
         foreach($searchArray as $value) {
             $result = User::orWhere([['first_name', 'LIKE', $value], ['last_name', 'LIKE', $value], ['username', 'LIKE', $value], ['phone_number', 'LIKE', $value], ['email', 'LIKE', $value]])->where([['account_type', '=', 'business'], ['account_status', '=', 'active']])->with('address', $categoryTable, 'businessCategory')->get();
-            $searchedResult->add($result);
+            if ($result->isNotEmpty()) {
+                $searchedResult->push($result);
+            }
         }
         
         return $searchedResult;
