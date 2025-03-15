@@ -1,11 +1,5 @@
 <template>
     <section class="pt-3">
-        <!-- <form class="d-flex justify-content-center" >
-            <div class="col-10 col-sm-6 col-md-4 me-3">
-                <input type="search" class="form-control col-md-6" id="searchInput" placeholder="Search an entrepreneur">
-            </div>
-            <button class="btn btn-sm btn-outline-success" type="submit">Search</button>
-        </form> -->
         <form class="row justify-content-center" @submit.prevent="submitForm">
             <div class="col-12 col-sm-6 col-md-6 align-items-center">
                 <div class="input-group mb-3">
@@ -24,6 +18,8 @@
     import { router, useForm, usePage } from '@inertiajs/vue3';
 
     export default {
+        props: ['pageName'],
+        emits: ['send-search-result'],
         data() {
             return {
                 searchVal: ""
@@ -36,17 +32,39 @@
             async submitForm() {
                 const formData = reactive({
                     searchVal: this.searchVal,
+                    pageName: this.pageName,
                 });
 
-                router.post('api/search', formData, {
-                    preserveState: true, // Prevents a full page reload
-                    onSuccess: (page) => {
-                        console.log(page);
-                    },
-                    onError: (errors) => {
-                        console.log('Error: ', errors);
-                    }
+                // router.post('/api/search', formData, {
+                //     preserveState: true, // Prevents a full page reload
+                //     onSuccess: (page) => {
+                //         console.log(page.props);
+                //         this.$emit('send-search-result', page.props);
+                //     },
+                //     onError: (errors) => {
+                //         console.log('Error: ', errors);
+                //     }
+                // });
+                
+                const response = await fetch('/api/search', {
+                    method: 'POST',
+                    headers: {
+                            'Content-Type': 'application/json'
+                        },
+                    body: JSON.stringify(formData)
                 });
+
+                // console.log(response);
+                if (response.ok) {
+                    const responseData = await response.json();
+                    if (responseData) {
+                        console.log(responseData);
+                        this.$emit('send-search-result', responseData);
+                    }
+                } else {
+                    // There is error
+                    console.log('There is an error!');
+                }
             }
         },
         watch: {
