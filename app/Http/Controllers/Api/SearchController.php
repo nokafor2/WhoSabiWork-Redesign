@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Traits\GlobalFunctions;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 
 class SearchController extends Controller
@@ -25,10 +26,15 @@ class SearchController extends Controller
     public function store(Request $request)
     {
         $searchVal = $request->searchVal;
+        $pageName = $request->pageName;
 
-        $searchedResult = $this->searchData($searchVal, 'artisan');
-        // dd($searchedResult);
-        return Inertia('Artisan/Index', $searchedResult);
+        $searchedResult = $this->searchData($searchVal, $pageName);
+        
+        // return Inertia('Artisan/Index', $searchedResult);
+
+        // return Redirect::route('artisans.index')->with("result", $searchedResult);
+
+        return $searchedResult;
     }
 
     /**
