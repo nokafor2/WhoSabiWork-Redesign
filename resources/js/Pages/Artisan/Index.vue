@@ -1,7 +1,7 @@
 <template>
     <h1 class="display-6 text-center">Welcome! Select the artisan category you need</h1>
     <!-- <SearchLayout></SearchLayout> -->
-    <search-entrepreneur></search-entrepreneur>
+    <search-entrepreneur :pageName="pageName" @send-search-result="updateArtisans"></search-entrepreneur>
     <select-entrepreneur :pageName="pageName" :selectArray="artisanTypes2" @send-category-type="updateArtisans"></select-entrepreneur>
     <div class="row justify-content-evenly">
         <BusinessCard v-for="(artisan, index) in artisans2" :key="index"
