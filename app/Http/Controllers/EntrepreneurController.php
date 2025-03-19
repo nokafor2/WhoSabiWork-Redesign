@@ -2,12 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Traits\GlobalFunctions;
 use App\Models\Address;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class EntrepreneurController extends Controller
 {
+    use GlobalFunctions;
+    
     /**
      * Display a listing of the resource.
      *
@@ -47,16 +51,9 @@ class EntrepreneurController extends Controller
      */
     public function show($id)
     {
-        $entrepreneur = User::where([['account_type', '=', 'business'], ['account_status', '=', 'active']])->with('address', 'businessCategory')->findOrFail($id);
-        // Get address
-        $address = Address::find($id)->fullAddress();
+        $foundUser = $this->getUserDetails($id);
 
-        return view('customers.show', 
-            [
-                'entrepreneur' => $entrepreneur,
-                'address' => $address
-            ]
-        );
+        return Inertia('Entrepreneur/Index', ['user' => $foundUser]);
     }
 
     /**
