@@ -431,6 +431,142 @@ trait GlobalFunctions {
         
         return $searchedResult;
     }
+
+    public function getUserDetails($userId) {
+        $newCategoryType = $this->getBussCategory($userId);
+
+        $models = ['Address', 'BusinessCategory'];
+        // Add category models to models array
+        foreach($newCategoryType as $category) {
+            if ($category === 'artisan') {
+                $models[] = 'Artisan';
+            } elseif ($category === 'seller') {
+                $models[] = 'Product';
+            } elseif ($category === 'technician') {
+                $models[] = 'TechnicalService';
+                // Get vehicles related to user id
+                $techVehCategories = $this->getVehCategory($userId, 'technical_service');
+                if (!empty($techVehCategories)) {
+                    $models = array_merge($models, $this->getVehModels($techVehCategories));
+                }
+            } elseif ($category === 'spare_part_seller') {
+                $models[] = 'SparePart';
+                // Get vehicles related to user id
+                $sparePartVehCategories = $this->getVehCategory($userId, 'spare_part');
+                if (!empty($sparePartVehCategories)) {
+                    $models = array_merge($models, $this->getVehModels($sparePartVehCategories));
+                }
+            }
+        }
+        // dd($models);
+        $foundUser = User::whereIn('id', [$userId])->where([['account_type', '=', 'business'], ['account_status', '=', 'active']])->with($models)->first()->toArray();
+        // dd($foundUser);
+        $refinedCategoryArray = array();
+        $refVehBrand = array();
+        foreach($newCategoryType as $category) {
+            if ($category === 'artisan') {
+                $refinedCategoryArray['artisan'] = $this->refinedModel('App\Models\Artisan', $foundUser['artisan']);
+            } elseif ($category === 'seller') {
+                $refinedCategoryArray['mobile_marketer'] = $this->refinedModel('App\Models\Product', $foundUser['product']);
+            } elseif ($category === 'technician') {
+                $refinedCategoryArray['mechanic'] = $this->refinedModel('App\Models\TechnicalService', $foundUser['technical_service']);
+                foreach ($techVehCategories as $vehicle) {
+                    if ($vehicle === 'car') {
+                        $refVehBrand['tech_car'] = $this->refinedModel('App\Models\CarBrand', $foundUser['car_brand'][0]);
+                    } elseif ($vehicle === 'bus') {
+                        $refVehBrand['tech_bus'] = $this->refinedModel('App\Models\BusBrand', $foundUser['bus_brand'][0]);
+                    } elseif ($vehicle === 'truck') {
+                        $refVehBrand['tech_truck'] = $this->refinedModel('App\Models\TruckBrand', $foundUser['truck_brand'][0]);
+                    }
+                }
+            } elseif ($category === 'spare_part_seller') {
+                $refinedCategoryArray['spare_part_seller'] = $this->refinedModel('App\Models\SparePart', $foundUser['spare_part']);
+                foreach ($sparePartVehCategories as $vehicle) {
+                    if ($vehicle === 'car') {
+                        $refVehBrand['sPart_car'] = $this->refinedModel('App\Models\CarBrand', $foundUser['car_brand'][1]);
+                    } elseif ($vehicle === 'bus') {
+                        $refVehBrand['sPart_bus'] = $this->refinedModel('App\Models\BusBrand', $foundUser['bus_brand'][1]);
+                    } elseif ($vehicle === 'truck') {
+                        $refVehBrand['sPart_truck'] = $this->refinedModel('App\Models\TruckBrand', $foundUser['truck_brand'][1]);
+                    }
+                }
+            }
+        }
+
+        return ['userDetails' => $foundUser, 
+                'userCategories' => $refinedCategoryArray, 
+                'vehicleBrands' => $refVehBrand
+        ];
+    }
+
+    public function getBussCategory($userId) {
+        $categoryType = BusinessCategory::where('user_id', '=', $userId)->select('artisan', 'seller', 'technician', 'spare_part_seller')->first()->toArray();
+
+        $newCategoryType = array();
+        foreach($categoryType as $category => $presence) {
+            if ($presence == 1) {
+                $newCategoryType[] = $category;
+            }
+        }
+
+        return $newCategoryType;
+    }
+
+    public function getVehCategory($userId, $techOrSpare) {
+        if ($techOrSpare === 'technical_service') {
+            $vehCategories = VehicleCategory::where([['user_id', '=', $userId], ['business_category', '=', 'technical_service']])->select('car', 'bus', 'truck')->first()->toArray();
+        } elseif ($techOrSpare === 'spare_part') {
+            $vehCategories = VehicleCategory::where([['user_id', '=', $userId], ['business_category', '=', 'spare_part']])->select('car', 'bus', 'truck')->first()->toArray();
+        }
+        
+        $newVehCategories = array();
+        foreach($vehCategories as $category => $presence) {
+            if ($presence == 1) {
+                $newVehCategories[] = $category;
+            }
+        }
+
+        return $newVehCategories;
+    }
+
+    public function getVehModels($newVehCategories) {
+        $models = [];
+        // Add category models to models array
+        foreach($newVehCategories as $category) {
+            if ($category === 'car') {
+                $models[] = 'CarBrand';
+            } elseif ($category === 'bus') {
+                $models[] = 'BusBrand';
+            } elseif ($category === 'truck') {
+                $models[] = 'TruckBrand';
+            }
+        }
+
+        return $models;
+    }
+
+    public function reduceArray3($arrayInput) {
+        $newArray = array();
+        foreach ($arrayInput as $key => $value) {
+            // Remove the id row and select only true values
+            if (($key !== 'id') && ($value === 1)) {
+                $newArray[$key] = ucfirst(str_replace("_", " ", $key));
+            }
+        }
+        asort($newArray);
+    
+        return $newArray;
+    }
+
+    public function refinedModel($model, $category) {
+        // ${$model}
+        // Get columns to exclude from table            
+        $arrayExclude = $model::$columnsToExclude;
+        // Get artisan columns 
+        $refindedCols = array_diff($category, $arrayExclude);
+        // reform the array
+        return $this->reduceArray3($refindedCols);
+    }
 }
 
 ?>
