@@ -5,6 +5,7 @@
     <select-entrepreneur :pageName="pageName" :selectArray="artisanTypes2" @send-category-type="updateArtisans"></select-entrepreneur>
     <div class="row justify-content-evenly">
         <BusinessCard v-for="(artisan, index) in artisans2" :key="index"
+            :userId=artisan.id
             :firstName=artisan.first_name
             :lastName=artisan.last_name
             :phoneNumber=artisan.phone_number
