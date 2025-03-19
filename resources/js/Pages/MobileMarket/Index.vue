@@ -5,6 +5,7 @@
     <select-entrepreneur :pageName="pageName" :selectArray="products2"  @send-category-type="updateMobileMarketers"></select-entrepreneur>
     <div class="row justify-content-evenly">
         <BusinessCard v-for="marketer in mobileMarketers2" :key="marketer"
+            :userId=marketer.id
             :firstName=marketer.first_name
             :lastName=marketer.last_name
             :phoneNumber=marketer.phone_number
