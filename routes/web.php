@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ArtisanController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\BusinessPageController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MechanicsController;
 use App\Http\Controllers\BusinessUserController;
@@ -46,8 +47,6 @@ Route::get('/contactus', [ContactUsController::class, 'index']);
 
 Route::get('/getState', [SearchController::class, 'getState']);
 
-// Route::post('/getStateData', [SearchController::class, 'getStateData']);
-
 // Route::get('/signup', [RegisterController::class, 'index']);
 
 Route::resource('users', UserController::class);
@@ -61,7 +60,8 @@ Route::resource('mobileMarketers', MobileMarketController::class);
 Route::resource('contactUs', ContactUsController::class);
 
 Route::resource('technicalServices', TechnicalServiceController::class)->only('store');
-// Route::post('/technicalServices', [TechnicalService::class, 'store']);
+
+Route::resource('entrepreneur', EntrepreneurController::class)->only('show');
 
 
 
@@ -69,22 +69,9 @@ Route::resource('technicalServices', TechnicalServiceController::class)->only('s
 
 
 
-// Using authorization to protect a URL
-// We would use a 'can' middleware to do the protection.
-Route::get('/secret', [HomeController::class, 'secret'])
-    ->name('home.secret')  
-    ->middleware('can:home.secret');
 
 // Resource controller for business users
 Route::resource('businessUser', BusinessUserController::class);
-
-Route::resource('mechanics', MechanicsController::class);
-
-Route::resource('entrepreneur', EntrepreneurController::class);
-
-Route::get('/businessPage', function () {
-    return "This is a business public page";
-})->name('businessPage');
 
 Route::get('/businessProfile', [BusinessUserController::class, 'index'])->name('businessProfile');
 
