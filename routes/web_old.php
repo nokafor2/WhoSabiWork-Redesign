@@ -68,6 +68,7 @@ Route::resource('technicalServices', TechnicalServiceController::class)->only('s
 
 
 
+
 // get() method is used with a normal controller
 Route::get('/', [HomeController::class, 'photoFeeds'])->name('home.photoFeeds');
 
