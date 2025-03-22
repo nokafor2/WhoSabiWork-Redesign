@@ -286,7 +286,14 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
-        dd($user->with('address'));
+        // Determine if it's a regular user or business user
+        $userType = $user->account_type;
+        
+        if ($userType === 'regular') {
+            return Inertia('User/UserProfile');
+        } elseif ($userType === 'business') {
+            return Inertia('Index/Index');
+        }
     }
 
     /**
