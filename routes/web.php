@@ -65,6 +65,12 @@ Route::resource('entrepreneur', EntrepreneurController::class)->only('show');
 
 
 
+// Route::get('/not-found', function () {
+//     return view('errors.404');
+// })->name('notfound');
+
+
+
 
 
 
