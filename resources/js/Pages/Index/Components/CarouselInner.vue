@@ -24,7 +24,7 @@ export default {
     },
     methods: {
         imagePath(imageName) {
-            const imageUrl = new URL(`../../../homePageImages/${imageName}.jpg`, import.meta.url).href;
+            const imageUrl = new URL(`../../../../homePageImages/${imageName}.jpg`, import.meta.url).href;
 
             return imageUrl;
         },
