@@ -51,9 +51,17 @@ class EntrepreneurController extends Controller
      */
     public function show($id)
     {
-        $foundUser = $this->getUserDetails($id);
+        // Check if user has a business account
+        $foundUser = User::find($id);
+        if ($foundUser->account_type === 'business') {
+            $foundUser = $this->getUserDetails($id);
 
-        return Inertia('Entrepreneur/Index', ['user' => $foundUser]);
+            return Inertia('Entrepreneur/Index', ['user' => $foundUser]);
+        } else {
+            return Inertia('Index/Index');
+            // return redirect()->route('notfound');
+        }
+        
     }
 
     /**
