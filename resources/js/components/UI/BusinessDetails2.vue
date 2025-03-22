@@ -12,12 +12,52 @@
                 <ul class="list-inline">
                     <li class="list-inline-item" v-for="(type, id) in category" :key="id">{{ type }},</li>
                 </ul>
+                <div v-if="index === 'mechanic'" class="row">
+                    <div v-if="user.vehicleBrands.tech_car" class="row px-4">
+                        <p class="col-auto mb-0">Car Brands:</p>
+                        <ul class="list-inline">
+                            <!-- <i class="fa-solid fa-car"></i> -->
+                            <li v-for="(carBrand, index) in user.vehicleBrands.tech_car" :key="index" class="list-inline-item"><i class="fa-solid fa-car-side px-2"></i>{{ carBrand }},</li>
+                        </ul>
+                    </div>
+                    <div v-if="user.vehicleBrands.tech_bus" class="row px-4">
+                        <p class="col-auto mb-0">Bus Brands:</p>
+                        <ul class="list-inline">
+                            <!-- <i class="fa-solid fa-bus"></i> -->
+                            <li v-for="(busBrand, index) in user.vehicleBrands.tech_bus" :key="index" class="list-inline-item"><i class="fa-solid fa-van-shuttle px-2"></i>{{ busBrand }},</li>
+                        </ul>
+                    </div>
+                    <div v-if="user.vehicleBrands.tech_truck" class="row px-4">
+                        <p class="col-auto mb-0">Truck Brands:</p>
+                        <ul class="list-inline">
+                            <li v-for="(truckBrand, index) in user.vehicleBrands.tech_truck" :key="index" class="list-inline-item"><i class="fa-solid fa-truck-moving px-2"></i>{{ truckBrand }},</li>
+                        </ul>
+                    </div>
+                </div>
+                <div v-if="index === 'spare_part_seller'" class="row">
+                    <div v-if="user.vehicleBrands.sPart_car" class="row px-4">
+                        <p class="col-auto mb-0">Car Brands:</p>
+                        <ul class="list-inline">
+                            <li v-for="(carBrand, index) in user.vehicleBrands.sPart_car" :key="index" class="list-inline-item"><i class="fa-solid fa-car-side px-2"></i>{{ carBrand }},</li>
+                        </ul>
+                    </div>
+                    <div v-if="user.vehicleBrands.sPart_bus" class="row px-4">
+                        <p class="col-auto mb-0">Bus Brands:</p>
+                        <ul class="list-inline">
+                            <li v-for="(busBrand, index) in user.vehicleBrands.tech_bus" :key="index" class="list-inline-item"><i class="fa-solid fa-van-shuttle px-2"></i>{{ busBrand }},</li>
+                        </ul>
+                    </div>
+                    <div v-if="user.vehicleBrands.sPart_truck" class="row px-4">
+                        <p class="col-auto mb-0">Truck Brands:</p>
+                        <ul class="list-inline">
+                            <li v-for="(truckBrand, index) in user.vehicleBrands.sPart_truck" :key="index" class="list-inline-item"><i class="fa-solid fa-truck-moving px-2"></i>{{ truckBrand }},</li>
+                        </ul>
+                    </div>
+                </div>
             </div>
             <div class="row">
                 <p class="col-auto mb-0">Description</p>
-                <p>
-                    {{ businessDescription }}
-                </p>
+                <p>{{ businessDescription }}</p>
             </div>
         </div>
     </div>
@@ -74,6 +114,12 @@
 
 
 
+                return "";
+            },
+            checkTechnician() {
+                return "";
+            },
+            checkSparePart() {
                 return "";
             }
         }
