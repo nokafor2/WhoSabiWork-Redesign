@@ -4,23 +4,15 @@
             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
                 <dl class="row col-12 mb-0">
                     <dt class="col-sm-3">Username:</dt>
-                    <dd class="col-sm-9 mb-0">nokafor2</dd>
+                    <dd class="col-sm-9 mb-0">{{ username }}</dd>
                 </dl>
             </button>
         </h2>
         <div id="collapseFive" class="accordion-collapse collapse" aria-labelledby="headingFive">
             <div class="accordion-body">
-                <form class=""  action="{{ route('register') }}" method="POST">
-                    <!-- @csrf -->
+                <form class="" @submit.prevent="submitAction">
                     <div class="form-group col-12 mb-3">
-                        <input type="text" name="username" value="{{ old('username') }}" placeholder="Username" required 
-                        class="form-control {{ $errors->has('username') ? 'is-invalid' : '' }}">
-            
-                        <!-- @if ($errors->has('username'))
-                            <span class="invalid-feedback">
-                                <strong>{{ $errors->first('username') }}</strong>
-                            </span>
-                        @endif -->
+                        <input type="text" name="username" value="" placeholder="Username" class="form-control" v-model="usernameInput">
                     </div>
                     
                     <div class="row justify-content-between">
@@ -35,16 +27,36 @@
 
 
 <script>
+    import MethodsMixin from '../Mixins/MethodsMixin.js';
+    import { useForm } from '@inertiajs/vue3';
+
     export default {
-        props: [],
+        mixins: [MethodsMixin],
+        props: ['username', 'userId'],
         emits: [],
         data() {
             return {
-
+                usernameInput: ''
             }
         },
         methods: {
-            
+            submitAction() {
+                console.log(this.usernameInput);
+                const dataToSend = useForm({
+                    updateVal: this.usernameInput,
+                    updateField: 'username',
+                });
+                dataToSend.put(route('users.update', this.userId), {
+                    preserveState: true,
+                    preserveScroll: true,
+                    onSuccess: (page) => {
+                        console.log(page.props.updateStatus);
+                    },
+                    onError: (errors) => {
+                        console.log('Error: ', errors);
+                    }
+                });
+            }
         }
     }
 </script>
