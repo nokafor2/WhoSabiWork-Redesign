@@ -10,19 +10,10 @@
         </h2>
         <div id="collapseEight" class="accordion-collapse collapse" aria-labelledby="headingEight">
             <div class="accordion-body">
-                <form class=""  action="{{ route('register') }}" method="POST">
-                    <!-- @csrf -->
+                <form class="" @submit.prevent="submitAction">
                     <div class="form-group col-12 mb-3">
-                        <input type="password" name="password" value="{{ old('password') }}" placeholder="Password" required 
-                        class="form-control {{ $errors->has('phoneNumber') ? 'is-invalid' : '' }}">
-                        <input type="password" name="password_confirmation" placeholder="Confirm password" required 
-                        class="mt-2 form-control {{ $errors->has('password_confirmation') ? 'is-invalid' : '' }}">
-    
-                        <!-- @if ($errors->has('password'))
-                            <span class="invalid-feedback">
-                                <strong>{{ $errors->first('password') }}</strong>
-                            </span>
-                        @endif -->
+                        <input type="password" name="password" value="" placeholder="Password" class="form-control" v-model="password">
+                        <input type="password" name="password_confirmation" placeholder="Confirm password" class="mt-2 form-control" v-model="confrimationPassword">
                     </div>
                     
                     <div class="row justify-content-between">
@@ -37,16 +28,38 @@
 
 
 <script>
+    import MethodsMixin from '../Mixins/MethodsMixin.js';
+    import { useForm } from '@inertiajs/vue3';
+
     export default {
-        props: [],
+        mixins: [MethodsMixin],
+        props: ['userId'],
         emits: [],
         data() {
             return {
-
+                password: '',
+                confrimationPassword: ''
             }
         },
         methods: {
-            
+            submitAction() {
+                console.log(this.password);
+                const dataToSend = useForm({
+                    updateVal: this.password,
+                    updateVal2: this.confrimationPassword,
+                    updateField: 'password',
+                });
+                dataToSend.put(route('users.update', this.userId), {
+                    preserveState: true,
+                    preserveScroll: true,
+                    onSuccess: (page) => {
+                        console.log(page.props.updateStatus);
+                    },
+                    onError: (errors) => {
+                        console.log('Error: ', errors);
+                    }
+                });
+            }
         }
     }
 </script>
