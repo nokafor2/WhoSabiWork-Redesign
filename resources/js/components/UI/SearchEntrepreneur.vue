@@ -37,6 +37,7 @@
 
                 // router.post('/api/search', formData, {
                 //     preserveState: true, // Prevents a full page reload
+                //     preserveScroll: true,
                 //     onSuccess: (page) => {
                 //         console.log(page.props);
                 //         this.$emit('send-search-result', page.props);
