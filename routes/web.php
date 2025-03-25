@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ArtisanController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\BusinessCategoryController;
 use App\Http\Controllers\BusinessPageController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MechanicsController;
@@ -62,6 +63,8 @@ Route::resource('contactUs', ContactUsController::class);
 Route::resource('technicalServices', TechnicalServiceController::class)->only('store');
 
 Route::resource('entrepreneur', EntrepreneurController::class)->only('show');
+
+Route::resource('businesscategory', BusinessCategoryController::class)->only('update');
 
 
 
