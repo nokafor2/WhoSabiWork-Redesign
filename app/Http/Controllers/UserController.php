@@ -290,9 +290,10 @@ class UserController extends Controller
         $userType = $user->account_type;
         
         if ($userType === 'regular') {
-            return Inertia('User/UserProfile');
+            return Inertia('User/UserProfile', ['user' => $user]);
         } elseif ($userType === 'business') {
-            return Inertia('Index/Index');
+            $userDetails = $this->getUserDetails($user->id);
+            return Inertia('User/UserProfile', ['user' => $userDetails['userDetails'], 'userCategories' => $userDetails['userCategories'], 'vehicleBrands' => $userDetails['vehicleBrands']]);
         }
     }
 
@@ -302,9 +303,10 @@ class UserController extends Controller
      * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function edit(User $user)
+    public function edit(Request $request)
     {
-        dd($user);
+        // $updateVal = $request->updateVal;
+        dd($request);
     }
 
     /**
@@ -316,7 +318,13 @@ class UserController extends Controller
      */
     public function update(Request $request, User $user)
     {
-        dd($user);
+        $updateVal = $request->updateVal;
+        $updateField = $request->updateField;
+        $user->{$updateField} = $updateVal;
+        $result = $user->save();
+        
+        // return Inertia('User/UserProfile', ['user' => $user, 'updateSatus' => $result]);
+        return redirect()->route('users.show', $user->id)->with('success', $result);
     }
 
     /**
