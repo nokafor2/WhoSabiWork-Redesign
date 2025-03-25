@@ -4,23 +4,15 @@
             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
                 <dl class="row col-12 mb-0">
                     <dt class="col-sm-3">Last Name:</dt>
-                    <dd class="col-sm-9 mb-0">Okafor</dd>
+                    <dd class="col-sm-9 mb-0">{{ getLastName }}</dd>
                 </dl>
             </button>
         </h2>
         <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree">
             <div class="accordion-body">
-                <form class=""  action="{{ route('register') }}" method="POST">
-                    <!-- @csrf -->
+                <form class="" @submit.prevent="submitAction">
                     <div class="form-group col-12 mb-3">
-                        <input type="text" name="last_name" value="{{ old('last_name') }}" placeholder="Last name" required 
-                        class="form-control {{ $errors->has('last_name') ? 'is-invalid' : '' }}">
-            
-                        <!-- @if ($errors->has('last_name'))
-                            <span class="invalid-feedback">
-                                <strong>{{ $errors->first('last_name') }}</strong>
-                            </span>
-                        @endif -->
+                        <input type="text" name="last_name" value="" placeholder="Last name" class="form-control" v-model="lastNameInput">
                     </div>
                     
                     <div class="row justify-content-between">
@@ -34,16 +26,42 @@
 </template>
 
 <script>
+    import MethodsMixin from '../Mixins/MethodsMixin.js';
+    import { useForm } from '@inertiajs/vue3';
+
     export default {
-        props: [],
+        mixins: [MethodsMixin],
+        props: ['lastName', 'userId'],
         emits: [],
         data() {
             return {
-
+                lastNameInput: '',
             }
         },
         methods: {
-            
+            submitAction() {
+                console.log(this.lastNameInput);
+                const dataToSend = useForm({
+                    updateVal: this.lastNameInput,
+                    updateField: 'last_name',
+                });
+                // dataToSend.put('/users/'+this.userId);
+                dataToSend.put(route('users.update', this.userId), {
+                    preserveState: true,
+                    preserveScroll: true,
+                    onSuccess: (page) => {
+                        console.log(page.props.updateStatus);
+                    },
+                    onError: (errors) => {
+                        console.log('Error: ', errors);
+                    }
+                });
+            }
+        },
+        computed: {
+            getLastName() {
+                return this.capitalizeFirstLetter(this.lastName);
+            }
         }
     }
 </script>
