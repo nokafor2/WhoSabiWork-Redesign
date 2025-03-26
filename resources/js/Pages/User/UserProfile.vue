@@ -46,424 +46,40 @@
 
                     <!-- {{-- Business name accordion --}} -->
                     <BusinessNameSection v-if="businessAccount" :businessName="user.business_category.business_name" :userId="user.id"></BusinessNameSection>
-                    <div v-if="businessAccount" class="accordion-item">
-                        <h2 class="accordion-header" id="headingNine">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseNine" aria-expanded="false" aria-controls="collapseNine">
-                                <dl class="row col-12 mb-0">
-                                    <dt class="col-sm-3">Business name:</dt>
-                                    <dd class="col-sm-9 mb-0">WhoSabiWork</dd>
-                                </dl>
-                            </button>
-                        </h2>
-                        <div id="collapseNine" class="accordion-collapse collapse" aria-labelledby="headingNine">
-                            <div class="accordion-body">
-                                <form class="" >
-                                    <div class="form-group col-12 mb-3">
-                                        <input type="text" name="businessName" value="" placeholder="Business name" required class="form-control">
-                                    </div>
-                                    
-                                    <div class="row justify-content-between">
-                                        <button type="submit" name="updateBusinessName" class="btn btn-danger col-auto">Update</button>
-                                        <button type="submit" name="clearBusinessName" class="btn btn-danger col-auto">Clear</button>
-                                    </div>
-                                </form>   
-                            </div>
-                        </div>
-                    </div>
 
+                    <!-- {{-- Business description accordion --}} -->
+                    <BusinessDescriptionSection v-if="businessAccount" :businessDescription="user.business_category.business_description" :userId="user.id"></BusinessDescriptionSection>
+                    
                     <!-- {{-- Address Line 1 accordion --}} -->
-                    <div v-if="businessAccount" class="accordion-item">
-                        <h2 class="accordion-header" id="headingTen">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTen" aria-expanded="false" aria-controls="collapseTen">
-                                <dl class="row col-12 mb-0">
-                                    <dt class="col-sm-3">Address Line 1:</dt>
-                                    <dd class="col-sm-9 mb-0">33 Efab City Estate</dd>
-                                </dl>
-                            </button>
-                        </h2>
-                        <div id="collapseTen" class="accordion-collapse collapse" aria-labelledby="headingTen">
-                            <div class="accordion-body">
-                                <form class=""  action="{{ route('register') }}" method="POST">
-                                    <!-- @csrf -->
-                                    <div class="form-group col-12 mb-3">
-                                        <input type="text" name="addressLine1" value="{{ old('addressLine1') }}" placeholder="Address Line 1" required 
-                                        class="form-control {{ $errors->has('addressLine1') ? 'is-invalid' : '' }}">
-                            
-                                        <!-- @if ($errors->has('addressLine1'))
-                                            <span class="invalid-feedback">
-                                                <strong>{{ $errors->first('addressLine1') }}</strong>
-                                            </span>
-                                        @endif -->
-                                    </div>
-                                    
-                                    <div class="row justify-content-between">
-                                        <button type="submit" name="updateAddressLine1" class="btn btn-danger col-auto">Update</button>
-                                        <button type="submit" name="clearAddressLine1" class="btn btn-danger col-auto">Clear</button>
-                                    </div>
-                                </form>   
-                            </div>
-                        </div>
-                    </div>
+                    <AddressLine1Section v-if="businessAccount" :addressLine1="user.address.address_line_1" :userId="user.id"></AddressLine1Section>
 
                     <!-- {{-- Address Line 2 accordion --}} -->
-                    <div v-if="businessAccount" class="accordion-item">
-                        <h2 class="accordion-header" id="headingEleven">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseEleven" aria-expanded="false" aria-controls="collapseEleven">
-                                <dl class="row col-12 mb-0">
-                                    <dt class="col-sm-3">Address Line 2:</dt>
-                                    <dd class="col-sm-9 mb-0">A description list is perfect for defining terms.</dd>
-                                </dl>
-                            </button>
-                        </h2>
-                        <div id="collapseEleven" class="accordion-collapse collapse" aria-labelledby="headingEleven">
-                            <div class="accordion-body">
-                                <form class=""  action="{{ route('register') }}" method="POST">
-                                    <!-- @csrf -->
-                                    <div class="form-group col-12 mb-3">
-                                        <input type="text" name="addressLine2" value="{{ old('addressLine2') }}" placeholder="Address Line 2" required 
-                                        class="form-control {{ $errors->has('addressLine2') ? 'is-invalid' : '' }}">
-                            
-                                        <!-- @if ($errors->has('addressLine1'))
-                                            <span class="invalid-feedback">
-                                                <strong>{{ $errors->first('addressLine2') }}</strong>
-                                            </span>
-                                        @endif -->
-                                    </div>
-                                    
-                                    <div class="row justify-content-between">
-                                        <button type="submit" name="updateAddressLine2" class="btn btn-danger col-auto">Update</button>
-                                        <button type="submit" name="clearAddressLine2" class="btn btn-danger col-auto">Clear</button>
-                                    </div>
-                                </form>   
-                            </div>
-                        </div>
-                    </div>
-
+                    <AddressLine2Section v-if="businessAccount" :addressLine2="user.address.address_line_2" :userId="user.id"></AddressLine2Section>
+                    
                     <!-- {{-- Address Line 3 accordion --}} -->
-                    <div v-if="businessAccount" class="accordion-item">
-                        <h2 class="accordion-header" id="headingTwelve">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwelve" aria-expanded="false" aria-controls="collapseTwelve">
-                                <dl class="row col-12 mb-0">
-                                    <dt class="col-sm-3">Address Line 3:</dt>
-                                    <dd class="col-sm-9 mb-0">A description list is perfect for defining terms.</dd>
-                                </dl>
-                            </button>
-                        </h2>
-                        <div id="collapseTwelve" class="accordion-collapse collapse" aria-labelledby="headingTwelve">
-                            <div class="accordion-body">
-                                <form class=""  action="{{ route('register') }}" method="POST">
-                                    <!-- @csrf -->
-                                    <div class="form-group col-12 mb-3">
-                                        <input type="text" name="addressLine3" value="{{ old('addressLine3') }}" placeholder="Address Line 3" required 
-                                        class="form-control {{ $errors->has('addressLine3') ? 'is-invalid' : '' }}">
-                            
-                                        <!-- @if ($errors->has('addressLine3'))
-                                            <span class="invalid-feedback">
-                                                <strong>{{ $errors->first('addressLine3') }}</strong>
-                                            </span>
-                                        @endif -->
-                                    </div>
-                                    
-                                    <div class="row justify-content-between">
-                                        <button type="submit" name="updateAddressLine3" class="btn btn-danger col-auto">Update</button>
-                                        <button type="submit" name="clearAddressLine3" class="btn btn-danger col-auto">Clear</button>
-                                    </div>
-                                </form>   
-                            </div>
-                        </div>
-                    </div>
-
+                    <AddressLine3Section v-if="businessAccount" :addressLine3="user.address.address_line_3" :userId="user.id"></AddressLine3Section>
+                    
                     <!-- {{-- State accordion --}} -->
-                    <div v-if="businessAccount" class="accordion-item">
-                        <h2 class="accordion-header" id="headingThirteen">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThirteen" aria-expanded="false" aria-controls="collapseThirteen">
-                                <dl class="row col-12 mb-0">
-                                    <dt class="col-sm-3">State:</dt>
-                                    <dd class="col-sm-9 mb-0">Abuja</dd>
-                                </dl>
-                            </button>
-                        </h2>
-                        <div id="collapseThirteen" class="accordion-collapse collapse" aria-labelledby="headingThirteen">
-                            <div class="accordion-body">
-                                <form class=""  action="{{ route('register') }}" method="POST">
-                                    <!-- @csrf -->
-                                    <div class="form-group col-12 mb-3">
-                                        <input type="text" name="state" value="{{ old('state') }}" placeholder="State" required 
-                                        class="form-control {{ $errors->has('state') ? 'is-invalid' : '' }}">
-                            
-                                        <!-- @if ($errors->has('state'))
-                                            <span class="invalid-feedback">
-                                                <strong>{{ $errors->first('state') }}</strong>
-                                            </span>
-                                        @endif -->
-                                    </div>
-                                    
-                                    <div class="row justify-content-between">
-                                        <button type="submit" name="updateState" class="btn btn-danger col-auto">Update</button>
-                                        <button type="submit" name="clearState" class="btn btn-danger col-auto">Clear</button>
-                                    </div>
-                                </form>   
-                            </div>
-                        </div>
-                    </div>
-
+                    <StateSection v-if="businessAccount" :state="user.address.state" :userId="user.id"></StateSection>
+                    
                     <!-- {{-- Town accordion --}} -->
-                    <div v-if="businessAccount" class="accordion-item">
-                        <h2 class="accordion-header" id="headingFourteen">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFourteen" aria-expanded="false" aria-controls="collapseFourteen">
-                                <dl class="row col-12 mb-0">
-                                    <dt class="col-sm-3">Town:</dt>
-                                    <dd class="col-sm-9 mb-0">Mbora District</dd>
-                                </dl>
-                            </button>
-                        </h2>
-                        <div id="collapseFourteen" class="accordion-collapse collapse" aria-labelledby="headingFourteen">
-                            <div class="accordion-body">
-                                <form class=""  action="{{ route('register') }}" method="POST">
-                                    <!-- @csrf -->
-                                    <div class="form-group col-12 mb-3">
-                                        <input type="text" name="town" value="{{ old('town') }}" placeholder="Town" required 
-                                        class="form-control {{ $errors->has('town') ? 'is-invalid' : '' }}">
-                            
-                                        <!-- @if ($errors->has('town'))
-                                            <span class="invalid-feedback">
-                                                <strong>{{ $errors->first('town') }}</strong>
-                                            </span>
-                                        @endif -->
-                                    </div>
-                                    
-                                    <div class="row justify-content-between">
-                                        <button type="submit" name="updateTown" class="btn btn-danger col-auto">Update</button>
-                                        <button type="submit" name="clearTown" class="btn btn-danger col-auto">Clear</button>
-                                    </div>
-                                </form>   
-                            </div>
-                        </div>
-                    </div>
-            
+                    <TownSection v-if="businessAccount" :town="user.address.town" :userId="user.id"></TownSection>
+                    
                     <!-- {{-- Business category accordion --}} -->
-                    <div v-if="businessAccount" class="accordion-item">
-                        <h2 class="accordion-header" id="headingFifteen">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFifteen" aria-expanded="false" aria-controls="collapseFifteen">
-                                <dl class="row col-12 mb-0">
-                                    <dt class="col-sm-3">Business Category:</dt>
-                                    <dd class="col-sm-9 mb-0">Artisan</dd>
-                                </dl>
-                            </button>
-                        </h2>
-                        <div id="collapseFifteen" class="accordion-collapse collapse" aria-labelledby="headingFifteen">
-                            <div class="accordion-body">
-                                <form class=""  action="{{ route('register') }}" method="POST">
-                                    <!-- @csrf -->
-                                    <div class="form-group col-12 mb-3">
-                                        <div class="form-check form-check-inline">
-                                            <input type="checkbox" name="business_categories[]" id="artisan" class="form-check-input">
-                                            <label for="artisan" class="form-check-label">Artisan</label>
-                                        </div>
-                                        <div class="form-check form-check-inline">
-                                            <input type="checkbox" name="business_categories[]" id="seller" class="form-check-input">
-                                            <label for="seller" class="form-check-label">Mobile market</label>
-                                        </div>
-                                        <div class="form-check form-check-inline">
-                                            <input type="checkbox" name="business_categories[]" id="mechanic" class="form-check-input">
-                                            <label for="mechanic" class="form-check-label">Mechanic</label>
-                                        </div>
-                                        <div class="form-check form-check-inline">
-                                            <input type="checkbox" name="business_categories[]" id="spare_part_seller" class="form-check-input">
-                                            <label for="spare_part_seller" class="form-check-label">Spare Part Seller</label>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="row justify-content-between">
-                                        <button type="submit" name="updateBusinessCategory" class="btn btn-danger col-auto">Update</button>
-                                        <button type="submit" name="clearBusinessCategory" class="btn btn-danger col-auto">Clear</button>
-                                    </div>
-                                </form>   
-                            </div>
-                        </div>
-                    </div>
-            
+                    <BusinessCategorySection v-if="businessAccount" :businessCategory="user.business_category" :userId="user.id"></BusinessCategorySection>
+                    
                     <!-- {{-- Artisans accordion --}} -->
-                    <div v-if="businessAccount" class="accordion-item">
-                        <h2 class="accordion-header" id="headingSixteen">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSixteen" aria-expanded="false" aria-controls="collapseSixteen">
-                                <dl class="row col-12 mb-0">
-                                    <dt class="col-sm-3">Artisans:</dt>
-                                    <dd class="col-sm-9 mb-0">
-                                        <ul class="list-inline mb-0">
-                                            <li class="list-inline-item">Caterer</li>
-                                            <li class="list-inline-item">Tailor</li>
-                                            <li class="list-inline-item">Electrician</li>
-                                        </ul>
-                                    </dd>
-                                </dl>
-                            </button>
-                        </h2>
-                        <div id="collapseSixteen" class="accordion-collapse collapse" aria-labelledby="headingSixteen">
-                            <div class="accordion-body">
-                                <form class=""  action="{{ route('register') }}" method="POST">
-                                    <!-- @csrf -->
-                                    <div class="form-group col-12 mb-3">
-                                        <div class="form-check form-check-inline">
-                                            <input class="form-check-input" name="artisans[]" type="checkbox" id="{{ $key }}" value="{{ $key }}" required>
-                                            <label class="form-check-label" for="{{ $key }}">Caterer</label>
-                                            <!-- <div class="invalid-feedback">Select at least one business category</div> -->
-                                        </div>
-                                        <div class="form-check form-check-inline">
-                                            <input class="form-check-input" name="artisans[]" type="checkbox" id="{{ $key }}" value="{{ $key }}" required>
-                                            <label class="form-check-label" for="{{ $key }}">Tailor</label>
-                                            <!-- <div class="invalid-feedback">Select at least one business category</div> -->
-                                        </div>
-                                        <div class="form-check form-check-inline">
-                                            <input class="form-check-input" name="artisans[]" type="checkbox" id="{{ $key }}" value="{{ $key }}" required>
-                                            <label class="form-check-label" for="{{ $key }}">Electrician</label>
-                                            <!-- <div class="invalid-feedback">Select at least one business category</div> -->
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="row justify-content-between">
-                                        <button type="submit" name="updateArtisan" class="btn btn-danger col-auto">Update</button>
-                                        <button type="submit" name="clearArtisan" class="btn btn-danger col-auto">Clear</button>
-                                    </div>
-                                </form>   
-                            </div>
-                        </div>
-                    </div>
-            
+                    <ArtisansSection v-if="isArtisan" :allArtisans="allArtisans" :selectedArtisans="isArtisan" :userId="user.id"></ArtisansSection>
+                    
                     <!-- {{-- Mobile market accordion --}} -->
-                    <div v-if="businessAccount" class="accordion-item">
-                        <h2 class="accordion-header" id="headingSeventeen">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSeventeen" aria-expanded="false" aria-controls="collapseSeventeen">
-                                <dl class="row col-12 mb-0">
-                                    <dt class="col-sm-3">Mobile market:</dt>
-                                    <dd class="col-sm-9 mb-0">
-                                        <ul class="list-inline mb-0">
-                                            <li class="list-inline-item">Shoes</li>
-                                            <li class="list-inline-item">Bags & Boxes</li>
-                                            <li class="list-inline-item">Electronics</li>
-                                        </ul>
-                                    </dd>
-                                </dl>
-                            </button>
-                        </h2>
-                        <div id="collapseSeventeen" class="accordion-collapse collapse" aria-labelledby="headingSeventeen">
-                            <div class="accordion-body">
-                                <form class=""  action="{{ route('register') }}" method="POST">
-                                    <!-- @csrf -->
-                                    <div class="form-group col-12 mb-3">
-                                        <div class="form-check form-check-inline">
-                                            <input class="form-check-input" name="products[]" type="checkbox" id="{{ $key }}" value="{{ $key }}">
-                                            <label class="form-check-label" for="{{ $key }}">Shoes</label>
-                                        </div>
-                                        <div class="form-check form-check-inline">
-                                            <input class="form-check-input" name="products[]" type="checkbox" id="{{ $key }}" value="{{ $key }}">
-                                            <label class="form-check-label" for="{{ $key }}">Bags & Boxes</label>
-                                        </div>
-                                        <div class="form-check form-check-inline">
-                                            <input class="form-check-input" name="products[]" type="checkbox" id="{{ $key }}" value="{{ $key }}">
-                                            <label class="form-check-label" for="{{ $key }}">Electronics</label>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="row justify-content-between">
-                                        <button type="submit" name="updateSeller" class="btn btn-danger col-auto">Update</button>
-                                        <button type="submit" name="clearSeller" class="btn btn-danger col-auto">Clear</button>
-                                    </div>
-                                </form>   
-                            </div>
-                        </div>
-                    </div>
-
-                    <div v-if="businessAccount">For Mechanics and Spare Part Sellers</div>
-    
+                    <MobileMarketSection v-if="isMobileMarketer" :allProducts="allProducts" :selectedProducts="isMobileMarketer" :userId="user.id"></MobileMarketSection>
+                    
                     <!-- {{-- Technicians accordion --}} -->
-                    <div v-if="businessAccount" class="accordion-item">
-                        <h2 class="accordion-header" id="headingEighteen">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseEighteen" aria-expanded="false" aria-controls="collapseEighteen">
-                                <dl class="row col-12 mb-0">
-                                    <dt class="col-sm-3">Technicians:</dt>
-                                    <dd class="col-sm-9 mb-0">
-                                        <ul class="list-inline mb-0">
-                                            <li class="list-inline-item">Mechanic</li>
-                                            <li class="list-inline-item">Electrician</li>
-                                            <li class="list-inline-item">Computer diagnostic</li>
-                                        </ul>
-                                    </dd>
-                                </dl>
-                            </button>
-                        </h2>
-                        <div id="collapseEighteen" class="accordion-collapse collapse" aria-labelledby="headingEighteen">
-                            <div class="accordion-body">
-                                <form class=""  action="{{ route('register') }}" method="POST">
-                                    <!-- @csrf -->
-                                    <div class="form-group col-12 mb-3">
-                                        <div class="form-check form-check-inline">
-                                            <input class="form-check-input" name="technical_services[]" type="checkbox" id="{{ $key }}" value="{{ $key }}">
-                                            <label class="form-check-label" for="{{ $key }}">Mechanic</label>
-                                        </div>
-                                        <div class="form-check form-check-inline">
-                                            <input class="form-check-input" name="technical_services[]" type="checkbox" id="{{ $key }}" value="{{ $key }}">
-                                            <label class="form-check-label" for="{{ $key }}">Electrician</label>
-                                        </div>
-                                        <div class="form-check form-check-inline">
-                                            <input class="form-check-input" name="technical_services[]" type="checkbox" id="{{ $key }}" value="{{ $key }}">
-                                            <label class="form-check-label" for="{{ $key }}">Computer diagnostic</label>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="row justify-content-between">
-                                        <button type="submit" name="updateTechnicalServices" class="btn btn-danger col-auto">Update</button>
-                                        <button type="submit" name="clearTechnicalServices" class="btn btn-danger col-auto">Clear</button>
-                                    </div>
-                                </form>   
-                            </div>
-                        </div>
-                    </div>
-            
+                    <TechnicalServiceSection v-if="isMechanic" :allTechnicalServices="allTechnicalServices" :selectedTechnicians="isMechanic" :userId="user.id"></TechnicalServiceSection>
+                    
                     <!-- {{-- Spare part sellers accordion --}} -->
-                    <div v-if="businessAccount" class="accordion-item">
-                        <h2 class="accordion-header" id="headingNineteen">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseNineteen" aria-expanded="false" aria-controls="collapseNineteen">
-                                <dl class="row col-12 mb-0">
-                                    <dt class="col-sm-3">Spare part sellers:</dt>
-                                    <dd class="col-sm-9 mb-0">
-                                        <ul class="list-inline mb-0">
-                                            <li class="list-inline-item">Enginer part</li>
-                                            <li class="list-inline-item">Tire</li>
-                                            <li class="list-inline-item">Wheels</li>
-                                        </ul>
-                                    </dd>
-                                </dl>
-                            </button>
-                        </h2>
-                        <div id="collapseNineteen" class="accordion-collapse collapse" aria-labelledby="headingNineteen">
-                            <div class="accordion-body">
-                                <form class=""  action="{{ route('register') }}" method="POST">
-                                    <!-- @csrf -->
-                                    <div class="form-group col-12 mb-3">
-                                        <div class="form-check form-check-inline">
-                                            <input class="form-check-input" name="spare_parts[]" type="checkbox" id="{{ $key }}" value="{{ $key }}">
-                                            <label class="form-check-label" for="{{ $key }}">Enginer part</label>
-                                        </div>
-                                        <div class="form-check form-check-inline">
-                                            <input class="form-check-input" name="spare_parts[]" type="checkbox" id="{{ $key }}" value="{{ $key }}">
-                                            <label class="form-check-label" for="{{ $key }}">Tire</label>
-                                        </div>
-                                        <div class="form-check form-check-inline">
-                                            <input class="form-check-input" name="spare_parts[]" type="checkbox" id="{{ $key }}" value="{{ $key }}">
-                                            <label class="form-check-label" for="{{ $key }}">Wheels</label>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="row justify-content-between">
-                                        <button type="submit" name="updateSpareParts" class="btn btn-danger col-auto">Update</button>
-                                        <button type="submit" name="clearSpareParts" class="btn btn-danger col-auto">Clear</button>
-                                    </div>
-                                </form>   
-                            </div>
-                        </div>
-                    </div>
-
+                    <SparePartSection v-if="isSparePartSeller" :allSpareParts="allSpareParts" :selectedSpareParts="isSparePartSeller" :userId="user.id"></SparePartSection>
+                    
                     <!-- {{-- Car brands accordion --}} -->
                     <div v-if="businessAccount" class="accordion-item">
                         <h2 class="accordion-header" id="headingTwenty">
@@ -482,8 +98,7 @@
                         </h2>
                         <div id="collapseTwenty" class="accordion-collapse collapse" aria-labelledby="headingTwenty">
                             <div class="accordion-body">
-                                <form class=""  action="{{ route('register') }}" method="POST">
-                                    <!-- @csrf -->
+                                <form class="">
                                     <div class="form-group col-12 mb-3">
                                         <div class="form-check form-check-inline">
                                             <input class="form-check-input" name="car_brands[]" type="checkbox" id="{{ $key }}" value="{{ $key }}">
@@ -501,7 +116,7 @@
                                     
                                     <div class="row justify-content-between">
                                         <button type="submit" name="updateCarBrands" class="btn btn-danger col-auto">Update</button>
-                                        <button type="submit" name="clearCarBrands" class="btn btn-danger col-auto">Clear</button>
+                                        <!-- <button type="submit" name="clearCarBrands" class="btn btn-danger col-auto">Clear</button> -->
                                     </div>
                                 </form>   
                             </div>
@@ -526,8 +141,7 @@
                         </h2>
                         <div id="collapseTwentyOne" class="accordion-collapse collapse" aria-labelledby="headingTwentyOne">
                             <div class="accordion-body">
-                                <form class=""  action="{{ route('register') }}" method="POST">
-                                    <!-- @csrf -->
+                                <form class="">
                                     <div class="form-group col-12 mb-3">
                                         <div class="form-check form-check-inline">
                                             <input class="form-check-input" name="bus_Brands[]" type="checkbox" id="{{ $key }}" value="{{ $key }}">
@@ -545,7 +159,7 @@
                                     
                                     <div class="row justify-content-between">
                                         <button type="submit" name="updateBusBrands" class="btn btn-danger col-auto">Update</button>
-                                        <button type="submit" name="clearBusBrands" class="btn btn-danger col-auto">Clear</button>
+                                        <!-- <button type="submit" name="clearBusBrands" class="btn btn-danger col-auto">Clear</button> -->
                                     </div>
                                 </form>   
                             </div>
@@ -570,8 +184,7 @@
                         </h2>
                         <div id="collapseTwentyTwo" class="accordion-collapse collapse" aria-labelledby="headingTwentyTwo">
                             <div class="accordion-body">
-                                <form class=""  action="{{ route('register') }}" method="POST">
-                                    <!-- @csrf -->
+                                <form class="">
                                     <div class="form-group col-12 mb-3">
                                         <div class="form-check form-check-inline">
                                             <input class="form-check-input" name="truck_brands[]" type="checkbox" id="{{ $key }}" value="{{ $key }}">
@@ -589,7 +202,7 @@
                                     
                                     <div class="row justify-content-between">
                                         <button type="submit" name="updateTruckBrands" class="btn btn-danger col-auto">Update</button>
-                                        <button type="submit" name="clearTruckBrands" class="btn btn-danger col-auto">Clear</button>
+                                        <!-- <button type="submit" name="clearTruckBrands" class="btn btn-danger col-auto">Clear</button> -->
                                     </div>
                                 </form>   
                             </div>
@@ -1185,14 +798,35 @@
     import AppointmentDetails from './Components/AppointmentDetails.vue';
     import AppointmentDetails1 from './Components/AppointmentDetails1.vue';
     import BusinessNameSection from './Components/BusinessNameSection.vue';
+    import AddressLine1Section from './Components/AddressLine1Section.vue';
+    import AddressLine2Section from './Components/AddressLine2Section.vue';
+    import AddressLine3Section from './Components/AddressLine3Section.vue';
+    import StateSection from './Components/StateSection.vue';
+    import TownSection from './Components/TownSection.vue';
+    import BusinessCategorySection from './Components/BusinessCategorySection.vue';
+    import BusinessDescriptionSection from './Components/BusinessDescriptionSection.vue';
+    import ArtisansSection from './Components/ArtisansSection.vue';
+    import MobileMarketSection from './Components/MobileMarketSection.vue';
+    import TechnicalServiceSection from './Components/TechnicalServiceSection.vue';
+    import SparePartSection from './Components/SparePartSection.vue';
 
     // import Mixins
     import MethodsMixin from './Mixins/MethodsMixin.js';
 
     export default {
-        components: {FieldAccordion, ProfilePhotoSection, ProfilePhotoSection2, FirstNameSection, LastNameSection, GenderSection, UsernameSection, EmailSection, PhoneNumberSection, PasswordSection, CommentCard, AppointmentDetails, AppointmentDetails1, BusinessNameSection},
+        components: {
+            FieldAccordion, ProfilePhotoSection, ProfilePhotoSection2, FirstNameSection, 
+            LastNameSection, GenderSection, UsernameSection, EmailSection, PhoneNumberSection, 
+            PasswordSection, CommentCard, AppointmentDetails, AppointmentDetails1, 
+            BusinessNameSection, AddressLine1Section, AddressLine2Section, AddressLine3Section, 
+            StateSection, TownSection, BusinessCategorySection, BusinessDescriptionSection, 
+            ArtisansSection, MobileMarketSection, TechnicalServiceSection, SparePartSection
+        },
         mixins: [MethodsMixin],
-        props: ['user', 'userCategories', 'vehicleBrands'],
+        props: ['user', 'userCategories', 'vehicleBrands', 'allArtisans', 'allProducts',
+            'allTechnicalServices', 'allSpareParts', 'allVehicleCategories', 'allCarBrands',
+            'allBusBrands', 'allTruckBrands'
+        ],
         emits: [],
         data() {
             return {
@@ -1212,23 +846,47 @@
                 return this.capitalizeFirstLetter(this.user.first_name) + " " + this.capitalizeFirstLetter(this.user.last_name);
             },
             businessAccount() {
-                if (this.user.account_type === 'business') {
-                    return true;
+                return (this.user.account_type === 'business') ? true : false;
+            },
+            isArtisan() {
+                if (this.user.account_type !== 'business') {
+                    return false
+                }
+                if (typeof this.userCategories.artisan === "object" && (this.userCategories.artisan !== "undefined" || this.userCategories.artisan !== null)) {
+                    return (Object.entries(this.userCategories.artisan).length > 0) ? true : false;
                 } else {
                     return false;
                 }
             },
-            isArtisan() {
-                return this.userCategories.artisan;
-            },
             isMobileMarketer() {
-                return this.userCategories.mobile_marketer;
+                if (this.user.account_type !== 'business') {
+                    return false
+                }
+                if (typeof this.userCategories.mobile_marketer === "object" && (this.userCategories.artisan !== "undefined" || this.userCategories.mobile_marketer !== null)) {
+                    return (Object.entries(this.userCategories.mobile_marketer).length > 0) ? true : false;
+                } else {
+                    return false;
+                }
             },
             isMechanic() {
-                return this.userCategories.mechanic;
+                if (this.user.account_type !== 'business') {
+                    return false
+                }
+                if (typeof this.userCategories.mechanic === "object" && (this.userCategories.artisan !== "undefined" || this.userCategories.mechanic !== null)) {
+                    return (Object.entries(this.userCategories.mechanic).length > 0) ? true : false;
+                } else {
+                    return false;
+                }
             },
             isSparePartSeller() {
-                return this.userCategories.spare_part_seller;
+                if (this.user.account_type !== 'business') {
+                    return false
+                }
+                if (typeof this.userCategories.c === "object" && (this.userCategories.artisan !== "undefined" || this.userCategories.mechanic !== null)) {
+                    return (Object.entries(this.userCategories.spare_part_seller).length > 0) ? true : false;
+                } else {
+                    return false;
+                }
             }
         }
     }
