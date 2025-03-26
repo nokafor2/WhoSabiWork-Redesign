@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Traits\GlobalFunctions;
 use App\Models\Product;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class MobileMarketController extends Controller
@@ -103,7 +104,22 @@ class MobileMarketController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $user = User::find($id);
+        $mobileMarketer = Product::where('user_id', '=', $user->id)->first();
+        $productObj = new Product();
+        $marketerProducts = $this->getTableColumnsWithSort($productObj->table, Product::$columnsToExclude);
+        $selectedProducts = $request->updateVal;
+        foreach ($marketerProducts as $index => $marketerProduct) {
+            if (in_array($index, $selectedProducts)) {
+                $mobileMarketer->{$index} = true;
+            } else {
+                $mobileMarketer->{$index} = false;
+            }
+        }
+
+        $result = $mobileMarketer->save();
+
+        return redirect()->route('users.show', $id)->with('success', $result);
     }
 
     /**
