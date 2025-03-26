@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AddressController;
 use App\Http\Controllers\ArtisanController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\BusinessCategoryController;
@@ -11,6 +12,7 @@ use App\Http\Controllers\ContactUsController;
 use App\Http\Controllers\EntrepreneurController;
 use App\Http\Controllers\MobileMarketController;
 use App\Http\Controllers\SearchController;
+use App\Http\Controllers\SparePartController;
 use App\Http\Controllers\TechnicalServiceController;
 use App\Http\Controllers\UserCommentController;
 use App\Http\Controllers\UserPhotoController;
@@ -53,18 +55,22 @@ Route::get('/getState', [SearchController::class, 'getState']);
 Route::resource('users', UserController::class);
 
 // resource() method is for a resource controller
-Route::resource('artisans', ArtisanController::class);
+Route::resource('artisans', ArtisanController::class)->only('index', 'store', 'update');
 
 // resource() method is for a resource controller
-Route::resource('mobileMarketers', MobileMarketController::class);
+Route::resource('mobileMarketers', MobileMarketController::class)->only('index', 'store', 'update');
 
-Route::resource('contactUs', ContactUsController::class);
+Route::resource('contactus', ContactUsController::class)->only('index', 'store', 'update');
 
-Route::resource('technicalServices', TechnicalServiceController::class)->only('store');
+Route::resource('technicalServices', TechnicalServiceController::class)->only('store', 'update');
 
 Route::resource('entrepreneur', EntrepreneurController::class)->only('show');
 
 Route::resource('businesscategory', BusinessCategoryController::class)->only('update');
+
+Route::resource('address', AddressController::class)->only('update');
+
+Route::resource('sparepart', SparePartController::class)->only('update');
 
 
 
@@ -80,14 +86,6 @@ Route::resource('businesscategory', BusinessCategoryController::class)->only('up
 
 
 // Resource controller for business users
-Route::resource('businessUser', BusinessUserController::class);
-
-Route::get('/businessProfile', [BusinessUserController::class, 'index'])->name('businessProfile');
-
-Route::get('/userProfile', function () {
-    return view('regularUser.profile');
-})->name('userProfile');
-
 Route::get('/users/tag/{tag}', [UserTagController::class, 'index'])->name('users.tags.index');
 
 Route::resource('users.comments', UserCommentController::class)->only(['store']);
