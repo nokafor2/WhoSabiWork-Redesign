@@ -58,11 +58,24 @@ class BusinessCategoryController extends Controller
     {
         $user = User::find($id);
         $businessCategory = BusinessCategory::where('user_id', '=', $user->id)->first();
-        // dd($businessCategory);
-        $updateVal = $request->updateVal;
-        $updateField = $request->updateField;
-        $businessCategory->{$updateField} = $updateVal;
-        $result = $businessCategory->save();
+        if (is_array($request->updateVal)) {
+            $allCategories = ['artisan', 'seller', 'technician', 'spare_part_seller'];
+            $categories = $request->updateVal;
+            foreach ($allCategories as $category) {
+                if (in_array($category, $categories)) {
+                    $businessCategory->{$category} = true;
+                } else {
+                    $businessCategory->{$category} = false;
+                }
+            }
+            $result = $businessCategory->save();
+        } else {
+            $updateVal = $request->updateVal;
+            $updateField = $request->updateField;
+            $businessCategory->{$updateField} = $updateVal;
+            $result = $businessCategory->save();
+        }
+        
 
         return redirect()->route('users.show', $id)->with('success', $result);
     }
