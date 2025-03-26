@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\SparePart;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class SparePartController extends Controller
@@ -68,7 +70,22 @@ class SparePartController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $user = User::find($id);
+        $sparePartSeller = SparePart::where('user_id', '=', $user->id)->first();
+        $sparePartObj = new SparePart();
+        $spareParts = $this->getTableColumnsWithSort($sparePartObj->table, SparePart::$columnsToExclude);
+        $selectedSpareParts = $request->updateVal;
+        foreach ($spareParts as $index => $sparePart) {
+            if (in_array($index, $selectedSpareParts)) {
+                $sparePartSeller->{$index} = true;
+            } else {
+                $sparePartSeller->{$index} = false;
+            }
+        }
+
+        $result = $sparePartSeller->save();
+
+        return redirect()->route('users.show', $id)->with('success', $result);
     }
 
     /**
