@@ -2,10 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Traits\GlobalFunctions;
+use App\Models\TechnicalService;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class TechnicalServiceController extends Controller
 {
+    use GlobalFunctions;
+    
     /**
      * Display a listing of the resource.
      */
@@ -68,7 +73,22 @@ class TechnicalServiceController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $user = User::find($id);
+        $technician = TechnicalService::where('user_id', '=', $user->id)->first();
+        $techServObj = new TechnicalService();
+        $technicalServices = $this->getTableColumnsWithSort($techServObj->table, TechnicalService::$columnsToExclude);
+        $selectedTechServ = $request->updateVal;
+        foreach ($technicalServices as $index => $technicalService) {
+            if (in_array($index, $selectedTechServ)) {
+                $technician->{$index} = true;
+            } else {
+                $technician->{$index} = false;
+            }
+        }
+
+        $result = $technician->save();
+
+        return redirect()->route('users.show', $id)->with('success', $result);
     }
 
     /**
