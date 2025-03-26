@@ -13,6 +13,16 @@ export default {
         },
         capitalizeFirstLetter(str) {
             return str.charAt(0).toUpperCase() + str.slice(1);
+        },
+        explodeArray(categories, seperator) {
+            var val = '';
+            for (let [key, category] of Object.entries(categories)) {
+                val += category;
+                if ((Number(key) + 1) < categories.length) {
+                    val += seperator;
+                }
+            }
+            return val;
         }
     }
 }
