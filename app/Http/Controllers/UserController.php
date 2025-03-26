@@ -286,6 +286,23 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
+        $artisan = new Artisan();
+        $product = new Product();
+        $technicalService = new TechnicalService();
+        $sparePart = new SparePart();
+        $vehicleCategory = new VehicleCategory();
+        $carBrand = new CarBrand();
+        $busBrand = new BusBrand();
+        $truckBrand = new TruckBrand();
+        $allArtisans = $this->getTableColumnsWithSort($artisan->table, Artisan::$columnsToExclude);
+        $allProducts = $this->getTableColumnsWithSort($product->table, Product::$columnsToExclude);
+        $allTechnicalServices = $this->getTableColumnsWithSort($technicalService->table, TechnicalService::$columnsToExclude);
+        $allSpareParts = $this->getTableColumnsWithSort($sparePart->table, SparePart::$columnsToExclude);
+        $allVehicleCategories = $this->getTableColumnsWithSort($vehicleCategory->table, VehicleCategory::$columnsToExclude);
+        $allCarBrands = $this->getTableColumnsWithSort($carBrand->table, CarBrand::$columnsToExclude);
+        $allBusBrands = $this->getTableColumnsWithSort($busBrand->table, BusBrand::$columnsToExclude);
+        $allTruckBrands = $this->getTableColumnsWithSort($truckBrand->table, TruckBrand::$columnsToExclude);
+        
         // Determine if it's a regular user or business user
         $userType = $user->account_type;
         
@@ -293,7 +310,19 @@ class UserController extends Controller
             return Inertia('User/UserProfile', ['user' => $user]);
         } elseif ($userType === 'business') {
             $userDetails = $this->getUserDetails($user->id);
-            return Inertia('User/UserProfile', ['user' => $userDetails['userDetails'], 'userCategories' => $userDetails['userCategories'], 'vehicleBrands' => $userDetails['vehicleBrands']]);
+            return Inertia('User/UserProfile', [
+                'user' => $userDetails['userDetails'], 
+                'userCategories' => $userDetails['userCategories'], 
+                'vehicleBrands' => $userDetails['vehicleBrands'],
+                'allArtisans' => $allArtisans,
+                'allProducts' => $allProducts,
+                'allTechnicalServices' => $allTechnicalServices,
+                'allSpareParts' => $allSpareParts,
+                'allVehicleCategories' => $allVehicleCategories,
+                'allCarBrands' => $allCarBrands,
+                'allBusBrands' => $allBusBrands,
+                'allTruckBrands' => $allTruckBrands
+            ]);
         }
     }
 
