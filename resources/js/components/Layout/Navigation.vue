@@ -28,7 +28,7 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-danger" :href="route('contactUs.index')">
+                        <a class="nav-link text-danger" :href="route('contactus.index')">
                             <i class="fas fa-headset fa-1x"></i> Contact Us
                         </a>
                     </li>
