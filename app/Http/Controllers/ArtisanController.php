@@ -2,9 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreArtisan;
 use App\Http\Traits\GlobalFunctions;
-use App\Models\Address;
 use App\Models\Artisan;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -109,8 +107,23 @@ class ArtisanController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(StoreArtisan $request, $id) {
-        // 
+    public function update(Request $request, $id) {
+        $user = User::find($id);
+        $artisanUser = Artisan::where('user_id', '=', $user->id)->first();
+        $artisanObj = new Artisan();
+        $artisanTypes = $this->getTableColumnsWithSort($artisanObj->table, Artisan::$columnsToExclude);
+        $selectedArtisans = $request->updateVal;
+        foreach ($artisanTypes as $index => $artisan) {
+            if (in_array($index, $selectedArtisans)) {
+                $artisanUser->{$index} = true;
+            } else {
+                $artisanUser->{$index} = false;
+            }
+        }
+
+        $result = $artisanUser->save();
+
+        return redirect()->route('users.show', $id)->with('success', $result);
     }
 
     /**
