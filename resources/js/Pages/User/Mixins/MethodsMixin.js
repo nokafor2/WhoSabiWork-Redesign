@@ -23,6 +23,10 @@ export default {
                 }
             }
             return val;
+        },
+        newId(index, vehType) {
+            var stringIndex = index.toString();
+            return `${this.techOrSpare}_${vehType}_${stringIndex}`;
         }
     }
 }
