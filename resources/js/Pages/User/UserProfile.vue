@@ -81,95 +81,18 @@
                     <SparePartSection v-if="isSparePartSeller" :allSpareParts="allSpareParts" :selectedSpareParts="isSparePartSeller" :userId="user.id"></SparePartSection>
                     
                     <!-- {{-- Car brands accordion --}} -->
-                    <div v-if="businessAccount" class="accordion-item">
-                        <h2 class="accordion-header" id="headingTwenty">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwenty" aria-expanded="false" aria-controls="collapseTwenty">
-                                <dl class="row col-12 mb-0">
-                                    <dt class="col-sm-3">Car brands:</dt>
-                                    <dd class="col-sm-9 mb-0">
-                                        <ul class="list-inline mb-0">
-                                            <li class="list-inline-item">Toyota</li>
-                                            <li class="list-inline-item">Nissan</li>
-                                            <li class="list-inline-item">Honda</li>
-                                        </ul>
-                                    </dd>
-                                </dl>
-                            </button>
-                        </h2>
-                        <div id="collapseTwenty" class="accordion-collapse collapse" aria-labelledby="headingTwenty">
-                            <div class="accordion-body">
-                                <form class="">
-                                    <div class="form-group col-12 mb-3">
-                                        <div class="form-check form-check-inline">
-                                            <input class="form-check-input" name="car_brands[]" type="checkbox" id="{{ $key }}" value="{{ $key }}">
-                                            <label class="form-check-label" for="{{ $key }}">Toyota</label>
-                                        </div>
-                                        <div class="form-check form-check-inline">
-                                            <input class="form-check-input" name="car_brands[]" type="checkbox" id="{{ $key }}" value="{{ $key }}">
-                                            <label class="form-check-label" for="{{ $key }}">Nissan</label>
-                                        </div>
-                                        <div class="form-check form-check-inline">
-                                            <input class="form-check-input" name="car_brands[]" type="checkbox" id="{{ $key }}" value="{{ $key }}">
-                                            <label class="form-check-label" for="{{ $key }}">Honda</label>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="row justify-content-between">
-                                        <button type="submit" name="updateCarBrands" class="btn btn-danger col-auto">Update</button>
-                                        <!-- <button type="submit" name="clearCarBrands" class="btn btn-danger col-auto">Clear</button> -->
-                                    </div>
-                                </form>   
-                            </div>
-                        </div>
-                    </div>
-
+                    <CarBrandsSection :allCarBrands="allCarBrands" :selectedCarBrands="vehicleBrands.tech_car" :userId="user.id"></CarBrandsSection>
+                    
                     <!-- {{-- Bus brands accordion --}} -->
-                    <div v-if="businessAccount" class="accordion-item">
-                        <h2 class="accordion-header" id="headingTwentyOne">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwentyOne" aria-expanded="false" aria-controls="collapseTwentyOne">
-                                <dl class="row col-12 mb-0">
-                                    <dt class="col-sm-3">Bus brands:</dt>
-                                    <dd class="col-sm-9 mb-0">
-                                        <ul class="list-inline mb-0">
-                                            <li class="list-inline-item">Toyota</li>
-                                            <li class="list-inline-item">Mercedes-Benz</li>
-                                            <li class="list-inline-item">Ford</li>
-                                        </ul>
-                                    </dd>
-                                </dl>
-                            </button>
-                        </h2>
-                        <div id="collapseTwentyOne" class="accordion-collapse collapse" aria-labelledby="headingTwentyOne">
-                            <div class="accordion-body">
-                                <form class="">
-                                    <div class="form-group col-12 mb-3">
-                                        <div class="form-check form-check-inline">
-                                            <input class="form-check-input" name="bus_Brands[]" type="checkbox" id="{{ $key }}" value="{{ $key }}">
-                                            <label class="form-check-label" for="{{ $key }}">Toyota</label>
-                                        </div>
-                                        <div class="form-check form-check-inline">
-                                            <input class="form-check-input" name="bus_Brands[]" type="checkbox" id="{{ $key }}" value="{{ $key }}">
-                                            <label class="form-check-label" for="{{ $key }}">Mercedes-Benz</label>
-                                        </div>
-                                        <div class="form-check form-check-inline">
-                                            <input class="form-check-input" name="bus_Brands[]" type="checkbox" id="{{ $key }}" value="{{ $key }}">
-                                            <label class="form-check-label" for="{{ $key }}">Ford</label>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="row justify-content-between">
-                                        <button type="submit" name="updateBusBrands" class="btn btn-danger col-auto">Update</button>
-                                        <!-- <button type="submit" name="clearBusBrands" class="btn btn-danger col-auto">Clear</button> -->
-                                    </div>
-                                </form>   
-                            </div>
-                        </div>
-                    </div>
-
+                    <BusBrandsSection :allBusBrands="allBusBrands" :selectedBusBrands="vehicleBrands.tech_bus" :userId="user.id"></BusBrandsSection>
+                    
                     <!-- {{-- Truck brnads accordion --}} -->
+                    <TruckBrandsSection :allTruckBrands="allTruckBrands" :selectedTruckBrands="vehicleBrands.tech_truck" :userId="user.id"></TruckBrandsSection>
+                    
+                    <!-- Vehicle Category accordion -->
                     <div v-if="businessAccount" class="accordion-item">
-                        <h2 class="accordion-header" id="headingTwentyTwo">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwentyTwo" aria-expanded="false" aria-controls="collapseTwentyTwo">
+                        <h2 class="accordion-header" id="headingTwentyFour">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwentyFour" aria-expanded="false" aria-controls="collapseTwentyFour">
                                 <dl class="row col-12 mb-0">
                                     <dt class="col-sm-3">Truck brands:</dt>
                                     <dd class="col-sm-9 mb-0">
@@ -182,7 +105,7 @@
                                 </dl>
                             </button>
                         </h2>
-                        <div id="collapseTwentyTwo" class="accordion-collapse collapse" aria-labelledby="headingTwentyTwo">
+                        <div id="collapseTwentyFour" class="accordion-collapse collapse" aria-labelledby="headingTwentyFour">
                             <div class="accordion-body">
                                 <form class="">
                                     <div class="form-group col-12 mb-3">
@@ -809,6 +732,9 @@
     import MobileMarketSection from './Components/MobileMarketSection.vue';
     import TechnicalServiceSection from './Components/TechnicalServiceSection.vue';
     import SparePartSection from './Components/SparePartSection.vue';
+    import CarBrandsSection from './Components/CarBrandsSection.vue';
+    import BusBrandsSection from './Components/BusBrandsSection.vue';
+    import TruckBrandsSection from './Components/TruckBrandsSection.vue';
 
     // import Mixins
     import MethodsMixin from './Mixins/MethodsMixin.js';
@@ -820,7 +746,8 @@
             PasswordSection, CommentCard, AppointmentDetails, AppointmentDetails1, 
             BusinessNameSection, AddressLine1Section, AddressLine2Section, AddressLine3Section, 
             StateSection, TownSection, BusinessCategorySection, BusinessDescriptionSection, 
-            ArtisansSection, MobileMarketSection, TechnicalServiceSection, SparePartSection
+            ArtisansSection, MobileMarketSection, TechnicalServiceSection, SparePartSection,
+            CarBrandsSection, BusBrandsSection, TruckBrandsSection
         },
         mixins: [MethodsMixin],
         props: ['user', 'userCategories', 'vehicleBrands', 'allArtisans', 'allProducts',
@@ -853,7 +780,7 @@
                     return false
                 }
                 if (typeof this.userCategories.artisan === "object" && (this.userCategories.artisan !== "undefined" || this.userCategories.artisan !== null)) {
-                    return (Object.entries(this.userCategories.artisan).length > 0) ? true : false;
+                    return (Object.entries(this.userCategories.artisan).length > 0) ? this.userCategories.artisan : false;
                 } else {
                     return false;
                 }
@@ -862,8 +789,8 @@
                 if (this.user.account_type !== 'business') {
                     return false
                 }
-                if (typeof this.userCategories.mobile_marketer === "object" && (this.userCategories.artisan !== "undefined" || this.userCategories.mobile_marketer !== null)) {
-                    return (Object.entries(this.userCategories.mobile_marketer).length > 0) ? true : false;
+                if (typeof this.userCategories.mobile_marketer === "object" && (this.userCategories.mobile_marketer !== "undefined" || this.userCategories.mobile_marketer !== null)) {
+                    return (Object.entries(this.userCategories.mobile_marketer).length > 0) ? this.userCategories.mobile_marketer : false;
                 } else {
                     return false;
                 }
@@ -872,8 +799,8 @@
                 if (this.user.account_type !== 'business') {
                     return false
                 }
-                if (typeof this.userCategories.mechanic === "object" && (this.userCategories.artisan !== "undefined" || this.userCategories.mechanic !== null)) {
-                    return (Object.entries(this.userCategories.mechanic).length > 0) ? true : false;
+                if (typeof this.userCategories.mechanic === "object" && (this.userCategories.mechanic !== "undefined" || this.userCategories.mechanic !== null)) {
+                    return (Object.entries(this.userCategories.mechanic).length > 0) ? this.userCategories.mechanic : false;
                 } else {
                     return false;
                 }
@@ -882,8 +809,8 @@
                 if (this.user.account_type !== 'business') {
                     return false
                 }
-                if (typeof this.userCategories.c === "object" && (this.userCategories.artisan !== "undefined" || this.userCategories.mechanic !== null)) {
-                    return (Object.entries(this.userCategories.spare_part_seller).length > 0) ? true : false;
+                if (typeof this.userCategories.spare_part_seller === "object" && (this.userCategories.spare_part_seller !== "undefined" || this.userCategories.spare_part_seller !== null)) {
+                    return (Object.entries(this.userCategories.spare_part_seller).length > 0) ? this.userCategories.spare_part_seller : false;
                 } else {
                     return false;
                 }
