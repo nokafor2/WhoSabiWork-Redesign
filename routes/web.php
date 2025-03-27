@@ -3,23 +3,22 @@
 use App\Http\Controllers\AddressController;
 use App\Http\Controllers\ArtisanController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\BusBrandController;
 use App\Http\Controllers\BusinessCategoryController;
-use App\Http\Controllers\BusinessPageController;
 use App\Http\Controllers\HomeController;
-use App\Http\Controllers\MechanicsController;
-use App\Http\Controllers\BusinessUserController;
+use App\Http\Controllers\CarBrandController;
 use App\Http\Controllers\ContactUsController;
 use App\Http\Controllers\EntrepreneurController;
 use App\Http\Controllers\MobileMarketController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\SparePartController;
 use App\Http\Controllers\TechnicalServiceController;
+use App\Http\Controllers\TruckBrandController;
 use App\Http\Controllers\UserCommentController;
 use App\Http\Controllers\UserPhotoController;
 use App\Http\Controllers\UserTagController;
 use App\Http\Controllers\UserController;
-use App\Models\BlogPost;
-use App\Models\TechnicalService;
+use App\Http\Controllers\VehicleCategoryController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -71,6 +70,14 @@ Route::resource('businesscategory', BusinessCategoryController::class)->only('up
 Route::resource('address', AddressController::class)->only('update');
 
 Route::resource('sparepart', SparePartController::class)->only('update');
+
+Route::resource('carbrand', CarBrandController::class)->only('update');
+
+Route::resource('busbrand', BusBrandController::class)->only('update');
+
+Route::resource('truckbrand', TruckBrandController::class)->only('update');
+
+Route::resource('vehiclecategory', VehicleCategoryController::class)->only('update');
 
 
 
