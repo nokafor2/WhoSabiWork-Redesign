@@ -312,7 +312,9 @@ class UserController extends Controller
             $userDetails = $this->getUserDetails($user->id);
             return Inertia('User/UserProfile', [
                 'user' => $userDetails['userDetails'], 
-                'userCategories' => $userDetails['userCategories'], 
+                'userCategories' => $userDetails['userCategories'],
+                'techVehCategories' => $userDetails['techVehCategories'],
+                'sPartVehCategories' => $userDetails['sPartVehCategories'],
                 'vehicleBrands' => $userDetails['vehicleBrands'],
                 'allArtisans' => $allArtisans,
                 'allProducts' => $allProducts,
