@@ -45,8 +45,22 @@ class ArtisanController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create() {
-        // 
+    public function create(Request $request, $id) {
+        $user = User::find($id);
+        $artisanObj = new Artisan();
+        $artisanTypes = $this->getTableColumnsWithSort($artisanObj->table, Artisan::$columnsToExclude);
+        $selectedArtisans = $request->updateVal;
+        foreach ($artisanTypes as $index => $artisan) {
+            if (in_array($index, $selectedArtisans)) {
+                $artisanObj->{$index} = true;
+            } else {
+                $artisanObj->{$index} = false;
+            }
+        }
+        // dd($artisanObj->toArray());
+        $result = Artisan::create(['user' => $user->id, ...$artisanObj->toArray()]);
+
+        return redirect()->route('users.show', $id)->with('success', $result);
     }
 
     /**
@@ -72,12 +86,7 @@ class ArtisanController extends Controller
             $artisans = $this->getSpecifiedUserDetails($businessCategory, $categoryType, $state, $town);
         }
 
-        return inertia(
-            'Artisan/Index', 
-            [ 
-                'artisans' => $artisans,
-            ]
-        );
+        return inertia('Artisan/Index', [ 'artisans' => $artisans, ]);
     }
 
     /**
@@ -111,17 +120,23 @@ class ArtisanController extends Controller
         $user = User::find($id);
         $artisanUser = Artisan::where('user_id', '=', $user->id)->first();
         $artisanObj = new Artisan();
-        $artisanTypes = $this->getTableColumnsWithSort($artisanObj->table, Artisan::$columnsToExclude);
-        $selectedArtisans = $request->updateVal;
-        foreach ($artisanTypes as $index => $artisan) {
-            if (in_array($index, $selectedArtisans)) {
-                $artisanUser->{$index} = true;
-            } else {
-                $artisanUser->{$index} = false;
+        if ($artisanUser !== null) {
+            // Update record
+            $artisanTypes = $this->getTableColumnsWithSort($artisanObj->table, Artisan::$columnsToExclude);
+            $selectedArtisans = $request->updateVal;
+            foreach ($artisanTypes as $index => $artisan) {
+                if (in_array($index, $selectedArtisans)) {
+                    $artisanUser->{$index} = true;
+                } else {
+                    $artisanUser->{$index} = false;
+                }
             }
-        }
 
-        $result = $artisanUser->save();
+            $result = $artisanUser->save();
+        } else {
+            // Create a new 
+            $this->create($request, $id);
+        }
 
         return redirect()->route('users.show', $id)->with('success', $result);
     }
