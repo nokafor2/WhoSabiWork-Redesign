@@ -81,6 +81,8 @@ class DatabaseSeeder extends Seeder
             TruckBrandsSeeder::class,
             TagsSeeder::class,
             UserTagSeeder::class,
+            UsersFeedbackSeeder::class,
+            UsersRatingSeeder::class,
         ]);
         
         // $this->call(UsersTableSeeder::class);
