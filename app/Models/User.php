@@ -97,6 +97,10 @@ class User extends Authenticatable
         return $this->hasMany('App\Models\TruckBrand');
     }
 
+    public function usersRating() {
+        return $this->hasMany('App\Models\UsersRating');
+    }
+
     public function tags() {
         // specify the time stamp to be displayed
         return $this->belongsToMany('App\Models\Tag', 'user_tag')->withTimestamps()->as('tagged');
