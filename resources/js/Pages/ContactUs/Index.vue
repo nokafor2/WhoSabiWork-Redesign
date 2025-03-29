@@ -20,9 +20,10 @@
                     <div class="col-sm-6 my-2">
                         <select class="form-select" aria-label="Default select example">
                             <option selected>How can we assist you?</option>
-                            <option value="1">One</option>
-                            <option value="2">Two</option>
-                            <option value="3">Three</option>
+                            <option value="other">Other</option>
+                            <option value="suggestion">Suggestion</option>
+                            <option value="complain">Complain</option>
+                            <option value="request">Request</option>
                         </select>
                     </div>
                     <textarea class="rounded form-control my-3" name="" id="" placeholder="Enter your message here" rows="4"></textarea>
