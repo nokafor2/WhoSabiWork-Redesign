@@ -351,7 +351,13 @@ class UserController extends Controller
     {
         $updateVal = $request->updateVal;
         $updateField = $request->updateField;
-        $user->{$updateField} = $updateVal;
+        if ($updateField === 'password') {
+            $updateVal2 = $request->updateVal2;
+            // Perform validation
+            $user->{$updateField} = Hash::make($updateVal);
+        } else {
+            $user->{$updateField} = $updateVal;
+        }
         $result = $user->save();
         
         // return Inertia('User/UserProfile', ['user' => $user, 'updateSatus' => $result]);

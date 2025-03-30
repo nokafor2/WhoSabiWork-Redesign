@@ -51,7 +51,9 @@
                     preserveState: true,
                     preserveScroll: true,
                     onSuccess: (page) => {
-                        console.log(page.props.updateStatus);
+                        if (page.props.flash.success) {
+                            this.firstNameInput = '';
+                        }
                     },
                     onError: (errors) => {
                         console.log('Error: ', errors);

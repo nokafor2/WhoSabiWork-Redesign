@@ -11,8 +11,15 @@ export default {
 
             return imageUrl;
         },
+        isAlphabet(char) {
+            return /^[a-zA-Z]$/.test(char);
+        },
         capitalizeFirstLetter(str) {
-            return str.charAt(0).toUpperCase() + str.slice(1);
+            if (str !== null ) {
+                return (this.isAlphabet(str.charAt(0))) ? str.charAt(0).toUpperCase() + str.slice(1) : str;
+            } else {
+                return str;
+            }
         },
         explodeArray(categories, seperator) {
             var val = '';
@@ -27,6 +34,13 @@ export default {
         newId(index, vehType) {
             var stringIndex = index.toString();
             return `${this.techOrSpare}_${vehType}_${stringIndex}`;
+        },
+        accordionTitle() {
+            if (this.techOrSpare === 'technical_service') {
+                return 'Technician';
+            } else if (this.techOrSpare === 'spare_part') {
+                return 'Spare Part';
+            }
         }
     }
 }

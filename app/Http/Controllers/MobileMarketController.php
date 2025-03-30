@@ -38,9 +38,23 @@ class MobileMarketController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Request $request, $id)
     {
-        //
+        $user = User::find($id);
+        $productObj = new Product();
+        $marketerProducts = $this->getTableColumnsWithSort($productObj->table, Product::$columnsToExclude);
+        $selectedProducts = $request->updateVal;
+        foreach ($marketerProducts as $index => $marketerProduct) {
+            if (in_array($index, $selectedProducts)) {
+                $productObj->{$index} = true;
+            } else {
+                $productObj->{$index} = false;
+            }
+        }
+    
+        $result = Product::create(['user_id' => $user->id, ...$productObj->toArray()]);
+    
+        return redirect()->route('users.show', $id)->with('success', $result);
     }
 
     /**
@@ -107,19 +121,25 @@ class MobileMarketController extends Controller
         $user = User::find($id);
         $mobileMarketer = Product::where('user_id', '=', $user->id)->first();
         $productObj = new Product();
-        $marketerProducts = $this->getTableColumnsWithSort($productObj->table, Product::$columnsToExclude);
-        $selectedProducts = $request->updateVal;
-        foreach ($marketerProducts as $index => $marketerProduct) {
-            if (in_array($index, $selectedProducts)) {
-                $mobileMarketer->{$index} = true;
-            } else {
-                $mobileMarketer->{$index} = false;
+        if ($mobileMarketer !== null) {
+            // update the record
+            $marketerProducts = $this->getTableColumnsWithSort($productObj->table, Product::$columnsToExclude);
+            $selectedProducts = $request->updateVal;
+            foreach ($marketerProducts as $index => $marketerProduct) {
+                if (in_array($index, $selectedProducts)) {
+                    $mobileMarketer->{$index} = true;
+                } else {
+                    $mobileMarketer->{$index} = false;
+                }
             }
+    
+            $result = $mobileMarketer->save();
+    
+            return redirect()->route('users.show', $id)->with('success', $result);
+        } else {
+            // Create new record
+            $this->create($request, $id);
         }
-
-        $result = $mobileMarketer->save();
-
-        return redirect()->route('users.show', $id)->with('success', $result);
     }
 
     /**

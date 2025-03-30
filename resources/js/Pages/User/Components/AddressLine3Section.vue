@@ -49,7 +49,9 @@
                     preserveState: true,
                     preserveScroll: true,
                     onSuccess: (page) => {
-                        console.log(page);
+                        if (page.props.flash.success) {
+                            this.addressLine3Input = '';
+                        }
                     },
                     onError: (errors) => {
                         console.log('Error: ', errors);

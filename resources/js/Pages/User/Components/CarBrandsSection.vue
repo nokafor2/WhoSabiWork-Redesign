@@ -1,9 +1,9 @@
 <template>
     <div class="accordion-item">
-        <h2 class="accordion-header" id="headingTwenty">
-            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwenty" aria-expanded="false" aria-controls="collapseTwenty">
+        <h2 class="accordion-header" :id="techHeading()">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" :data-bs-target="techCollapse2()" aria-expanded="false" :aria-controls="techCollapse()">
                 <dl class="row col-12 mb-0">
-                    <dt class="col-sm-3">Car brands:</dt>
+                    <dt class="col-sm-3">{{ accordionTitle() }} Car brands:</dt>
                     <dd class="col-sm-9 mb-0">
                         <ul class="list-inline mb-0">
                             <li v-for="(carBrand, index) in selectedCarBrands" :key="index" class="list-inline-item">{{ carBrand }},</li>
@@ -12,7 +12,7 @@
                 </dl>
             </button>
         </h2>
-        <div id="collapseTwenty" class="accordion-collapse collapse" aria-labelledby="headingTwenty">
+        <div :id="techCollapse()" class="accordion-collapse collapse" :aria-labelledby="techHeading()">
             <div class="accordion-body">
                 <form class="" @submit.prevent="submitAction">
                     <div class="form-group col-12 mb-3">
@@ -39,7 +39,7 @@
 
     export default {
         mixins: [MethodsMixin],
-        props: ['allCarBrands', 'selectedCarBrands', 'userId'],
+        props: ['allCarBrands', 'selectedCarBrands', 'userId', 'techOrSpare'],
         emits: [],
         data() {
             return {
@@ -50,17 +50,41 @@
             submitAction() {
                 const dataToSend = useForm({
                     updateVal: this.carBrandsInput,
+                    businessCategory: this.techOrSpare
                 });
                 dataToSend.put(route('carbrand.update', this.userId), {
                     preserveState: true,
                     preserveScroll: true,
                     onSuccess: (page) => {
-                        console.log(page);
+                        if (page.props.flash.success) {
+                            this.carBrandsInput = [];
+                        }
                     },
                     onError: (errors) => {
                         console.log('Error: ', errors);
                     }
                 });
+            },
+            techHeading() {
+                if (this.techOrSpare === 'technical_service') {
+                    return 'headingTwenty';
+                } else if (this.techOrSpare === 'spare_part') {
+                    return 'headingTwentySix';
+                }
+            },
+            techCollapse() {
+                if (this.techOrSpare === 'technical_service') {
+                    return 'collapseTwenty';
+                } else if (this.techOrSpare === 'spare_part') {
+                    return 'collapseTwentySix';
+                }
+            },
+            techCollapse2() {
+                if (this.techOrSpare === 'technical_service') {
+                    return '#collapseTwenty';
+                } else if (this.techOrSpare === 'spare_part') {
+                    return '#collapseTwentySix';
+                }
             }
         },
         computed: {

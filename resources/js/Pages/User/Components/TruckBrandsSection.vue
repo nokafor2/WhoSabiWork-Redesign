@@ -1,9 +1,9 @@
 <template>
     <div class="accordion-item">
-        <h2 class="accordion-header" id="headingTwentyTwo">
-            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwentyTwo" aria-expanded="false" aria-controls="collapseTwentyTwo">
+        <h2 class="accordion-header" :id="techHeading()">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" :data-bs-target="techCollapse2()" aria-expanded="false" :aria-controls="techCollapse()">
                 <dl class="row col-12 mb-0">
-                    <dt class="col-sm-3">Truck brands:</dt>
+                    <dt class="col-sm-3">{{ accordionTitle() }} Truck brands:</dt>
                     <dd class="col-sm-9 mb-0">
                         <ul class="list-inline mb-0">
                             <li v-for="(truckBrand, index) in selectedTruckBrands" :key="index" class="list-inline-item">{{ truckBrand }}</li>
@@ -12,7 +12,7 @@
                 </dl>
             </button>
         </h2>
-        <div id="collapseTwentyTwo" class="accordion-collapse collapse" aria-labelledby="headingTwentyTwo">
+        <div :id="techCollapse()" class="accordion-collapse collapse" :aria-labelledby="techHeading()">
             <div class="accordion-body">
                 <form class="" @submit.prevent="submitAction">
                     <div class="form-group col-12 mb-3">
@@ -39,7 +39,7 @@
 
     export default {
         mixins: [MethodsMixin],
-        props: ['allTruckBrands', 'selectedTruckBrands', 'userId'],
+        props: ['allTruckBrands', 'selectedTruckBrands', 'userId', 'techOrSpare'],
         emits: [],
         data() {
             return {
@@ -50,17 +50,41 @@
             submitAction() {
                 const dataToSend = useForm({
                     updateVal: this.truckBrandsInput,
+                    businessCategory: this.techOrSpare
                 });
                 dataToSend.put(route('truckbrand.update', this.userId), {
                     preserveState: true,
                     preserveScroll: true,
                     onSuccess: (page) => {
-                        console.log(page);
+                        if (page.props.flash.success) {
+                            this.truckBrandsInput = [];
+                        }
                     },
                     onError: (errors) => {
                         console.log('Error: ', errors);
                     }
                 });
+            },
+            techHeading() {
+                if (this.techOrSpare === 'technical_service') {
+                    return 'headingTwentyTwo';
+                } else if (this.techOrSpare === 'spare_part') {
+                    return 'headingTwentyEight';
+                }
+            },
+            techCollapse() {
+                if (this.techOrSpare === 'technical_service') {
+                    return 'collapseTwentyTwo';
+                } else if (this.techOrSpare === 'spare_part') {
+                    return 'collapseTwentyEight';
+                }
+            },
+            techCollapse2() {
+                if (this.techOrSpare === 'technical_service') {
+                    return '#collapseTwentyTwo';
+                } else if (this.techOrSpare === 'spare_part') {
+                    return '#collapseTwentyEight';
+                }
             }
         },
         computed: {

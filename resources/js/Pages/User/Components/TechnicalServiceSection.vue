@@ -55,7 +55,9 @@
                     preserveState: true,
                     preserveScroll: true,
                     onSuccess: (page) => {
-                        console.log(page);
+                        if (page.props.flash.success) {
+                            this.techniciansInput = [];
+                        }
                     },
                     onError: (errors) => {
                         console.log('Error: ', errors);

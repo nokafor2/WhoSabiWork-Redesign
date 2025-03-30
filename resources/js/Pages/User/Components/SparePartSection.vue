@@ -51,11 +51,13 @@
                 const dataToSend = useForm({
                     updateVal: this.sparePartsInput,
                 });
-                dataToSend.put(route('technicalServices.update', this.userId), {
+                dataToSend.put(route('sparepart.update', this.userId), {
                     preserveState: true,
                     preserveScroll: true,
                     onSuccess: (page) => {
-                        console.log(page);
+                        if (page.props.flash.success) {
+                            this.sparePartsInput = [];
+                        }
                     },
                     onError: (errors) => {
                         console.log('Error: ', errors);

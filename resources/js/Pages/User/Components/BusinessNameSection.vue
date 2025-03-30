@@ -51,7 +51,9 @@
                     preserveState: true,
                     preserveScroll: true,
                     onSuccess: (page) => {
-                        console.log(page);
+                        if (page.props.flash.success) {
+                            this.businessNameInput = '';
+                        }
                     },
                     onError: (errors) => {
                         console.log('Error: ', errors);

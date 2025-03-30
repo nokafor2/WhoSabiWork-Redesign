@@ -22,9 +22,24 @@ class CarBrandController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(Request $request, string $id)
     {
-        //
+        $user = User::find($id);
+        $carBrandObj = new CarBrand();
+        $allCarBrands = $this->getTableColumnsWithSort($carBrandObj->table, CarBrand::$columnsToExclude);
+        $selectedCarBrands = $request->updateVal;
+        $businessCategory = $request->businessCategory;
+        foreach ($allCarBrands as $index => $carBrand) {
+            if (in_array($index, $selectedCarBrands)) {
+                $carBrandObj->{$index} = true;
+            } else {
+                $carBrandObj->{$index} = false;
+            }
+        }
+
+        $result = CarBrand::create(['user_id' => $user->id, 'business_category' => $businessCategory, ...$carBrandObj->toArray()]);
+
+        return redirect()->route('users.show', $id)->with('success', $result);
     }
 
     /**
@@ -57,21 +72,28 @@ class CarBrandController extends Controller
     public function update(Request $request, string $id)
     {
         $user = User::find($id);
-        $carBrandUser = CarBrand::where('user_id', '=', $user->id)->first();
+        $businessCategory = $request->businessCategory;
+        $carBrandUser = CarBrand::where([['user_id', '=', $user->id], ['business_category', '=', $businessCategory]])->first();
         $carBrandObj = new CarBrand();
         $allCarBrands = $this->getTableColumnsWithSort($carBrandObj->table, CarBrand::$columnsToExclude);
         $selectedCarBrands = $request->updateVal;
-        foreach ($allCarBrands as $index => $carBrand) {
-            if (in_array($index, $selectedCarBrands)) {
-                $carBrandUser->{$index} = true;
-            } else {
-                $carBrandUser->{$index} = false;
+        if ($carBrandUser !== null) {
+            // Update the record
+            foreach ($allCarBrands as $index => $carBrand) {
+                if (in_array($index, $selectedCarBrands)) {
+                    $carBrandUser->{$index} = true;
+                } else {
+                    $carBrandUser->{$index} = false;
+                }
             }
+    
+            $result = $carBrandUser->save();
+    
+            return redirect()->route('users.show', $id)->with('success', $result);
+        } else {
+            // Create new record
+            $this->create($request, $id);
         }
-
-        $result = $carBrandUser->save();
-
-        return redirect()->route('users.show', $id)->with('success', $result);
     }
 
     /**

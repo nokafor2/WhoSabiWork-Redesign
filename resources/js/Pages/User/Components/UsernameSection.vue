@@ -17,7 +17,7 @@
                     
                     <div class="row justify-content-between">
                         <button type="submit" name="updateUsername" class="btn btn-danger col-auto">Update</button>
-                        <button type="submit" name="clearUsername" class="btn btn-danger col-auto">Clear</button>
+                        <!-- <button type="submit" name="clearUsername" class="btn btn-danger col-auto">Clear</button> -->
                     </div>
                 </form>   
             </div>
@@ -50,7 +50,9 @@
                     preserveState: true,
                     preserveScroll: true,
                     onSuccess: (page) => {
-                        console.log(page.props.updateStatus);
+                        if (page.props.flash.success) {
+                            this.usernameInput = '';
+                        }
                     },
                     onError: (errors) => {
                         console.log('Error: ', errors);

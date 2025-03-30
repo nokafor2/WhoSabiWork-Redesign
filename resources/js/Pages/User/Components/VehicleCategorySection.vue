@@ -3,7 +3,7 @@
         <h2 class="accordion-header" :id="techHeading()">
             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" :data-bs-target="techCollapse2()" aria-expanded="false" :aria-controls="techCollapse()">
                 <dl class="row col-12 mb-0">
-                    <dt class="col-sm-3">Vehicle Categories:</dt>
+                    <dt class="col-sm-3">{{ accordionTitle() }} Vehicle Categories:</dt>
                     <dd class="col-sm-9 mb-0">
                         <ul class="list-inline mb-0">
                             <li v-for="(vehCategory, index) in selectedVehCategories" :key="index" class="list-inline-item">{{ vehCategory }},</li>
@@ -50,12 +50,15 @@
             submitAction() {
                 const dataToSend = useForm({
                     updateVal: this.vehicleCategoriesInput,
+                    businessCategory: this.techOrSpare
                 });
                 dataToSend.put(route('vehiclecategory.update', this.userId), {
                     preserveState: true,
                     preserveScroll: true,
                     onSuccess: (page) => {
-                        console.log(page);
+                        if (page.props.flash.success) {
+                            this.vehicleCategoriesInput = [];
+                        }
                     },
                     onError: (errors) => {
                         console.log('Error: ', errors);
@@ -63,23 +66,23 @@
                 });
             },
             techHeading() {
-                if (this.techOrSpare === 'tech') {
+                if (this.techOrSpare === 'technical_service') {
                     return 'headingTwentyFour';
-                } else if (this.techOrSpare === 'spare') {
+                } else if (this.techOrSpare === 'spare_part') {
                     return 'headingTwentyFive';
                 }
             },
             techCollapse() {
-                if (this.techOrSpare === 'tech') {
+                if (this.techOrSpare === 'technical_service') {
                     return 'collapseTwentyFour';
-                } else if (this.techOrSpare === 'spare') {
+                } else if (this.techOrSpare === 'spare_part') {
                     return 'collapseTwentyFive';
                 }
             },
             techCollapse2() {
-                if (this.techOrSpare === 'tech') {
+                if (this.techOrSpare === 'technical_service') {
                     return '#collapseTwentyFour';
-                } else if (this.techOrSpare === 'spare') {
+                } else if (this.techOrSpare === 'spare_part') {
                     return '#collapseTwentyFive';
                 }
             }

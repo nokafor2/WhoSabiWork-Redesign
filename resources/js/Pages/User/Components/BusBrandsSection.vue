@@ -1,9 +1,9 @@
 <template>
     <div class="accordion-item">
-        <h2 class="accordion-header" id="headingTwentyOne">
-            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwentyOne" aria-expanded="false" aria-controls="collapseTwentyOne">
+        <h2 class="accordion-header" :id="techHeading()">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" :data-bs-target="techCollapse2()" aria-expanded="false" :aria-controls="techCollapse()">
                 <dl class="row col-12 mb-0">
-                    <dt class="col-sm-3">Bus brands:</dt>
+                    <dt class="col-sm-3">{{ accordionTitle() }} Bus brands:</dt>
                     <dd class="col-sm-9 mb-0">
                         <ul class="list-inline mb-0">
                             <li v-for="(busBrand, index) in selectedBusBrands" :key="index" class="list-inline-item">{{ busBrand }}</li>
@@ -12,7 +12,7 @@
                 </dl>
             </button>
         </h2>
-        <div id="collapseTwentyOne" class="accordion-collapse collapse" aria-labelledby="headingTwentyOne">
+        <div :id="techCollapse()" class="accordion-collapse collapse" :aria-labelledby="techHeading()">
             <div class="accordion-body">
                 <form class="" @submit.prevent="submitAction">
                     <div class="form-group col-12 mb-3">
@@ -39,7 +39,7 @@
 
     export default {
         mixins: [MethodsMixin],
-        props: ['allBusBrands', 'selectedBusBrands', 'userId'],
+        props: ['allBusBrands', 'selectedBusBrands', 'userId', 'techOrSpare'],
         emits: [],
         data() {
             return {
@@ -50,17 +50,41 @@
             submitAction() {
                 const dataToSend = useForm({
                     updateVal: this.busBrandsInput,
+                    businessCategory: this.techOrSpare
                 });
                 dataToSend.put(route('busbrand.update', this.userId), {
                     preserveState: true,
                     preserveScroll: true,
                     onSuccess: (page) => {
-                        console.log(page);
+                        if (page.props.flash.success) {
+                            this.busBrandsInput = [];
+                        }
                     },
                     onError: (errors) => {
                         console.log('Error: ', errors);
                     }
                 });
+            },
+            techHeading() {
+                if (this.techOrSpare === 'technical_service') {
+                    return 'headingTwentyOne';
+                } else if (this.techOrSpare === 'spare_part') {
+                    return 'headingTwentySeven';
+                }
+            },
+            techCollapse() {
+                if (this.techOrSpare === 'technical_service') {
+                    return 'collapseTwentyOne';
+                } else if (this.techOrSpare === 'spare_part') {
+                    return 'collapseTwentySeven';
+                }
+            },
+            techCollapse2() {
+                if (this.techOrSpare === 'technical_service') {
+                    return '#collapseTwentyOne';
+                } else if (this.techOrSpare === 'spare_part') {
+                    return '#collapseTwentySeven';
+                }
             }
         },
         computed: {
