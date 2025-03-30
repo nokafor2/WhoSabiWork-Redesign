@@ -462,37 +462,77 @@ trait GlobalFunctions {
         }
         
         $foundUser = User::whereIn('id', [$userId])->where([['account_type', '=', 'business'], ['account_status', '=', 'active']])->with($models)->first()->toArray();
-        
+        // dd($foundUser);
         $refinedCategoryArray = array();
         $refVehBrand = array();
         foreach($newCategoryType as $category) {
             if ($category === 'artisan') {
-                $refinedCategoryArray['artisan'] = $this->refinedModel('App\Models\Artisan', $foundUser['artisan']);
+                if ($foundUser['artisan'] !== null) {
+                    $refinedCategoryArray['artisan'] = $this->refinedModel('App\Models\Artisan', $foundUser['artisan']);
+                } else {
+                    $refinedCategoryArray['artisan'] = [];
+                }
             } elseif ($category === 'seller') {
-                $refinedCategoryArray['mobile_marketer'] = $this->refinedModel('App\Models\Product', $foundUser['product']);
+                if ($foundUser['product'] !== null) {
+                    $refinedCategoryArray['mobile_marketer'] = $this->refinedModel('App\Models\Product', $foundUser['product']);
+                } else {
+                    $refinedCategoryArray['mobile_marketer'] = [];
+                }
             } elseif ($category === 'technician') {
-                $refinedCategoryArray['mechanic'] = $this->refinedModel('App\Models\TechnicalService', $foundUser['technical_service']);
+                if ($foundUser['technical_service'] !== null) {
+                    $refinedCategoryArray['mechanic'] = $this->refinedModel('App\Models\TechnicalService', $foundUser['technical_service']);
+                } else {
+                    $refinedCategoryArray['mechanic'] = [];
+                }
                 if (!empty($techVehCategories)) {
                     foreach ($techVehCategories as $vehicle) {
                         if ($vehicle === 'car') {
-                            $refVehBrand['tech_car'] = $this->refinedModel('App\Models\CarBrand', $foundUser['car_brand'][0]);
+                            if (array_key_exists(0, $foundUser['car_brand'])) {
+                                $refVehBrand['tech_car'] = $this->refinedModel('App\Models\CarBrand', $foundUser['car_brand'][0]);
+                            } else {
+                                $refVehBrand['tech_car'][0] = '';
+                            }
                         } elseif ($vehicle === 'bus') {
-                            $refVehBrand['tech_bus'] = $this->refinedModel('App\Models\BusBrand', $foundUser['bus_brand'][0]);
+                            if (array_key_exists(0, $foundUser['bus_brand'])) {
+                                $refVehBrand['tech_bus'] = $this->refinedModel('App\Models\BusBrand', $foundUser['bus_brand'][0]);
+                            } else {
+                                $refVehBrand['tech_bus'][0] = '';
+                            }
                         } elseif ($vehicle === 'truck') {
-                            $refVehBrand['tech_truck'] = $this->refinedModel('App\Models\TruckBrand', $foundUser['truck_brand'][0]);
+                            if (array_key_exists(0, $foundUser['truck_brand'])) {
+                                $refVehBrand['tech_truck'] = $this->refinedModel('App\Models\TruckBrand', $foundUser['truck_brand'][0]);
+                            } else {
+                                $refVehBrand['tech_truck'][0] = '';
+                            }
                         }
                     }
                 }
             } elseif ($category === 'spare_part_seller') {
-                $refinedCategoryArray['spare_part_seller'] = $this->refinedModel('App\Models\SparePart', $foundUser['spare_part']);
+                if ($foundUser['spare_part'] !== null) {
+                    $refinedCategoryArray['spare_part_seller'] = $this->refinedModel('App\Models\SparePart', $foundUser['spare_part']);
+                } else {
+                    $refinedCategoryArray['spare_part_seller'] = [];
+                }
                 if (!empty($sparePartVehCategories)) {
                     foreach ($sparePartVehCategories as $vehicle) {
                         if ($vehicle === 'car') {
-                            $refVehBrand['sPart_car'] = $this->refinedModel('App\Models\CarBrand', $foundUser['car_brand'][1]);
+                            if (array_key_exists(1, $foundUser['car_brand'])) {
+                                $refVehBrand['sPart_car'] = $this->refinedModel('App\Models\CarBrand', $foundUser['car_brand'][1]);
+                            } else {
+                                $refVehBrand['sPart_car'][1] = '';
+                            }
                         } elseif ($vehicle === 'bus') {
-                            $refVehBrand['sPart_bus'] = $this->refinedModel('App\Models\BusBrand', $foundUser['bus_brand'][1]);
+                            if (array_key_exists(1, $foundUser['bus_brand'])) {
+                                $refVehBrand['sPart_bus'] = $this->refinedModel('App\Models\BusBrand', $foundUser['bus_brand'][1]);
+                            } else {
+                                $refVehBrand['sPart_bus'][1] = '';
+                            }
                         } elseif ($vehicle === 'truck') {
-                            $refVehBrand['sPart_truck'] = $this->refinedModel('App\Models\TruckBrand', $foundUser['truck_brand'][1]);
+                            if (array_key_exists(1, $foundUser['truck_brand'])) {
+                                $refVehBrand['sPart_truck'] = $this->refinedModel('App\Models\TruckBrand', $foundUser['truck_brand'][1]);
+                            } else {
+                                $refVehBrand['sPart_truck'][1] = '';
+                            }
                         }
                     }
                 }
@@ -522,15 +562,20 @@ trait GlobalFunctions {
 
     public function getVehCategory($userId, $techOrSpare) {
         if ($techOrSpare === 'technical_service') {
-            $vehCategories = VehicleCategory::where([['user_id', '=', $userId], ['business_category', '=', 'technical_service']])->select('car', 'bus', 'truck')->first()->toArray();
+            $vehCategories = VehicleCategory::where([['user_id', '=', $userId], ['business_category', '=', 'technical_service']])->select('car', 'bus', 'truck')->first();
         } elseif ($techOrSpare === 'spare_part') {
-            $vehCategories = VehicleCategory::where([['user_id', '=', $userId], ['business_category', '=', 'spare_part']])->select('car', 'bus', 'truck')->first()->toArray();
+            $vehCategories = VehicleCategory::where([['user_id', '=', $userId], ['business_category', '=', 'spare_part']])->select('car', 'bus', 'truck')->first();
+        }
+        if ($vehCategories !== null) {
+            $vehCategories = $vehCategories->toArray();
         }
         
         $newVehCategories = array();
-        foreach($vehCategories as $category => $presence) {
-            if ($presence == 1) {
-                $newVehCategories[] = $category;
+        if (!empty($vehCategories)) {
+            foreach($vehCategories as $category => $presence) {
+                if ($presence == 1) {
+                    $newVehCategories[] = $category;
+                }
             }
         }
 

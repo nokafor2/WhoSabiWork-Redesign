@@ -22,9 +22,24 @@ class BusBrandController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(Request $request, string $id)
     {
-        //
+        $user = User::find($id);
+        $busBrandObj = new BusBrand();
+        $allBusBrands = $this->getTableColumnsWithSort($busBrandObj->table, BusBrand::$columnsToExclude);
+        $selectedBusBrands = $request->updateVal;
+        $businessCategory = $request->businessCategory;
+        foreach ($allBusBrands as $index => $busBrand) {
+            if (in_array($index, $selectedBusBrands)) {
+                $busBrandObj->{$index} = true;
+            } else {
+                $busBrandObj->{$index} = false;
+            }
+        }
+
+        $result = BusBrand::create(['user_id' => $user->id, 'business_category' => $businessCategory, ...$busBrandObj->toArray() ]);
+
+        return redirect()->route('users.show', $id)->with('success', $result);
     }
 
     /**
@@ -57,21 +72,26 @@ class BusBrandController extends Controller
     public function update(Request $request, string $id)
     {
         $user = User::find($id);
-        $busBrandUser = BusBrand::where('user_id', '=', $user->id)->first();
+        $businessCategory = $request->businessCategory;
+        $busBrandUser = BusBrand::where([['user_id', '=', $user->id], ['business_category', '=', $businessCategory]])->first();
         $busBrandObj = new BusBrand();
         $allBusBrands = $this->getTableColumnsWithSort($busBrandObj->table, BusBrand::$columnsToExclude);
         $selectedBusBrands = $request->updateVal;
-        foreach ($allBusBrands as $index => $busBrand) {
-            if (in_array($index, $selectedBusBrands)) {
-                $busBrandUser->{$index} = true;
-            } else {
-                $busBrandUser->{$index} = false;
+        if ($busBrandUser !== null) {
+            foreach ($allBusBrands as $index => $busBrand) {
+                if (in_array($index, $selectedBusBrands)) {
+                    $busBrandUser->{$index} = true;
+                } else {
+                    $busBrandUser->{$index} = false;
+                }
             }
+    
+            $result = $busBrandUser->save();
+    
+            return redirect()->route('users.show', $id)->with('success', $result);
+        } else {
+            $this->create($request, $id);
         }
-
-        $result = $busBrandUser->save();
-
-        return redirect()->route('users.show', $id)->with('success', $result);
     }
 
     /**

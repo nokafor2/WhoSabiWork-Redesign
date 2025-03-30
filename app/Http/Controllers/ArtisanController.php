@@ -58,7 +58,7 @@ class ArtisanController extends Controller
             }
         }
         // dd($artisanObj->toArray());
-        $result = Artisan::create(['user' => $user->id, ...$artisanObj->toArray()]);
+        $result = Artisan::create(['user_id' => $user->id, ...$artisanObj->toArray()]);
 
         return redirect()->route('users.show', $id)->with('success', $result);
     }
@@ -133,12 +133,12 @@ class ArtisanController extends Controller
             }
 
             $result = $artisanUser->save();
+
+            return redirect()->route('users.show', $id)->with('success', $result);
         } else {
             // Create a new 
             $this->create($request, $id);
         }
-
-        return redirect()->route('users.show', $id)->with('success', $result);
     }
 
     /**

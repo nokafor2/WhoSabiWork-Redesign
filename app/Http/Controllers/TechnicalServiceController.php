@@ -22,9 +22,23 @@ class TechnicalServiceController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(Request $request, string $id)
     {
-        //
+        $user = User::find($id);
+        $techServObj = new TechnicalService();
+        $technicalServices = $this->getTableColumnsWithSort($techServObj->table, TechnicalService::$columnsToExclude);
+        $selectedTechServ = $request->updateVal;
+        foreach ($technicalServices as $index => $technicalService) {
+            if (in_array($index, $selectedTechServ)) {
+                $techServObj->{$index} = true;
+            } else {
+                $techServObj->{$index} = false;
+            }
+        }
+
+        $result = TechnicalService::create(['user_id' => $user->id, ...$techServObj->toArray()]);
+
+        return redirect()->route('users.show', $id)->with('success', $result);
     }
 
     /**
@@ -76,19 +90,25 @@ class TechnicalServiceController extends Controller
         $user = User::find($id);
         $technician = TechnicalService::where('user_id', '=', $user->id)->first();
         $techServObj = new TechnicalService();
-        $technicalServices = $this->getTableColumnsWithSort($techServObj->table, TechnicalService::$columnsToExclude);
-        $selectedTechServ = $request->updateVal;
-        foreach ($technicalServices as $index => $technicalService) {
-            if (in_array($index, $selectedTechServ)) {
-                $technician->{$index} = true;
-            } else {
-                $technician->{$index} = false;
+        if ($technician !== null) {
+            // Update record
+            $technicalServices = $this->getTableColumnsWithSort($techServObj->table, TechnicalService::$columnsToExclude);
+            $selectedTechServ = $request->updateVal;
+            foreach ($technicalServices as $index => $technicalService) {
+                if (in_array($index, $selectedTechServ)) {
+                    $technician->{$index} = true;
+                } else {
+                    $technician->{$index} = false;
+                }
             }
+
+            $result = $technician->save();
+
+            return redirect()->route('users.show', $id)->with('success', $result);
+        } else {
+            // Create new record
+            $this->create($request, $id);
         }
-
-        $result = $technician->save();
-
-        return redirect()->route('users.show', $id)->with('success', $result);
     }
 
     /**

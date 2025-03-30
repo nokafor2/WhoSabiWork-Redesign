@@ -22,9 +22,24 @@ class TruckBrandController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(Request $request, string $id)
     {
-        //
+        $user = User::find($id);
+        $truckBrandObj = new TruckBrand();
+        $allTruckBrands = $this->getTableColumnsWithSort($truckBrandObj->table, TruckBrand::$columnsToExclude);
+        $selectedTruckBrands = $request->updateVal;
+        $businessCategory = $request->businessCategory;
+        foreach ($allTruckBrands as $index => $truckBrand) {
+            if (in_array($index, $selectedTruckBrands)) {
+                $truckBrandObj->{$index} = true;
+            } else {
+                $truckBrandObj->{$index} = false;
+            }
+        }
+
+        $result = TruckBrand::create(['user_id' => $user->id, 'business_category' => $businessCategory, ...$truckBrandObj->toArray()]);
+
+        return redirect()->route('users.show', $id)->with('success', $result);
     }
 
     /**
@@ -57,21 +72,26 @@ class TruckBrandController extends Controller
     public function update(Request $request, string $id)
     {
         $user = User::find($id);
-        $truckBrandUser = TruckBrand::where('user_id', '=', $user->id)->first();
+        $businessCategory = $request->businessCategory;
+        $truckBrandUser = TruckBrand::where([['user_id', '=', $user->id], ['business_category', '=', $businessCategory]])->first();
         $truckBrandObj = new TruckBrand();
         $allTruckBrands = $this->getTableColumnsWithSort($truckBrandObj->table, TruckBrand::$columnsToExclude);
         $selectedTruckBrands = $request->updateVal;
-        foreach ($allTruckBrands as $index => $truckBrand) {
-            if (in_array($index, $selectedTruckBrands)) {
-                $truckBrandUser->{$index} = true;
-            } else {
-                $truckBrandUser->{$index} = false;
+        if ($truckBrandUser !== null) {
+            foreach ($allTruckBrands as $index => $truckBrand) {
+                if (in_array($index, $selectedTruckBrands)) {
+                    $truckBrandUser->{$index} = true;
+                } else {
+                    $truckBrandUser->{$index} = false;
+                }
             }
+    
+            $result = $truckBrandUser->save();
+    
+            return redirect()->route('users.show', $id)->with('success', $result);
+        } else {
+            $this->create($request, $id);
         }
-
-        $result = $truckBrandUser->save();
-
-        return redirect()->route('users.show', $id)->with('success', $result);
     }
 
     /**

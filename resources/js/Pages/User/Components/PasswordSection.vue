@@ -18,7 +18,7 @@
                     
                     <div class="row justify-content-between">
                         <button type="submit" name="updatePassword" class="btn btn-danger col-auto">Update</button>
-                        <button type="submit" name="clearPassword" class="btn btn-danger col-auto">Clear</button>
+                        <!-- <button type="submit" name="clearPassword" class="btn btn-danger col-auto">Clear</button> -->
                     </div>
                 </form>   
             </div>
@@ -53,7 +53,10 @@
                     preserveState: true,
                     preserveScroll: true,
                     onSuccess: (page) => {
-                        console.log(page.props.updateStatus);
+                        if (page.props.flash.success) {
+                            this.password = '';
+                            this.confrimationPassword = '';
+                        }
                     },
                     onError: (errors) => {
                         console.log('Error: ', errors);

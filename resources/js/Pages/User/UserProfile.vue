@@ -75,37 +75,37 @@
                     <ArtisansSection v-if="isArtisan" :allArtisans="allArtisans" :selectedArtisans="isArtisan" :userId="user.id"></ArtisansSection>
                     
                     <!-- {{-- Mobile market accordion --}} -->
-                    <MobileMarketSection v-if="businessAccount" :allProducts="allProducts" :selectedProducts="isMobileMarketer" :userId="user.id"></MobileMarketSection>
+                    <MobileMarketSection v-if="isMobileMarketer" :allProducts="allProducts" :selectedProducts="isMobileMarketer" :userId="user.id"></MobileMarketSection>
                     
                     <!-- {{-- Technicians accordion --}} -->
-                    <TechnicalServiceSection v-if="businessAccount" :allTechnicalServices="allTechnicalServices" :selectedTechnicians="isMechanic" :userId="user.id"></TechnicalServiceSection>
+                    <TechnicalServiceSection v-if="isMechanic" :allTechnicalServices="allTechnicalServices" :selectedTechnicians="isMechanic" :userId="user.id"></TechnicalServiceSection>
                     
-                    <!-- Vehicle Category accordion -->
-                    <VehicleCategorySection v-if="businessAccount" :allVehicleCategories="allVehicleCategories" :selectedVehCategories="hasTechVehCategory" :userId="user.id" :techOrSpare="'tech'"></VehicleCategorySection>
+                    <!-- Vehicle Category accordion for technical service -->
+                    <VehicleCategorySection v-if="hasTechVehCategory" :allVehicleCategories="allVehicleCategories" :selectedVehCategories="hasTechVehCategory" :userId="user.id" :techOrSpare="'technical_service'"></VehicleCategorySection>
                     
                     <!-- {{-- Car brands accordion --}} -->
-                    <CarBrandsSection v-if="businessAccount" :allCarBrands="allCarBrands" :selectedCarBrands="vehicleBrands.tech_car" :userId="user.id"></CarBrandsSection>
+                    <CarBrandsSection v-if="hasTechCarBrands" :allCarBrands="allCarBrands" :selectedCarBrands="hasTechCarBrands" :userId="user.id" :techOrSpare="'technical_service'"></CarBrandsSection>
                     
                     <!-- {{-- Bus brands accordion --}} -->
-                    <BusBrandsSection v-if="businessAccount" :allBusBrands="allBusBrands" :selectedBusBrands="vehicleBrands.tech_bus" :userId="user.id"></BusBrandsSection>
+                    <BusBrandsSection v-if="hasTechBusBrands" :allBusBrands="allBusBrands" :selectedBusBrands="hasTechBusBrands" :userId="user.id" :techOrSpare="'technical_service'"></BusBrandsSection>
                     
                     <!-- {{-- Truck brnads accordion --}} -->
-                    <TruckBrandsSection v-if="businessAccount" :allTruckBrands="allTruckBrands" :selectedTruckBrands="vehicleBrands.tech_truck" :userId="user.id"></TruckBrandsSection>
+                    <TruckBrandsSection v-if="hasTechTruckBrands" :allTruckBrands="allTruckBrands" :selectedTruckBrands="hasTechTruckBrands" :userId="user.id" :techOrSpare="'technical_service'"></TruckBrandsSection>
                     
                     <!-- {{-- Spare part sellers accordion --}} -->
-                    <SparePartSection v-if="businessAccount" :allSpareParts="allSpareParts" :selectedSpareParts="isSparePartSeller" :userId="user.id"></SparePartSection>
+                    <SparePartSection v-if="isSparePartSeller" :allSpareParts="allSpareParts" :selectedSpareParts="isSparePartSeller" :userId="user.id"></SparePartSection>
                     
-                    <!-- Vehicle Category accordion -->
-                    <VehicleCategorySection v-if="businessAccount" :allVehicleCategories="allVehicleCategories" :selectedVehCategories="hasSpartVehCategory" :userId="user.id" :techOrSpare="'spare'"></VehicleCategorySection>
+                    <!-- Vehicle Category accordion for spare parts -->
+                    <VehicleCategorySection v-if="hasSpartVehCategory" :allVehicleCategories="allVehicleCategories" :selectedVehCategories="hasSpartVehCategory" :userId="user.id" :techOrSpare="'spare_part'"></VehicleCategorySection>
                     
                     <!-- {{-- Car brands accordion --}} -->
-                    <CarBrandsSection v-if="businessAccount" :allCarBrands="allCarBrands" :selectedCarBrands="vehicleBrands.sPart_car" :userId="user.id"></CarBrandsSection>
+                    <CarBrandsSection v-if="hasSpartCarBrands" :allCarBrands="allCarBrands" :selectedCarBrands="hasSpartCarBrands" :userId="user.id" :techOrSpare="'spare_part'"></CarBrandsSection>
                     
                     <!-- {{-- Bus brands accordion --}} -->
-                    <BusBrandsSection v-if="businessAccount" :allBusBrands="allBusBrands" :selectedBusBrands="vehicleBrands.sPart_bus" :userId="user.id"></BusBrandsSection>
+                    <BusBrandsSection v-if="hasSpartBusBrands" :allBusBrands="allBusBrands" :selectedBusBrands="hasSpartBusBrands" :userId="user.id" :techOrSpare="'spare_part'"></BusBrandsSection>
                     
                     <!-- {{-- Truck brnads accordion --}} -->
-                    <TruckBrandsSection v-if="businessAccount" :allTruckBrands="allTruckBrands" :selectedTruckBrands="vehicleBrands.sPart_truck" :userId="user.id"></TruckBrandsSection>
+                    <TruckBrandsSection v-if="hasSpartTruckBrands" :allTruckBrands="allTruckBrands" :selectedTruckBrands="hasSpartTruckBrands" :userId="user.id" :techOrSpare="'spare_part'"></TruckBrandsSection>
                 </div>
             </div>
             <!-- End of Business details pane -->
@@ -726,6 +726,21 @@
         data() {
             return {
                 adImages: ['photoSample', 'photoSample1', 'photoSample2', 'photoSample3', 'photoSample4', 'photoSample5', 'photoSample6', 'photoSample7', 'photoSample8', 'photoSample9', 'photoSample10', 'photoSample11', 'photoSample12', 'photoSample13', 'photoSample14', 'photoSample15', 'photoSample16', 'photoSample17', 'photoSample18', 'photoSample19', 'photoSample20'],
+                artisanChoicesVisible: false,
+                mobileSellerChoicesVisible: false,
+                techServChoicesVisible: false,
+                sparePartChoicesVisible: false,
+                vehicleCategoriesVisible: false,
+                carBrandsVisible: false,
+                busBrandsVisible: false,
+                truckBrandsVisible: false,
+                vehicleCategoriesVisibleSS: false,
+                carBrandsVisibleSS: false,
+                busBrandsVisibleSS: false,
+                truckBrandsVisibleSS: false,
+                techServCat: 'techServ',
+                sparePartCat: 'sparePart',
+                formIsValid: true,
             }
         },
         methods: {
@@ -800,6 +815,66 @@
                 }
                 if (typeof this.sPartVehCategories === "object" && (this.sPartVehCategories !== "undefined" || this.sPartVehCategories !== null)) {
                     return (Object.entries(this.sPartVehCategories).length > 0) ? this.sPartVehCategories : false;
+                } else {
+                    return false;
+                }
+            },
+            hasTechCarBrands() {
+                if (this.user.account_type !== 'business') {
+                    return false
+                }
+                if (typeof this.vehicleBrands.tech_car === "object" && (this.vehicleBrands.tech_car !== "undefined" || this.vehicleBrands.tech_car !== null)) {
+                    return (Object.entries(this.vehicleBrands.tech_car).length > 0) ? this.vehicleBrands.tech_car : false;
+                } else {
+                    return false;
+                } 
+            },
+            hasTechBusBrands() {
+                if (this.user.account_type !== 'business') {
+                    return false
+                }
+                if (typeof this.vehicleBrands.tech_bus === "object" && (this.vehicleBrands.tech_bus !== "undefined" || this.vehicleBrands.tech_bus !== null)) {
+                    return (Object.entries(this.vehicleBrands.tech_bus).length > 0) ? this.vehicleBrands.tech_bus : false;
+                } else {
+                    return false;
+                }
+            }, 
+            hasTechTruckBrands() {
+                if (this.user.account_type !== 'business') {
+                    return false
+                }
+                if (typeof this.vehicleBrands.tech_truck === "object" && (this.vehicleBrands.tech_truck !== "undefined" || this.vehicleBrands.tech_truck !== null)) {
+                    return (Object.entries(this.vehicleBrands.tech_truck).length > 0) ? this.vehicleBrands.tech_truck : false;
+                } else {
+                    return false;
+                }
+            },
+            hasSpartCarBrands() {
+                if (this.user.account_type !== 'business') {
+                    return false
+                }
+                if (typeof this.vehicleBrands.sPart_car === "object" && (this.vehicleBrands.sPart_car !== "undefined" || this.vehicleBrands.sPart_car !== null)) {
+                    return (Object.entries(this.vehicleBrands.sPart_car).length > 0) ? this.vehicleBrands.sPart_car : false;
+                } else {
+                    return false;
+                }
+            },
+            hasSpartBusBrands() {
+                if (this.user.account_type !== 'business') {
+                    return false
+                }
+                if (typeof this.vehicleBrands.sPart_bus === "object" && (this.vehicleBrands.sPart_bus !== "undefined" || this.vehicleBrands.sPart_bus !== null)) {
+                    return (Object.entries(this.vehicleBrands.sPart_bus).length > 0) ? this.vehicleBrands.sPart_bus : false;
+                } else {
+                    return false;
+                }
+            },
+            hasSpartTruckBrands() {
+                if (this.user.account_type !== 'business') {
+                    return false
+                }
+                if (typeof this.vehicleBrands.sPart_truck === "object" && (this.vehicleBrands.sPart_truck !== "undefined" || this.vehicleBrands.sPart_truck !== null)) {
+                    return (Object.entries(this.vehicleBrands.sPart_truck).length > 0) ? this.vehicleBrands.sPart_truck : false;
                 } else {
                     return false;
                 }

@@ -21,7 +21,7 @@
                     
                     <div class="row justify-content-between">
                         <button type="submit" name="updateGender" class="btn btn-danger col-auto">Update</button>
-                        <button type="submit" name="clearGender" class="btn btn-danger col-auto">Clear</button>
+                        <!-- <button type="submit" name="clearGender" class="btn btn-danger col-auto">Clear</button> -->
                     </div>
                 </form>   
             </div>
@@ -54,7 +54,9 @@
                     preserveState: true,
                     preserveScroll: true,
                     onSuccess: (page) => {
-                        console.log(page.props.updateStatus);
+                        if (page.props.flash.success) {
+                            this.genderInput = '';
+                        }
                     },
                     onError: (errors) => {
                         console.log('Error: ', errors);
