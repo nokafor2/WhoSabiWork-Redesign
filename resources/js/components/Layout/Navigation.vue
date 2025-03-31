@@ -34,7 +34,7 @@
                     </li>
                 </ul>
 
-                <ul class="navbar-nav nav-pills ms-auto me-2 mb-2 mb-xl-0 gap-2 pt-2">
+                <ul v-if="!user" class="navbar-nav nav-pills ms-auto me-2 mb-2 mb-xl-0 gap-2 pt-2">
                     <li class="nav-item col-sm-6 justify-content-center">
                         <a :href="route('users.create')" class="btn btn-danger btn-sm text-light w-100">Sign Up</a>
                     </li>
@@ -42,23 +42,19 @@
                     <li class="nav-item col-sm-6">
                         <a :href="route('users.index')" class="btn btn-danger btn-sm text-light w-100">Sign In</a>
                     </li>
-
-                    <form id="logout-form d-none" method="POST" action="{{ route('logout') }}">
-                        
-                    </form>                   
                 </ul>
 
-                <ul class="navbar-nav nav-pills mb-2 mb-xl-0">
+                <ul v-else class="navbar-nav nav-pills mb-2 mb-xl-0">
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-person" viewBox="0 0 16 16">
                                 <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0m4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4m-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10s-3.516.68-4.168 1.332c-.678.678-.83 1.418-.832 1.664z"/>
-                              </svg> Nna-ayua Okafor
+                              </svg> {{ user.firstName }} {{ user.lastName }}
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="#">Welcome Nna-ayua</a></li>
+                            <li><a class="dropdown-item" href="#">Welcome {{ user.firstName }}</a></li>
                             <li>
-                                <a class="dropdown-item" href="#">
+                                <a class="dropdown-item" :href="route('users.show', user.id)">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person" viewBox="0 0 16 16">
                                         <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0m4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4m-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10s-3.516.68-4.168 1.332c-.678.678-.83 1.418-.832 1.664z"/>
                                       </svg> Your Profile
@@ -66,10 +62,10 @@
                             </li>
                             <li><hr class="dropdown-divider"></li>
                             <li class="nav-item">
-                                    <a href="{{ route('logout') }}" class="btn btn-danger btn-sm text-light mx-2 w-75"
-                                    
-                                    onclick="event.preventDefault();document.getElementById('logout-form').submit();"
-                                    >Sign Out</a>
+                                <Link :href="route('logout')" method="delete" as="button" class="btn btn-danger btn-sm text-light mx-2 w-75">Sign Out</Link>
+                                <!-- <form @submit.prevent="logout" method="delete">
+                                    <button class="btn btn-danger btn-sm" type="button">Sign Out</button>
+                                </form> -->
                             </li>
                         </ul>
                     </li>
@@ -84,6 +80,31 @@
     </nav>
 </template>
 
+<script setup>
+    import { Link } from '@inertiajs/vue3';
+</script>
+
 <script>
-    import {Link} from '@inertiajs/vue3'
+    import { useForm, usePage } from '@inertiajs/vue3';
+
+    export default {
+        data () {
+            return {
+                page: usePage()
+            }
+        },
+        methods: {
+            logout() {
+                useForm().delete(route('logout'));
+            }
+        },
+        computed: {
+            user() {
+                return this.page.props.user;
+            },
+            flashSuccess() {
+                return this.page.props.flash.success;
+            }
+        }
+    }
 </script>

@@ -13,6 +13,7 @@ use App\Models\TruckBrand;
 use App\Models\User;
 use App\Models\VehicleCategory;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -27,6 +28,9 @@ class UserController extends Controller
     {
         // Set authentication for all the methods, hence a user must be logged in to implement any
         // $this->middleware('auth');
+        // Authenticate some actions with middle ware
+        // This can also be set in the web route file
+        // $this->middleware('auth')->except('index');
         // Authorize certain actions
         // $this->authorizeResource(User::class, 'user');
     }
@@ -126,7 +130,6 @@ class UserController extends Controller
         // After validation is complete, save the details
         $user = User::create([
             ...$validatedUserVals,
-            'password' => Hash::make($request->password),
             'remember_token' => Str::random(10),
             'account_status' => 'active',
             'account_type' => $accountType,
@@ -145,11 +148,11 @@ class UserController extends Controller
                 ...$validatedBussCatVals,
                 'artisan' => in_array('artisan', $request->businessCategories) ? true : false,
                 'seller' => in_array('mobileMarket', $request->businessCategories) ? true : false,
-                'technician' => in_array('mechanic', $request->selectedArtisans) ? true : false,
-                'spare_part_seller' => in_array('spare_parts', $request->selectedMobileSellers) ? true : false,
+                'technician' => (isset($request->selectedArtisans) && in_array('mechanic', $request->selectedArtisans)) ? true : false,
+                'spare_part_seller' => (isset($request->selectedMobileSellers) && in_array('spare_parts', $request->selectedMobileSellers)) ? true : false,
             ]);
 
-            if (in_array('artisan', $request->businessCategories) && (count($request->selectedArtisans) > 0)) {
+            if (in_array('artisan', $request->businessCategories) && (isset($request->selectedArtisans) && (count($request->selectedArtisans) > 0))) {
                 // $validatedVals = [...$request->validate([
                 //     'selectedArtisans' => ['required', 'array', 'min:1'],
                 //     'selectedArtisans.*' => [Rule::in(array_keys($allArtisans->toArray()))],
@@ -163,7 +166,7 @@ class UserController extends Controller
                 $user->artisan()->create($selectedArtisans);
             }
 
-            if (in_array('mechanic', $request->selectedArtisans)) {
+            if ((isset($request->selectedArtisans) && in_array('mechanic', $request->selectedArtisans))) {
                 // Save selected technicians
                 if (!empty($request->selectedTechnicalServices)) {
                     $selectedTechServ = array();
@@ -215,7 +218,7 @@ class UserController extends Controller
             }
 
             // validate for mobile maketers
-            if (in_array('mobileMarket', $request->businessCategories) && (count($request->selectedMobileSellers) > 0)) {
+            if (in_array('mobileMarket', $request->businessCategories) && (isset($request->selectedMobileSellers) && (count($request->selectedMobileSellers) > 0))) {
                 $selectedMarketers = array();
                 foreach ($request->selectedMobileSellers as $type) {
                     $selectedMarketers[$type] = TRUE;
@@ -223,7 +226,7 @@ class UserController extends Controller
                 $user->product()->create($selectedMarketers);
             }
 
-            if (in_array('spare_parts', $request->selectedMobileSellers)) {
+            if ((isset($request->selectedMobileSellers) && in_array('spare_parts', $request->selectedMobileSellers))) {
                 // Save selected spare part sellers
                 if (!empty($request->selectedSpareParts)) {
                     $selectedSpareParts = array();
@@ -275,7 +278,10 @@ class UserController extends Controller
             }
         }
 
-        return redirect()->route('users.create')->with('success', 'Account was successfully created!');
+        // After saving the user, authenticate them
+        Auth::login($user);
+
+        return redirect()->route('users.show', $user->id)->with('success', 'Account was successfully created!');
     }
 
     /**
