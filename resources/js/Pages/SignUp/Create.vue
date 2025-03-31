@@ -9,6 +9,7 @@
                 {{ page.props.flash.success }} 
             </div>
             <form @submit.prevent="submitForm">
+                <p class="small text-center pt-2">Already have an account? <a :href="route('users.index')" class="text-decoration-none text-danger">Sign in here</a></p>
                 <div class="form-check form-switch">
                     <input @change="setAccountType" class="form-check-input" type="checkbox" role="switch" id="businessAccountSelect" value="businessAccount" v-model="accountType">
                     <label class="form-check-label" for="businessAccountSelect">Business Account</label>

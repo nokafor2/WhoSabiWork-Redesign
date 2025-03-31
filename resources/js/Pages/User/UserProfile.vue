@@ -117,199 +117,7 @@
                         <div class="row justify-content-center">
                             <div class="col-md 10">
                                 <div class="row justify-content-evenly">
-                                    
-                                    <div class="card m-3 shadow" style="width: 200px;">
-                                        <img :src=imagePath(1) class="card-img-top btn" height="174px" alt="" type="button"  data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                        <p class="card-text mb-1 px-2">Image caption</p>
-                                        
-                                        <!-- Modal -->
-                                        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                            <div class="modal-dialog">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <!-- <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1> -->
-                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                    </div>
-                                                    <div class="modal-body">
-                                                        <img :src=imagePath(1) class="img-fluid" alt="">
-                                                        <p class="card-text my-2 px-2 bg-dark text-light rounded">A beautiful cruise boat parked in the harbor waiting a beautiful environment.</p>
-                                                        <a href="#" class="text-decoration-none me-3 text-body"><i class="fa-solid fa-thumbs-up pe-2"></i>20</a>
-                                                        <div class="d-flex my-3">
-                                                            <button class="btn btm-sm col-auto bg-danger text-light me-3">Edit Caption</button>
-                                                            <button class="btn btm-sm col-auto bg-danger text-light me-3">Set Image as Cover Photo</button>
-                                                            <button class="btn btm-sm col-auto bg-danger text-light">Delete Photo</button>
-                                                        </div>
-
-                                                        <div class="col-12 rounded bg-dark text-light p-2 mb-3">
-                                                            <form action="">
-                                                                <!-- <textarea class="rounded col-12 mt-3" name="" id="" placeholder="Enter your comment" rows="3"></textarea> -->
-                                                                <textarea class="rounded form-control my-3" name="" id="" placeholder="Edit Caption" rows="3"></textarea>
-                                                                <div class="d-flex justify-content-between">
-                                                                    <button class="btn btn-sm btn-danger">Submit</button>
-                                                                </div>
-                                                            </form>
-                                                        </div>
-
-                                                        <div class="col-12 rounded bg-dark text-light p-2">
-                                                            <p class="pt-2">5 comment(s)</p>
-                                                            <div class="col-12 border-bottom pt-2">
-                                                                <div class="row justify-content-between align-content-middle">
-                                                                    <div class="col-auto">
-                                                                        <div class="d-flex mt-2 mb-1 align-middle">
-                                                                            <img class="col-auto rounded-circle me-2" style="height: 25px; width: 25px;" :src=imagePath(0)>
-                                                                            <p class="col-auto mb-1">Nna-ayua Okafor</p>
-                                                                        </div>
-                                                                    </div>
-                                                                    <p class="col-auto pt-2">December 18, 2024 at 5:18 PM</p>
-                                                                </div>
-                                                                <p class="col-12 bg-white text-body rounded">
-                                                                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Illo modi vero laboriosam suscipit! Enim reiciendis sunt debitis, ipsa sit ipsam amet obcaecati! Assumenda harum ipsam natus iste explicabo eos nemo?
-                                                                </p>
-                                                            </div>
-                                                            <div class="col-12 border-bottom pt-2">
-                                                                <div class="row justify-content-between align-content-middle">
-                                                                    <div class="col-auto">
-                                                                        <div class="d-flex mt-2 mb-1 align-middle">
-                                                                            <img class="col-auto rounded-circle me-2" style="height: 25px; width: 25px;" :src=imagePath(0)>
-                                                                            <p class="col-auto mb-1">Nna-ayua Okafor</p>
-                                                                        </div>
-                                                                    </div>
-                                                                    <p class="col-auto pt-2">December 18, 2024 at 5:18 PM</p>
-                                                                </div>
-                                                                <p class="col-12 bg-white text-body rounded">
-                                                                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Illo modi vero laboriosam suscipit! Enim reiciendis sunt debitis, ipsa sit ipsam amet obcaecati! Assumenda harum ipsam natus iste explicabo eos nemo?
-                                                                </p>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="modal-footer">
-                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                                        <button type="button" class="btn btn-primary">Save changes</button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="card m-3 shadow" style="width: 200px;">
-                                        <img :src=imagePath(2) class="card-img-top btn" height="174px" alt="" type="button"  data-bs-toggle="modal" data-bs-target="#exampleModal1">
-                                        <p class="card-text mb-1 px-2">Image caption</p>
-
-                                        <!-- Modal -->
-                                        <div class="modal fade" id="exampleModal1" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                            <div class="modal-dialog">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <!-- <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1> -->
-                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                    </div>
-                                                    <div class="modal-body">
-                                                        <img :src=imagePath(2) class="img-fluid" alt="">
-                                                    </div>
-                                                    <div class="modal-footer">
-                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                                        <button type="button" class="btn btn-primary">Save changes</button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="card m-3 shadow" style="width: 200px;">
-                                        <img :src=imagePath(3) class="card-img-top btn" height="174px" alt="" type="button"  data-bs-toggle="modal" data-bs-target="#exampleModal2">
-                                        <p class="card-text mb-1 px-2">Image caption</p>
-
-                                        <!-- Modal -->
-                                        <div class="modal fade" id="exampleModal2" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                            <div class="modal-dialog">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <!-- <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1> -->
-                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                    </div>
-                                                    <div class="modal-body">
-                                                        <img :src=imagePath(3) class="img-fluid" alt="">
-                                                    </div>
-                                                    <div class="modal-footer">
-                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                                        <button type="button" class="btn btn-primary">Save changes</button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="card m-3 shadow" style="width: 200px;">
-                                        <img :src=imagePath(4) class="card-img-top btn" height="174px" alt="" type="button"  data-bs-toggle="modal" data-bs-target="#exampleModal3">
-                                        <p class="card-text mb-1 px-2">Image caption</p>
-
-                                        <!-- Modal -->
-                                        <div class="modal fade" id="exampleModal3" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                            <div class="modal-dialog">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <!-- <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1> -->
-                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                    </div>
-                                                    <div class="modal-body">
-                                                        <img :src=imagePath(4) class="img-fluid" alt="">
-                                                    </div>
-                                                    <div class="modal-footer">
-                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                                        <button type="button" class="btn btn-primary">Save changes</button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="card m-3 shadow" style="width: 200px;">
-                                        <img :src=imagePath(5) class="card-img-top btn" height="174px" alt="" type="button"  data-bs-toggle="modal" data-bs-target="#exampleModal4">
-                                        <p class="card-text mb-1 px-2">Image caption</p>
-
-                                        <!-- Modal -->
-                                        <div class="modal fade" id="exampleModal4" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                            <div class="modal-dialog">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <!-- <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1> -->
-                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                    </div>
-                                                    <div class="modal-body">
-                                                        <img :src=imagePath(5) class="img-fluid" alt="">
-                                                    </div>
-                                                    <div class="modal-footer">
-                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                                        <button type="button" class="btn btn-primary">Save changes</button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="card m-3 shadow" style="width: 200px;">
-                                        <img :src=imagePath(6) class="card-img-top btn" height="174px" alt="" type="button"  data-bs-toggle="modal" data-bs-target="#exampleModal5">
-                                        <p class="card-text mb-1 px-2">Image caption</p>
-
-                                        <!-- Modal -->
-                                        <div class="modal fade" id="exampleModal5" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                            <div class="modal-dialog">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <!-- <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1> -->
-                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                    </div>
-                                                    <div class="modal-body">
-                                                        <img :src=imagePath(6) class="img-fluid" alt="">
-                                                    </div>
-                                                    <div class="modal-footer">
-                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                                        <button type="button" class="btn btn-primary">Save changes</button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+                                    <ImageCard v-for="index in 6" :key="index" :index="index" :userId="index"></ImageCard>
                                 </div>
                             </div>
                         </div>
@@ -323,95 +131,11 @@
                 <div class="row justify-content-center">
                     <div class="col-md-10 col-xl-8 rounded text-light pb-3" style="background-color: #040D14">
                         <p class="pt-2">5 comment(s)</p>
-                        <div class="col-12 border-bottom py-2">
-                            <div class="row justify-content-between align-content-middle">
-                                <div class="col-auto">
-                                    <div class="d-flex mt-2 mb-1 align-middle">
-                                        <img class="col-auto rounded-circle me-2" style="height: 25px; width: 25px;" :src=imagePath(0)>
-                                        <p class="col-auto mb-1">Nna-ayua Okafor</p>
-                                    </div>
-                                </div>
-                                <p class="col-auto pt-2">December 18, 2024 at 5:18 PM</p>
-                            </div>
-                            <p class="col-12 bg-white text-body rounded">
-                                Lorem ipsum dolor sit amet consectetur adipisicing elit. Illo modi vero laboriosam suscipit! Enim reiciendis sunt debitis, ipsa sit ipsam amet obcaecati! Assumenda harum ipsam natus iste explicabo eos nemo?
-                            </p>
-                            <div class="d-flex justify-content-end">
-                                <button class="btn btm-sm border border-light text-light" style="background-color: #040D14">Reply</button>
-                            </div>
-                        </div>
-
-                        <div class="col-12 border-bottom py-2">
-                            <div class="row justify-content-between align-content-middle">
-                                <div class="col-auto">
-                                    <div class="d-flex mt-2 mb-1 align-middle">
-                                        <img class="col-auto rounded-circle me-2" style="height: 25px; width: 25px;" :src=imagePath(0)>
-                                        <p class="col-auto mb-1">Nna-ayua Okafor</p>
-                                    </div>
-                                </div>
-                                <p class="col-auto pt-2">December 18, 2024 at 5:18 PM</p>
-                            </div>
-                            <p class="col-12 bg-white text-body rounded">
-                                Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ad cumque adipisci possimus voluptatum? Asperiores labore, adipisci id nostrum ab ut voluptatum accusantium? Nulla similique ut aspernatur laudantium. Debitis, vitae nostrum.
-                            </p>
-                            <div class="d-flex justify-content-end">
-                                <button class="btn btm-sm border border-light text-light" style="background-color: #040D14">Reply</button>
-                            </div>
-
-                            <!-- reply -->
-                            <div class="row justify-content-end">
-                                <div class="col-10">
-                                    <div class="row justify-content-between align-content-middle">
-                                        <div class="col-auto">
-                                            <div class="d-flex mt-2 mb-1 align-middle">
-                                                <img class="col-auto rounded-circle me-2" style="height: 25px; width: 25px;" :src=imagePath(0)>
-                                                <p class="col-auto mb-1">You replied</p>
-                                            </div>
-                                        </div>
-                                        <p class="col-auto pt-2">December 18, 2024 at 5:18 PM</p>
-                                    </div>
-                                    <p class="col-12 bg-white text-body rounded">
-                                        Lorem, ipsum dolor sit amet consectetur adipisicing elit. Ea quia magni illo ipsam est ducimus accusantium quisquam libero ut soluta similique, natus molestiae voluptas architecto? Inventore excepturi aliquid soluta placeat!
-                                    </p>
-                                </div>
-                            </div>
-
-                            <div class="row justify-content-end">
-                                <div class="col-10">
-                                    <div class="row justify-content-between align-content-middle">
-                                        <div class="col-auto">
-                                            <div class="d-flex mt-2 mb-1 align-middle">
-                                                <img class="col-auto rounded-circle me-2" style="height: 25px; width: 25px;" :src=imagePath(0)>
-                                                <p class="col-auto mb-1">You replied</p>
-                                            </div>
-                                        </div>
-                                        <p class="col-auto pt-2">December 18, 2024 at 5:18 PM</p>
-                                    </div>
-                                    <p class="col-12 bg-white text-body rounded">
-                                        Lorem, ipsum dolor sit amet consectetur adipisicing elit. Ea quia magni illo ipsam est ducimus accusantium quisquam libero ut soluta similique, natus molestiae voluptas architecto? Inventore excepturi aliquid soluta placeat!
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-12 border-bottom py-2">
-                            <div class="row justify-content-between align-content-middle">
-                                <div class="col-auto">
-                                    <div class="d-flex mt-2 mb-1 align-middle">
-                                        <img class="col-auto rounded-circle me-2" style="height: 25px; width: 25px;" :src=imagePath(0)>
-                                        <p class="col-auto mb-1">Nna-ayua Okafor</p>
-                                    </div>
-                                </div>
-                                <p class="col-auto pt-2">December 18, 2024 at 5:18 PM</p>
-                            </div>
-                            <p class="col-12 bg-white text-body rounded">
-                                Lorem ipsum dolor sit amet consectetur adipisicing elit. Temporibus iusto ut asperiores, aliquid repellat fugit nam omnis perspiciatis deserunt est, ea ex enim quae cum! Tempora veritatis similique error quos!
-                            </p>
-                            <textarea class="rounded form-control my-3" name="" id="" placeholder="Reply" rows="1"></textarea>
-                            <div class="d-flex justify-content-end">
-                                <button class="btn btm-sm border border-light text-light" style="background-color: #040D14">Reply</button>
-                            </div>
-                        </div>
+                        <CommentAndReplyCard :index="3" :replies="{}"></CommentAndReplyCard>
+                        
+                        <CommentAndReplyCard :index="5" :replies="replies"></CommentAndReplyCard>
+                        
+                        <CommentAndReplyCard :index="10" :replies="{}"></CommentAndReplyCard>
                     </div>
                 </div>
             </div>
@@ -422,50 +146,7 @@
                 <div class="row justify-content-center">
                     <div class="col-md-10 col-xl-8 rounded text-light pb-3" >  <!-- style="background-color: #040D14" -->
                         <p class="pt-2 text-body">5 comment(s)</p>
-                        <div class="col-12 border-bottom pt-2">
-                            <div class="row justify-content-between align-content-middle">
-                                <div class="col-auto">
-                                    <div class="d-flex mt-2 mb-1 align-middle">
-                                        <img class="col-auto rounded-circle me-2" style="height: 25px; width: 25px;" :src=imagePath(0)>
-                                        <p class="col-auto mb-1 text-body">Nna-ayua Okafor</p>
-                                    </div>
-                                </div>
-                                <p class="col-auto pt-2 text-body">December 18, 2024 at 5:18 PM</p>
-                            </div>
-                            <p class="col-12 bg-white text-body rounded">
-                                Lorem ipsum dolor sit amet consectetur adipisicing elit. Illo modi vero laboriosam suscipit! Enim reiciendis sunt debitis, ipsa sit ipsam amet obcaecati! Assumenda harum ipsam natus iste explicabo eos nemo?
-                            </p>
-                        </div>
-
-                        <div class="col-12 border-bottom pt-2">
-                            <div class="row justify-content-between align-content-middle">
-                                <div class="col-auto">
-                                    <div class="d-flex mt-2 mb-1 align-middle">
-                                        <img class="col-auto rounded-circle me-2" style="height: 25px; width: 25px;" :src=imagePath(0)>
-                                        <p class="col-auto mb-1 text-body">Nna-ayua Okafor</p>
-                                    </div>
-                                </div>
-                                <p class="col-auto pt-2 text-body">December 18, 2024 at 5:18 PM</p>
-                            </div>
-                            <p class="col-12 bg-white text-body rounded">
-                                Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ad cumque adipisci possimus voluptatum? Asperiores labore, adipisci id nostrum ab ut voluptatum accusantium? Nulla similique ut aspernatur laudantium. Debitis, vitae nostrum.
-                            </p>
-                        </div>
-
-                        <div class="col-12 border-bottom pt-2">
-                            <div class="row justify-content-between align-content-middle">
-                                <div class="col-auto">
-                                    <div class="d-flex mt-2 mb-1 align-middle">
-                                        <img class="col-auto rounded-circle me-2" style="height: 25px; width: 25px;" :src=imagePath(0)>
-                                        <p class="col-auto mb-1 text-body">Nna-ayua Okafor</p>
-                                    </div>
-                                </div>
-                                <p class="col-auto pt-2 text-body">December 18, 2024 at 5:18 PM</p>
-                            </div>
-                            <p class="col-12 bg-white text-body rounded">
-                                Lorem ipsum dolor sit amet consectetur adipisicing elit. Temporibus iusto ut asperiores, aliquid repellat fugit nam omnis perspiciatis deserunt est, ea ex enim quae cum! Tempora veritatis similique error quos!
-                            </p>
-                        </div>
+                        <CommentCard v-for="index in 5" :key="index" :index="index"></CommentCard>
                     </div>
                 </div>
             </div>
@@ -482,64 +163,7 @@
                 <div class="row gap-3 gx-1">
                     <div class="col-md">
                         <p class="bg-danger text-light text-center">Appointments requested with technicians</p>
-                        <div class="card col-12 mb-3">
-                            <div class="card-body">
-                                <h5 class="card-title text-center">Appointment Details</h5>
-                                <div class="d-block d-sm-flex">
-                                    <p class="card-text col-xs-4 fw-semibold mb-0 mb-sm-3">Technician Name:</p>
-                                    <p class="card-text col-xs-8 ps-0 ps-sm-2 mb-3">Nna-ayua Okafor</p>
-                                </div>                                    
-                                <div class="d-block d-sm-flex">
-                                    <p class="card-text col-xs-4 fw-semibold mb-0 mb-sm-3">Phone Number:</p>
-                                    <p class="card-text col-xs-8 ps-0 ps-sm-2 mb-3">09093336969</p>
-                                </div>
-                                <div class="d-block d-sm-flex">
-                                    <p class="card-text col-xs-4 fw-semibold mb-0 mb-sm-3">Appointment Day:</p>
-                                    <p class="card-text col-xs-8 ps-0 ps-sm-2 mb-3">Friday, December 20, 2024</p>
-                                </div>
-                                <div class="d-block d-sm-flex">
-                                    <p class="card-text col-xs-4 fw-semibold mb-0 mb-sm-3">Appointment Time:</p>
-                                    <p class="card-text col-xs-8 ps-0 ps-sm-2 mb-3">8:00 AM - 9:00 AM, 9:00 AM - 10:00 AM, 10:00 AM - 11:00 AM</p>
-                                    <!-- <p class="card-text col-xs-8 ps-0 ps-sm-2 mb-3">
-                                        <ul class="list-inline">
-                                            <li class="list-inline-item">8:00 AM - 9:00 AM,</li>
-                                            <li class="list-inline-item">9:00 AM - 10:00 AM,</li>
-                                            <li class="list-inline-item">10:00 AM - 11:00 AM</li>
-                                        </ul>
-                                    </p> -->
-                                </div>
-                                <div class="d-block d-sm-flex">
-                                    <p class="card-text col-xs-4 fw-semibold mb-0 mb-sm-3">Appointment Reason:</p>
-                                    <p class="card-text col-xs-8 ps-0 ps-sm-2 mb-3">Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam dolorum at sit numquam! Ut, ipsa! Ducimus animi sapiente iusto minima, repudiandae natus fugit eligendi sequi, beatae placeat nam modi optio?</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="card col-12 mb-3">
-                            <div class="card-body">
-                                <h5 class="card-title text-center">Appointment Details</h5>
-                                <div class="d-block d-sm-flex">
-                                    <p class="card-text col-xs-12 ps-0 ps-sm-2 mb-3"><span class="card-text col-xs-4 fw-semibold mb-0 mb-sm-3">Technician Name:</span>
-                                    Nna-ayua Okafor</p>
-                                </div>                                    
-                                <div class="d-block d-sm-flex">
-                                    <p class="card-text col-xs-12 ps-0 ps-sm-2 mb-3"><span class="card-text col-xs-4 fw-semibold mb-0 mb-sm-3">Phone Number:</span>
-                                    09093336969</p>
-                                </div>
-                                <div class="d-block d-sm-flex">
-                                    <p class="card-text col-xs-12 ps-0 ps-sm-2 mb-3"><span class="card-text col-xs-4 fw-semibold mb-0 mb-sm-3">Appointment Day:</span>
-                                    Friday, December 20, 2024</p>
-                                </div>
-                                <div class="d-block d-sm-flex">
-                                    <p class="card-text col-xs-12 ps-0 ps-sm-2 mb-3"><span class="card-text col-xs-4 fw-semibold mb-0 mb-sm-3">Appointment Time:</span>
-                                    8:00 AM - 9:00 AM, 9:00 AM - 10:00 AM</p>
-                                </div>
-                                <div class="d-block d-sm-flex">
-                                    <p class="card-text col-xs-12 ps-0 ps-sm-2 mb-3"><span class="card-text col-xs-4 fw-semibold mb-0 mb-sm-3">Appointment Reason:</span>
-                                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam dolorum at sit numquam! Ut, ipsa! Ducimus animi sapiente iusto minima, repudiandae natus fugit eligendi sequi, beatae placeat nam modi optio?</p>
-                                </div>
-                            </div>
-                        </div>
+                        <AppointmentDetails v-for="index in 3" :key="index"></AppointmentDetails>
 
                         <div class="card col-12 mb-3">
                             <div class="card-body">
@@ -562,6 +186,7 @@
 
                     <div class="col-md">
                         <p class="bg-danger text-light text-center">Appointments confirmed with technicians</p>
+                        <AppointmentDetails v-for="index in 2" :key="index"></AppointmentDetails>
                         <div class="card col-12 mb-3">
                             <div class="card-body">
                                 <h6 class="card-subtitle mb-2 text-body-secondary">You have no appointment confirmed yet.</h6>
@@ -577,65 +202,8 @@
                 <div class="row gap-3 gx-1">
                     <div class="col-md">
                         <p class="bg-danger text-light text-center">Appointments requested with technicians</p>
-                        <div class="card col-12 mb-3">
-                            <div class="card-body">
-                                <h5 class="card-title text-center">Appointment Details</h5>
-                                <div class="d-block d-sm-flex">
-                                    <p class="card-text col-xs-4 fw-semibold mb-0 mb-sm-3">Technician Name:</p>
-                                    <p class="card-text col-xs-8 ps-0 ps-sm-2 mb-3">Nna-ayua Okafor</p>
-                                </div>                                    
-                                <div class="d-block d-sm-flex">
-                                    <p class="card-text col-xs-4 fw-semibold mb-0 mb-sm-3">Phone Number:</p>
-                                    <p class="card-text col-xs-8 ps-0 ps-sm-2 mb-3">09093336969</p>
-                                </div>
-                                <div class="d-block d-sm-flex">
-                                    <p class="card-text col-xs-4 fw-semibold mb-0 mb-sm-3">Appointment Day:</p>
-                                    <p class="card-text col-xs-8 ps-0 ps-sm-2 mb-3">Friday, December 20, 2024</p>
-                                </div>
-                                <div class="d-block d-sm-flex">
-                                    <p class="card-text col-xs-4 fw-semibold mb-0 mb-sm-3">Appointment Time:</p>
-                                    <p class="card-text col-xs-8 ps-0 ps-sm-2 mb-3">8:00 AM - 9:00 AM, 9:00 AM - 10:00 AM, 10:00 AM - 11:00 AM</p>
-                                    <!-- <p class="card-text col-xs-8 ps-0 ps-sm-2 mb-3">
-                                        <ul class="list-inline">
-                                            <li class="list-inline-item">8:00 AM - 9:00 AM,</li>
-                                            <li class="list-inline-item">9:00 AM - 10:00 AM,</li>
-                                            <li class="list-inline-item">10:00 AM - 11:00 AM</li>
-                                        </ul>
-                                    </p> -->
-                                </div>
-                                <div class="d-block d-sm-flex">
-                                    <p class="card-text col-xs-4 fw-semibold mb-0 mb-sm-3">Appointment Reason:</p>
-                                    <p class="card-text col-xs-8 ps-0 ps-sm-2 mb-3">Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam dolorum at sit numquam! Ut, ipsa! Ducimus animi sapiente iusto minima, repudiandae natus fugit eligendi sequi, beatae placeat nam modi optio?</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="card col-12 mb-3">
-                            <div class="card-body">
-                                <h5 class="card-title text-center">Appointment Details</h5>
-                                <div class="d-block d-sm-flex">
-                                    <p class="card-text col-xs-12 ps-0 ps-sm-2 mb-3"><span class="card-text col-xs-4 fw-semibold mb-0 mb-sm-3">Technician Name:</span>
-                                    Nna-ayua Okafor</p>
-                                </div>                                    
-                                <div class="d-block d-sm-flex">
-                                    <p class="card-text col-xs-12 ps-0 ps-sm-2 mb-3"><span class="card-text col-xs-4 fw-semibold mb-0 mb-sm-3">Phone Number:</span>
-                                    09093336969</p>
-                                </div>
-                                <div class="d-block d-sm-flex">
-                                    <p class="card-text col-xs-12 ps-0 ps-sm-2 mb-3"><span class="card-text col-xs-4 fw-semibold mb-0 mb-sm-3">Appointment Day:</span>
-                                    Friday, December 20, 2024</p>
-                                </div>
-                                <div class="d-block d-sm-flex">
-                                    <p class="card-text col-xs-12 ps-0 ps-sm-2 mb-3"><span class="card-text col-xs-4 fw-semibold mb-0 mb-sm-3">Appointment Time:</span>
-                                    8:00 AM - 9:00 AM, 9:00 AM - 10:00 AM</p>
-                                </div>
-                                <div class="d-block d-sm-flex">
-                                    <p class="card-text col-xs-12 ps-0 ps-sm-2 mb-3"><span class="card-text col-xs-4 fw-semibold mb-0 mb-sm-3">Appointment Reason:</span>
-                                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam dolorum at sit numquam! Ut, ipsa! Ducimus animi sapiente iusto minima, repudiandae natus fugit eligendi sequi, beatae placeat nam modi optio?</p>
-                                </div>
-                            </div>
-                        </div>
-
+                        <AppointmentDetails v-for="index in 3" :key="index"></AppointmentDetails>
+                        
                         <div class="card col-12 mb-3">
                             <div class="card-body">
                             <h6 class="card-subtitle mb-2 text-body-secondary">You have 1 appointment waiting confirmation</h6>
@@ -657,6 +225,7 @@
 
                     <div class="col-md">
                         <p class="bg-danger text-light text-center">Appointments confirmed with technicians</p>
+                        <AppointmentDetails v-for="index in 1" :key="index"></AppointmentDetails>
                         <div class="card col-12 mb-3">
                             <div class="card-body">
                                 <h6 class="card-subtitle mb-2 text-body-secondary">You have no appointment confirmed yet.</h6>
@@ -702,9 +271,12 @@
     import TruckBrandsSection from './Components/TruckBrandsSection.vue';
     import VehicleCategorySection from './Components/VehicleCategorySection.vue';
     import BusinessPageSection from './Components/BusinessPageSection.vue';
+    import ImageCard from './Components/ImageCard.vue';
+    import CommentAndReplyCard from './Components/CommentAndReplyCard.vue';
 
     // import Mixins
     import MethodsMixin from './Mixins/MethodsMixin.js';
+    import { useForm, usePage } from '@inertiajs/vue3';
 
     export default {
         components: {
@@ -715,7 +287,7 @@
             StateSection, TownSection, BusinessCategorySection, BusinessDescriptionSection, 
             ArtisansSection, MobileMarketSection, TechnicalServiceSection, SparePartSection,
             CarBrandsSection, BusBrandsSection, TruckBrandsSection, VehicleCategorySection,
-            BusinessPageSection
+            BusinessPageSection, ImageCard, CommentAndReplyCard
         },
         mixins: [MethodsMixin],
         props: ['user', 'userCategories', 'techVehCategories', 'sPartVehCategories', 'vehicleBrands', 'allArtisans', 'allProducts',
@@ -726,21 +298,12 @@
         data() {
             return {
                 adImages: ['photoSample', 'photoSample1', 'photoSample2', 'photoSample3', 'photoSample4', 'photoSample5', 'photoSample6', 'photoSample7', 'photoSample8', 'photoSample9', 'photoSample10', 'photoSample11', 'photoSample12', 'photoSample13', 'photoSample14', 'photoSample15', 'photoSample16', 'photoSample17', 'photoSample18', 'photoSample19', 'photoSample20'],
-                artisanChoicesVisible: false,
-                mobileSellerChoicesVisible: false,
-                techServChoicesVisible: false,
-                sparePartChoicesVisible: false,
-                vehicleCategoriesVisible: false,
-                carBrandsVisible: false,
-                busBrandsVisible: false,
-                truckBrandsVisible: false,
-                vehicleCategoriesVisibleSS: false,
-                carBrandsVisibleSS: false,
-                busBrandsVisibleSS: false,
-                truckBrandsVisibleSS: false,
-                techServCat: 'techServ',
-                sparePartCat: 'sparePart',
-                formIsValid: true,
+                replies: {
+                    0: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Illo modi vero laboriosam suscipit! Enim reiciendis sunt debitis, ipsa sit ipsam amet obcaecati! Assumenda harum ipsam natus iste explicabo eos nemo?',
+                    1: 'Lorem, ipsum dolor sit amet consectetur adipisicing elit. Ea quia magni illo ipsam est ducimus accusantium quisquam libero ut soluta similique, natus molestiae voluptas architecto? Inventore excepturi aliquid soluta placeat!',
+                    2: 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ad cumque adipisci possimus voluptatum? Asperiores labore, adipisci id nostrum ab ut voluptatum accusantium? Nulla similique ut aspernatur laudantium. Debitis, vitae nostrum.'
+                },
+                page: usePage(),
             }
         },
         methods: {
@@ -752,6 +315,12 @@
             }
         },
         computed: {
+            user() {
+                return this.page.props.user;
+            },
+            flashSuccess() {
+                return this.page.props.flash.success;
+            },
             fullName() {
                 return this.capitalizeFirstLetter(this.user.first_name) + " " + this.capitalizeFirstLetter(this.user.last_name);
             },

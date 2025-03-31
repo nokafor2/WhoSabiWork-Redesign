@@ -5,16 +5,21 @@
     
     <div class="row justify-content-center">
         <div class="col-sm-6 col-md-5 py-3">
+            <div v-if="page.props.flash.success" class="text-success">
+                    {{ page.props.flash.success }} 
+            </div>
             <form @submit.prevent="submitForm">
                 <div class="form-floating my-2">
-                    <input type="text" class="form-control" id="username" placeholder="">
+                    <input type="text" class="form-control" id="username" placeholder="" v-model="username.val">
                     <label for="username">Username / E-mail / Phone number</label>
+                    <p v-if="formData.errors.email" :class="{'text-danger': formData.errors.email}"> {{ formData.errors.email }} </p>
                 </div>
                 <div class="form-floating my-2">
-                    <input type="password" class="form-control" id="password" placeholder="">
+                    <input type="password" class="form-control" id="password" placeholder="" v-model="password.val">
                     <label for="password">Password</label>
+                    <p v-if="formData.errors.password" :class="{'text-danger': formData.errors.password}"> {{ formData.errors.password }} </p>
                 </div>
-                <button class="btn btn-sm bg-white">
+                <button class="btn btn-sm bg-white" type="submit">
                     Forgot password?
                 </button>
                 
@@ -46,7 +51,7 @@
                     </div>
                 </div>
 
-                <p class="small text-center pt-2">Don't have an account? <a class="text-decoration-none text-danger">Sign up here</a></p>
+                <p class="small text-center pt-2">Don't have an account? <a :href="route('users.create')" class="text-decoration-none text-danger">Sign up here</a></p>
             </form>
         </div>
     </div>
@@ -54,15 +59,51 @@
 
 
 <script>
+    import { useForm, usePage } from '@inertiajs/vue3';
+
     export default {
         data() {
             return {
-
+                username: {
+                    val: '',
+                    isValid: true,
+                },
+                password: {
+                    val: '',
+                    isValid: true,
+                },
+                formData: useForm({
+                    username: '',
+                    password: '',
+                }),
+                page: usePage(),
             }
         },
         methods: {
-            async submitForm() {
-
+            submitForm() {
+                // You can set formData.username and formData.password in the v-model instead
+                this.formData = useForm({
+                    email: this.username.val,
+                    password: this.password.val,
+                });
+                this.formData.post(route('login.store'), {
+                    preserveState: true,
+                    preserveScroll: true,
+                    onSuccess: (page) => {
+                        console.log(page);
+                    },
+                    onError: (errors) => {
+                        console.log('Error: ', errors);
+                    }
+                });
+            }
+        },
+        computed: {
+            user() {
+                return this.page.props.user;
+            },
+            flashSuccess() {
+                return this.page.props.flash.success;
             }
         }
     }

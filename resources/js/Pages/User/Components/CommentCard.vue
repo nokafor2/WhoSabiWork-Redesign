@@ -3,7 +3,7 @@
         <div class="row justify-content-between align-content-middle">
             <div class="col-auto">
                 <div class="d-flex mt-2 mb-1 align-middle">
-                    <img class="col-auto rounded-circle me-2" style="height: 25px; width: 25px;" :src=imagePath(0)>
+                    <img class="col-auto rounded-circle me-2" style="height: 25px; width: 25px;" :src=imagePath(index)>
                     <p class="col-auto mb-1">Nna-ayua Okafor</p>
                 </div>
             </div>
@@ -17,21 +17,19 @@
 
 
 <script>
+    import MethodsMixin from '../Mixins/MethodsMixin.js';
+
     export default {
-        props: [],
+        mixins: [MethodsMixin],
+        props: ['index'],
         emits: [],
         data() {
             return {
-                adImages: ['photoSample', 'photoSample1', 'photoSample2', 'photoSample3', 'photoSample4', 'photoSample5', 'photoSample6', 'photoSample7', 'photoSample8', 'photoSample9', 'photoSample10', 'photoSample11', 'photoSample12', 'photoSample13', 'photoSample14', 'photoSample15', 'photoSample16', 'photoSample17', 'photoSample18', 'photoSample19', 'photoSample20'],
+                
             }
         },
         methods: {
-            imagePath(index) {
-                const imageName = this.adImages[index];
-                const imageUrl = new URL(`../../../../Images/${imageName}.jpg`, import.meta.url).href;
-
-                return imageUrl;
-            }
+            
         }
     }
 </script>

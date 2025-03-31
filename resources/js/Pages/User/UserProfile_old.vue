@@ -45,7 +45,7 @@
                 <div class="row justify-content-center">
                     <div class="col-md-10 col-xl-8 rounded bg-dark text-light pb-3">
                         <p class="pt-2">5 comment(s)</p>
-                        <CommentCard v-for="index in 5" :key="index"></CommentCard>
+                        <CommentCard v-for="index in 5" :key="index" :index="index"></CommentCard>
                     </div>
                 </div>
             </div>

@@ -18,22 +18,24 @@
                     <first-and-last-name ref="firstAndLastNames" @send-first-name="updateFirstName" @send-last-name="updateLastName" :errors="formData.errors" ></first-and-last-name>
                     <phone-and-email ref="phoneAndEmail" @send-phone-number="updatePhoneNumber" @send-email="updateEmail" :errors="formData.errors"></phone-and-email>
                     <div class="col-sm-6 my-2">
-                        <select class="form-select" aria-label="Default select example">
-                            <option selected>How can we assist you?</option>
-                            <option value="other">Other</option>
+                        <select class="form-select" aria-label="Default select example" v-model="messageSubject.val">
+                            <option value="default">How can we assist you?</option>
                             <option value="suggestion">Suggestion</option>
                             <option value="complain">Complain</option>
                             <option value="request">Request</option>
+                            <option value="other">Other</option>
                         </select>
                     </div>
-                    <textarea class="rounded form-control my-3" name="" id="" placeholder="Enter your message here" rows="4"></textarea>
+                    <p v-if="formData.errors.message_subject" :class="{'text-danger': formData.errors.message_subject}">{{ formData.errors.message_subject }}</p>
+                    <textarea class="rounded form-control my-3" name="" id="" placeholder="Enter your message here" rows="4" v-model="messageContent.val"></textarea>
+                    <p v-if="formData.errors.message_content" :class="{'text-danger': formData.errors.message_content}">{{ formData.errors.message_content }}</p>
                     <div class="d-flex justify-content-end align-items-center">
                         <p class="d-inline mb-0 pe-2">Character count:</p>
                         <input class="form-control form-check-inline me-0 text-end" style="width: 90px;" type="text" value="0/250" aria-label="Disabled input" disabled readonly>
                     </div>
                     
                     <div class="row justify-content-center mt-5">
-                        <button class="btn btn-danger w-50">Submit</button>
+                        <button class="btn btn-danger w-50" type="submit">Submit</button>
                     </div>
                 </form>
             </div>
@@ -60,7 +62,7 @@
 
     // import functions for use
     // import { reactive } from 'vue';
-    import { router, useForm, usePage } from '@inertiajs/vue3';
+    import { useForm, usePage } from '@inertiajs/vue3';
 
     export default {
         components: { 
@@ -85,6 +87,14 @@
                     val: '',
                     isValid: true
                 },
+                messageSubject: {
+                    val: 'default',
+                    isValid: true
+                },
+                messageContent: {
+                    val: '',
+                    isValid: true
+                },
                 formData: useForm({
                     first_name: '',
                     last_name: '',
@@ -97,23 +107,36 @@
         },
         methods: {
             submitForm() {
-
+                this.formData = useForm({
+                    firstName: this.firstName.val,
+                    lastName: this.lastName.val,
+                    phoneNumber: this.phoneNumber.val,
+                    email: this.email.val,
+                    messageSubject: this.messageSubject.val,
+                    messageContent: this.messageContent.val,
+                });
+                this.formData.post(route('contactus.store'), {
+                    preserveState: true,
+                    preserveScroll: true,
+                    onSuccess: (page) => {
+                        console.log(page);
+                    },
+                    onError: (errors) => {
+                        console.log('Error: ', errors);
+                    }
+                });
             },
             updateFirstName(firstName) {
                 this.firstName = firstName;
-                console.log(this.firstName);
             },
             updateLastName(lastName) {
                 this.lastName = lastName;
-                console.log(this.lastName);
             },
             updatePhoneNumber(phoneNumber) {
                 this.phoneNumber = phoneNumber;
-                console.log(this.phoneNumber);
             },
             updateEmail(email) {
                 this.email = email;
-                console.log(this.email);
             },
         }
     }

@@ -3,6 +3,7 @@
 use App\Http\Controllers\AddressController;
 use App\Http\Controllers\ArtisanController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BusBrandController;
 use App\Http\Controllers\BusinessCategoryController;
 use App\Http\Controllers\HomeController;
@@ -45,13 +46,17 @@ Route::get('/mobilemarketer', [MobileMarketController::class, 'index']);
 
 Route::get('/artisans', [ArtisanController::class, 'index']);
 
-Route::get('/contactus', [ContactUsController::class, 'index']);
+// Route::get('/contactus', [ContactUsController::class, 'index']);
 
 Route::get('/getState', [SearchController::class, 'getState']);
 
 // Route::get('/signup', [RegisterController::class, 'index']);
 
 Route::resource('users', UserController::class);
+// Authenticating some routes in the resource method
+// Route::resource('users', UserController::class)->only(['store', 'show', 'edit', 'update', 'destroy'])->middleware('auth');
+// Use the except here for the index and show route not to be disabled
+// Route::resource('users', UserController::class)->except(['store', 'show', 'edit', 'update', 'destroy']);
 
 // resource() method is for a resource controller
 Route::resource('artisans', ArtisanController::class)->only('index', 'store', 'update');
@@ -59,7 +64,7 @@ Route::resource('artisans', ArtisanController::class)->only('index', 'store', 'u
 // resource() method is for a resource controller
 Route::resource('mobileMarketers', MobileMarketController::class)->only('index', 'store', 'update');
 
-Route::resource('contactus', ContactUsController::class)->only('index', 'store', 'update');
+Route::resource('contactus', ContactUsController::class)->only('index', 'store', 'create');
 
 Route::resource('technicalServices', TechnicalServiceController::class)->only('store', 'update');
 
@@ -78,6 +83,12 @@ Route::resource('busbrand', BusBrandController::class)->only('update');
 Route::resource('truckbrand', TruckBrandController::class)->only('update');
 
 Route::resource('vehiclecategory', VehicleCategoryController::class)->only('update');
+
+Route::get('userlogin', [AuthController::class, 'create'])->name('login');
+
+Route::post('userlogin', [AuthController::class, 'store'])->name('login.store');
+
+Route::delete('userlogout', [AuthController::class, 'destroy'])->name('logout');
 
 
 
@@ -100,4 +111,4 @@ Route::resource('users.comments', UserCommentController::class)->only(['store'])
 Route::resource('users.photo', UserPhotoController::class)->only(['store', 'update']);
 
 // create routes for and authentication
-Auth::routes();
+// Auth::routes();
