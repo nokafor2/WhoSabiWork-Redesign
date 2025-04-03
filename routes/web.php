@@ -38,7 +38,7 @@ use Illuminate\Support\Facades\Route;
 //     return inertia('Index/Index');
 // });
 
-Route::get('/whosabiwork', [HomeController::class, 'index'])->name('home.index');
+Route::get('/', [HomeController::class, 'index'])->name('home.index');
 
 Route::get('/photofeed', [HomeController::class, 'photoFeeds'])->name('home.photoFeeds');
 
