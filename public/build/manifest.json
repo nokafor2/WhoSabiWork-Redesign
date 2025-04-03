@@ -1,23 +1,198 @@
 {
-  "resources/css/app.css": {
-    "file": "assets/app-l0sNRNKZ.js",
-    "name": "app",
-    "src": "resources/css/app.css",
-    "isEntry": true
+  "resources/Images/WhoSabiWorkL1.jpg": {
+    "file": "assets/WhoSabiWorkL1-B5V6ByRw.jpg",
+    "src": "resources/Images/WhoSabiWorkL1.jpg"
   },
-  "resources/js/Pages/Index/Index.vue": {
-    "file": "assets/Index-CdfHuTj9.js",
-    "name": "Index",
-    "src": "resources/js/Pages/Index/Index.vue",
-    "isDynamicEntry": true
+  "resources/Images/WhoSabiWorkLogo.jpg": {
+    "file": "assets/WhoSabiWorkLogo-DHtmvkUO.jpg",
+    "src": "resources/Images/WhoSabiWorkLogo.jpg"
+  },
+  "resources/Images/photoSample.jpg": {
+    "file": "assets/photoSample-DKwCuY33.jpg",
+    "src": "resources/Images/photoSample.jpg"
+  },
+  "resources/Images/photoSample1.jpg": {
+    "file": "assets/photoSample1-CIkqJ0dh.jpg",
+    "src": "resources/Images/photoSample1.jpg"
+  },
+  "resources/Images/photoSample10.jpg": {
+    "file": "assets/photoSample10-BYPwQeS3.jpg",
+    "src": "resources/Images/photoSample10.jpg"
+  },
+  "resources/Images/photoSample11.jpg": {
+    "file": "assets/photoSample11-DsLsaGI2.jpg",
+    "src": "resources/Images/photoSample11.jpg"
+  },
+  "resources/Images/photoSample12.jpg": {
+    "file": "assets/photoSample12-Dfll_4pO.jpg",
+    "src": "resources/Images/photoSample12.jpg"
+  },
+  "resources/Images/photoSample13.jpg": {
+    "file": "assets/photoSample13-CeIhCISg.jpg",
+    "src": "resources/Images/photoSample13.jpg"
+  },
+  "resources/Images/photoSample14.jpg": {
+    "file": "assets/photoSample14-BwLdt8LK.jpg",
+    "src": "resources/Images/photoSample14.jpg"
+  },
+  "resources/Images/photoSample15.jpg": {
+    "file": "assets/photoSample15-RYhRyAQo.jpg",
+    "src": "resources/Images/photoSample15.jpg"
+  },
+  "resources/Images/photoSample16.jpg": {
+    "file": "assets/photoSample16-CTHwQ144.jpg",
+    "src": "resources/Images/photoSample16.jpg"
+  },
+  "resources/Images/photoSample17.jpg": {
+    "file": "assets/photoSample17-BZnOULlg.jpg",
+    "src": "resources/Images/photoSample17.jpg"
+  },
+  "resources/Images/photoSample18.jpg": {
+    "file": "assets/photoSample18-BNAE-eP5.jpg",
+    "src": "resources/Images/photoSample18.jpg"
+  },
+  "resources/Images/photoSample19.jpg": {
+    "file": "assets/photoSample19-BDnSfzAh.jpg",
+    "src": "resources/Images/photoSample19.jpg"
+  },
+  "resources/Images/photoSample2.jpg": {
+    "file": "assets/photoSample2-46Ko67Ue.jpg",
+    "src": "resources/Images/photoSample2.jpg"
+  },
+  "resources/Images/photoSample20.jpg": {
+    "file": "assets/photoSample20-BB9U0xmo.jpg",
+    "src": "resources/Images/photoSample20.jpg"
+  },
+  "resources/Images/photoSample3.jpg": {
+    "file": "assets/photoSample3-B2MZqYXQ.jpg",
+    "src": "resources/Images/photoSample3.jpg"
+  },
+  "resources/Images/photoSample4.jpg": {
+    "file": "assets/photoSample4-1QK82Nt5.jpg",
+    "src": "resources/Images/photoSample4.jpg"
+  },
+  "resources/Images/photoSample5.jpg": {
+    "file": "assets/photoSample5-BNfbw56k.jpg",
+    "src": "resources/Images/photoSample5.jpg"
+  },
+  "resources/Images/photoSample6.jpg": {
+    "file": "assets/photoSample6-8TI-wVLe.jpg",
+    "src": "resources/Images/photoSample6.jpg"
+  },
+  "resources/Images/photoSample7.jpg": {
+    "file": "assets/photoSample7-CjZPeQI-.jpg",
+    "src": "resources/Images/photoSample7.jpg"
+  },
+  "resources/Images/photoSample8.jpg": {
+    "file": "assets/photoSample8-B6Svefdf.jpg",
+    "src": "resources/Images/photoSample8.jpg"
+  },
+  "resources/Images/photoSample9.jpg": {
+    "file": "assets/photoSample9-DyLueTEN.jpg",
+    "src": "resources/Images/photoSample9.jpg"
+  },
+  "resources/homePageImages/slideShowImageB.jpg": {
+    "file": "assets/slideShowImageB-B73_qFj2.jpg",
+    "src": "resources/homePageImages/slideShowImageB.jpg"
+  },
+  "resources/homePageImages/slideShowImageD.jpg": {
+    "file": "assets/slideShowImageD-1kfM0Glk.jpg",
+    "src": "resources/homePageImages/slideShowImageD.jpg"
+  },
+  "resources/homePageImages/slideShowImageE.jpg": {
+    "file": "assets/slideShowImageE-zefFL8Tg.jpg",
+    "src": "resources/homePageImages/slideShowImageE.jpg"
+  },
+  "resources/homePageImages/slideShowImageF.jpg": {
+    "file": "assets/slideShowImageF-B2u7_TZC.jpg",
+    "src": "resources/homePageImages/slideShowImageF.jpg"
+  },
+  "resources/homePageImages/slideShowImageG.jpg": {
+    "file": "assets/slideShowImageG-B4iHyTg5.jpg",
+    "src": "resources/homePageImages/slideShowImageG.jpg"
+  },
+  "resources/homePageImages/slideShowImageH.jpg": {
+    "file": "assets/slideShowImageH-CLznfirV.jpg",
+    "src": "resources/homePageImages/slideShowImageH.jpg"
+  },
+  "resources/homePageImages/slideShowImageI.jpg": {
+    "file": "assets/slideShowImageI-B9K3fdy6.jpg",
+    "src": "resources/homePageImages/slideShowImageI.jpg"
+  },
+  "resources/homePageImages/slideShowImageJ.jpg": {
+    "file": "assets/slideShowImageJ-Dyms0Kh9.jpg",
+    "src": "resources/homePageImages/slideShowImageJ.jpg"
+  },
+  "resources/homePageImages/slideShowImageK.jpg": {
+    "file": "assets/slideShowImageK-CM4dAf-F.jpg",
+    "src": "resources/homePageImages/slideShowImageK.jpg"
+  },
+  "resources/homePageImages/slideShowImageL.jpg": {
+    "file": "assets/slideShowImageL-XU_U6v4I.jpg",
+    "src": "resources/homePageImages/slideShowImageL.jpg"
+  },
+  "resources/homePageImages/slideShowImageM.jpg": {
+    "file": "assets/slideShowImageM-CGLUlDcd.jpg",
+    "src": "resources/homePageImages/slideShowImageM.jpg"
+  },
+  "resources/homePageImages/slideShowImageN.jpg": {
+    "file": "assets/slideShowImageN-D4Fp9YFv.jpg",
+    "src": "resources/homePageImages/slideShowImageN.jpg"
+  },
+  "resources/homePageImages/slideShowImageO.jpg": {
+    "file": "assets/slideShowImageO-67h65DjS.jpg",
+    "src": "resources/homePageImages/slideShowImageO.jpg"
   },
   "resources/js/app.js": {
-    "file": "assets/app-8U_hXGza.js",
+    "file": "assets/app-CXhmTFMw.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true,
-    "dynamicImports": [
-      "resources/js/Pages/Index/Index.vue"
+    "css": [
+      "assets/app-C6px3Dzu.css"
+    ],
+    "assets": [
+      "assets/photoSample-DKwCuY33.jpg",
+      "assets/WhoSabiWorkL1-B5V6ByRw.jpg",
+      "assets/WhoSabiWorkLogo-DHtmvkUO.jpg",
+      "assets/photoSample1-CIkqJ0dh.jpg",
+      "assets/photoSample10-BYPwQeS3.jpg",
+      "assets/photoSample11-DsLsaGI2.jpg",
+      "assets/photoSample12-Dfll_4pO.jpg",
+      "assets/photoSample13-CeIhCISg.jpg",
+      "assets/photoSample14-BwLdt8LK.jpg",
+      "assets/photoSample15-RYhRyAQo.jpg",
+      "assets/photoSample16-CTHwQ144.jpg",
+      "assets/photoSample17-BZnOULlg.jpg",
+      "assets/photoSample18-BNAE-eP5.jpg",
+      "assets/photoSample19-BDnSfzAh.jpg",
+      "assets/photoSample2-46Ko67Ue.jpg",
+      "assets/photoSample20-BB9U0xmo.jpg",
+      "assets/photoSample3-B2MZqYXQ.jpg",
+      "assets/photoSample4-1QK82Nt5.jpg",
+      "assets/photoSample5-BNfbw56k.jpg",
+      "assets/photoSample6-8TI-wVLe.jpg",
+      "assets/photoSample7-CjZPeQI-.jpg",
+      "assets/photoSample8-B6Svefdf.jpg",
+      "assets/photoSample9-DyLueTEN.jpg",
+      "assets/slideShowImageB-B73_qFj2.jpg",
+      "assets/slideShowImageD-1kfM0Glk.jpg",
+      "assets/slideShowImageE-zefFL8Tg.jpg",
+      "assets/slideShowImageF-B2u7_TZC.jpg",
+      "assets/slideShowImageG-B4iHyTg5.jpg",
+      "assets/slideShowImageH-CLznfirV.jpg",
+      "assets/slideShowImageI-B9K3fdy6.jpg",
+      "assets/slideShowImageJ-Dyms0Kh9.jpg",
+      "assets/slideShowImageK-CM4dAf-F.jpg",
+      "assets/slideShowImageL-XU_U6v4I.jpg",
+      "assets/slideShowImageM-CGLUlDcd.jpg",
+      "assets/slideShowImageN-D4Fp9YFv.jpg",
+      "assets/slideShowImageO-67h65DjS.jpg"
     ]
+  },
+  "resources/sass/app.scss": {
+    "file": "assets/app-DqME6eCz.css",
+    "src": "resources/sass/app.scss",
+    "isEntry": true
   }
 }
