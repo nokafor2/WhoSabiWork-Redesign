@@ -20,7 +20,8 @@ class UsersRatingFactory extends Factory
     {
         // Get the array of business users
         $businessUsers = User::where('account_type', '=', 'business')->get();
-
+        // Get the last user in the data base
+        $userSize = User::count();
         return [
             'user_id' => $businessUsers->random()->id,
             'rating' => $this->faker->numberBetween(1,5),

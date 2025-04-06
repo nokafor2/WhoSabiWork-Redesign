@@ -539,11 +539,27 @@ trait GlobalFunctions {
             }
         }
 
+        if (isset($foundUser['users_rating']) && !empty($foundUser['users_rating'])) {
+            $ratingCount = count($foundUser['users_rating']);
+            // get the average rating
+            $ratingSum = 0;
+            foreach ($foundUser['users_rating'] as $key => $value) {
+                foreach ($value as $key2 => $value2) {
+                    if ($key2 === 'rating') {
+                        $ratingSum += $value2;
+                    }
+                }
+            }
+            $avgRating = round($ratingSum / $ratingCount);
+            $userRating = ['ratingCount' => $ratingCount, 'avgRating' => $avgRating];
+        }
+
         return ['userDetails' => $foundUser, 
                 'userCategories' => $refinedCategoryArray,
                 'techVehCategories' => $techVehCategories,
                 'sPartVehCategories' => $sparePartVehCategories,
                 'vehicleBrands' => $refVehBrand,
+                'userRating' => $userRating,
         ];
     }
 

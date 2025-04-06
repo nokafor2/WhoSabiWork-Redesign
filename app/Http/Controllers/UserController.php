@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreUserRequest;
 use App\Http\Traits\GlobalFunctions;
 use App\Models\Artisan;
 use App\Models\BusBrand;
@@ -355,6 +356,8 @@ class UserController extends Controller
      */
     public function update(Request $request, User $user)
     {
+        // $validated = $request->safe()->only(['first_name']);
+        // dd($request->all());
         $updateVal = $request->updateVal;
         $updateField = $request->updateField;
         if ($updateField === 'password') {
