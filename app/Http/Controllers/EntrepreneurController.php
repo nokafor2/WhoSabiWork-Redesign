@@ -55,7 +55,7 @@ class EntrepreneurController extends Controller
         $foundUser = User::find($id);
         if ($foundUser->account_type === 'business') {
             $foundUser = $this->getUserDetails($id);
-
+            // dd($foundUser);
             return Inertia('Entrepreneur/Index', ['user' => $foundUser]);
         } else {
             return Inertia('Index/Index');

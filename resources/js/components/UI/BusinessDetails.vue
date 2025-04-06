@@ -9,11 +9,11 @@
                 <p class="text-center fs-3 mb-0 mb-lg-3 rounded-pill">{{ fullName }}</p>
                 <div class="row col-12 text-center text-sm-end text-lg-start gap-1 mb-1 mb-lg-0 justify-content-center">
                     <p class="col-lg mb-0 mb-lg-3 bg-light text-body rounded-pill w-auto d-block-md">
-                        <i class="fa-solid fa-star"></i>
-                        <i class="fa-solid fa-star"></i>
+                        <i v-for="rating in userRating" :key="rating" class="fa-solid fa-star"></i>
+                        <!-- <i class="fa-solid fa-star"></i>
                         <i class="fa-solid fa-star"></i>
                         <i class="fa-regular fa-star-half-stroke"></i>
-                        <i class="fa-regular fa-star"></i>
+                        <i class="fa-regular fa-star"></i> -->
                     </p>
                     <p class="col-lg mb-0 mb-lg-3 bg-light text-body rounded-pill w-auto">
                         {{ advocators }} advocators
@@ -51,6 +51,7 @@
             return {
                 address: '',
                 adImages: ['photoSample', 'photoSample1', 'photoSample2', 'photoSample3', 'photoSample4', 'photoSample5', 'photoSample6', 'photoSample7', 'photoSample8', 'photoSample9', 'photoSample10', 'photoSample11', 'photoSample12', 'photoSample13', 'photoSample14', 'photoSample15', 'photoSample16', 'photoSample17', 'photoSample18', 'photoSample19', 'photoSample20'],
+                // userRating: '',
             }
         },
         methods: {
@@ -104,6 +105,9 @@
             },
             advocators() {
                 return this.user.userDetails.business_category.views;
+            },
+            userRating() {
+                return this.user.userRating.avgRating;
             }
         }
     }
