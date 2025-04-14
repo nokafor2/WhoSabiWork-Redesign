@@ -52,7 +52,7 @@ class UserFactory extends Factory
             'gender' => 'male',
             'email' => 'johnfelix@gmail.com',
             'username' => 'johnFelix',
-            'password' => Hash::make('password'),
+            'password' => Hash::make('6QpL4X9$'),
             'phone_number' => '08057368560',
             'account_status' => 'active',
             'account_type' => 'business',

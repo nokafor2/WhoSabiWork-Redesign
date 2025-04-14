@@ -9,12 +9,15 @@ use App\Http\Controllers\BusinessCategoryController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\CarBrandController;
 use App\Http\Controllers\ContactUsController;
+use App\Http\Controllers\DeleteTemporaryImageController;
 use App\Http\Controllers\EntrepreneurController;
 use App\Http\Controllers\MobileMarketController;
+use App\Http\Controllers\PhotographController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\SparePartController;
 use App\Http\Controllers\TechnicalServiceController;
 use App\Http\Controllers\TruckBrandController;
+use App\Http\Controllers\UploadTemporaryImageController;
 use App\Http\Controllers\UserCommentController;
 use App\Http\Controllers\UserPhotoController;
 use App\Http\Controllers\UserTagController;
@@ -42,9 +45,9 @@ Route::get('/', [HomeController::class, 'index'])->name('home.index');
 
 Route::get('/photofeed', [HomeController::class, 'photoFeeds'])->name('home.photoFeeds');
 
-Route::get('/mobilemarketer', [MobileMarketController::class, 'index']);
+// Route::get('/mobilemarketer', [MobileMarketController::class, 'index']);
 
-Route::get('/artisans', [ArtisanController::class, 'index']);
+// Route::get('/artisans', [ArtisanController::class, 'index']);
 
 // Route::get('/contactus', [ContactUsController::class, 'index']);
 
@@ -84,13 +87,18 @@ Route::resource('truckbrand', TruckBrandController::class)->only('update');
 
 Route::resource('vehiclecategory', VehicleCategoryController::class)->only('update');
 
+Route::resource('photograph', PhotographController::class)->only('index', 'store', 'create', 'update');
+
 Route::get('userlogin', [AuthController::class, 'create'])->name('login');
 
 Route::post('userlogin', [AuthController::class, 'store'])->name('login.store');
 
 Route::delete('userlogout', [AuthController::class, 'destroy'])->name('logout');
 
-
+// Route::post('/posts', StorePostController::class); Use photograph controller
+Route::post('/upload', UploadTemporaryImageController::class);
+// Route::post('/revert/{folder}', DeleteTemporaryImageController::class)->name('deleteImage');
+Route::post('/revert', DeleteTemporaryImageController::class)->name('deleteImage');
 
 // Route::get('/not-found', function () {
 //     return view('errors.404');
