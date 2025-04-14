@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreUsersFeedRequest extends FormRequest
 {
@@ -21,12 +22,14 @@ class StoreUsersFeedRequest extends FormRequest
      */
     public function rules(): array
     {
+        $message_subject = ['suggestion', 'complain', 'request', 'other'];
+        
         return [
             'first_name' => ['required', 'string', 'max:50'],
             'last_name' => ['required', 'string', 'max:50'],
             'phone_number' => ['sometimes', 'required', 'string', 'min:11', 'max:15', 'unique:users'],
             'email' => ['required', 'string', 'email', 'max:50', 'unique:users'],
-            'message_subject' => ['required', 'string', 'max:250'],
+            'message_subject' => ['required', 'string', 'max:250', Rule::in($message_subject)],
             'message_content' => ['required', 'string', 'max:250'],
         ];
     }

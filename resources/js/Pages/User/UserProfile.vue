@@ -114,6 +114,9 @@
             <div v-if="businessAccount" class="tab-pane fade" id="photoGallery" role="tabpanel" aria-labelledby="photoGallery-tab" tabindex="0">
                 <div class="gallery">
                     <div class="container">
+                        <PhotoUpload></PhotoUpload>
+                    </div>
+                    <div class="container">
                         <div class="row justify-content-center">
                             <div class="col-md 10">
                                 <div class="row justify-content-evenly">
@@ -273,6 +276,7 @@
     import BusinessPageSection from './Components/BusinessPageSection.vue';
     import ImageCard from './Components/ImageCard.vue';
     import CommentAndReplyCard from './Components/CommentAndReplyCard.vue';
+    import PhotoUpload from './Components/PhotoUpload.vue';
 
     // import Mixins
     import MethodsMixin from './Mixins/MethodsMixin.js';
@@ -287,7 +291,7 @@
             StateSection, TownSection, BusinessCategorySection, BusinessDescriptionSection, 
             ArtisansSection, MobileMarketSection, TechnicalServiceSection, SparePartSection,
             CarBrandsSection, BusBrandsSection, TruckBrandsSection, VehicleCategorySection,
-            BusinessPageSection, ImageCard, CommentAndReplyCard
+            BusinessPageSection, ImageCard, CommentAndReplyCard, PhotoUpload
         },
         mixins: [MethodsMixin],
         props: ['user', 'userCategories', 'techVehCategories', 'sPartVehCategories', 'vehicleBrands', 'allArtisans', 'allProducts',

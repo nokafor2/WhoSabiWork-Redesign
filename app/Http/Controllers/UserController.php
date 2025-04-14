@@ -124,13 +124,14 @@ class UserController extends Controller
             $validatedVals = [...$validatedVals, ...$validatedBussCatVals];
             // dd($validatedVals);
         } else {
-            // This a public account
+            // This is a public account
             $accountType = 'regular';
         }
 
         // After validation is complete, save the details
         $user = User::create([
             ...$validatedUserVals,
+            'password' => Hash::make($request->password),
             'remember_token' => Str::random(10),
             'account_status' => 'active',
             'account_type' => $accountType,

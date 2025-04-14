@@ -27,11 +27,11 @@
                         </select>
                     </div>
                     <p v-if="formData.errors.message_subject" :class="{'text-danger': formData.errors.message_subject}">{{ formData.errors.message_subject }}</p>
-                    <textarea class="rounded form-control my-3" name="" id="" placeholder="Enter your message here" rows="4" v-model="messageContent.val"></textarea>
+                    <textarea class="rounded form-control my-3" name="messageContent" id="messageContent" placeholder="Enter your message here" rows="4" v-model="messageContent.val"></textarea>
                     <p v-if="formData.errors.message_content" :class="{'text-danger': formData.errors.message_content}">{{ formData.errors.message_content }}</p>
                     <div class="d-flex justify-content-end align-items-center">
                         <p class="d-inline mb-0 pe-2">Character count:</p>
-                        <input class="form-control form-check-inline me-0 text-end" style="width: 90px;" type="text" value="0/250" aria-label="Disabled input" disabled readonly>
+                        <input class="form-control form-check-inline me-0 text-end" :class="{'text-danger': textLimit}" style="width: 90px;" type="text" :value="countTextInput" aria-label="Disabled input" disabled readonly>
                     </div>
                     
                     <div class="row justify-content-center mt-5">
@@ -95,6 +95,8 @@
                     val: '',
                     isValid: true
                 },
+                textCount: 0,
+                textLimit: false,
                 formData: useForm({
                     first_name: '',
                     last_name: '',
@@ -108,18 +110,24 @@
         methods: {
             submitForm() {
                 this.formData = useForm({
-                    firstName: this.firstName.val,
-                    lastName: this.lastName.val,
-                    phoneNumber: this.phoneNumber.val,
+                    first_name: this.firstName.val,
+                    last_name: this.lastName.val,
+                    phone_number: this.phoneNumber.val,
                     email: this.email.val,
-                    messageSubject: this.messageSubject.val,
-                    messageContent: this.messageContent.val,
+                    message_subject: this.messageSubject.val,
+                    message_content: this.messageContent.val,
                 });
                 this.formData.post(route('contactus.store'), {
                     preserveState: true,
                     preserveScroll: true,
                     onSuccess: (page) => {
-                        console.log(page);
+                        // console.log(page);
+                        this.firstName.val = '';
+                        this.lastName.val = '';
+                        this.phoneNumber.val = '';
+                        this.email.val = '';
+                        this.messageSubject.val = '';
+                        this.messageContent.val = '';
                     },
                     onError: (errors) => {
                         console.log('Error: ', errors);
@@ -137,7 +145,27 @@
             },
             updateEmail(email) {
                 this.email = email;
-            },
+            }
+        },
+        computed: {
+            countTextInput() {
+                if (this.messageContent.val) {
+                    this.textCount = this.messageContent.val.length;
+                }
+                return this.textCount+'/250';
+            }
+        },
+        watch: {
+            'messageContent.val'() {
+                console.log(this.messageContent.val);
+                this.textCount = this.messageContent.val.length;
+                console.log(this.textCount);
+                if (this.textCount > 250) {
+                    this.textLimit = true;
+                } else if (this.textCount < 251) {
+                    this.textLimit = false;
+                }
+            }
         }
     }
 </script>
