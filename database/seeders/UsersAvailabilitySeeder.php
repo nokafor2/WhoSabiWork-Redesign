@@ -3,11 +3,11 @@
 namespace Database\Seeders;
 
 use App\Models\User;
-use App\Models\UsersRating;
+use App\Models\UsersAvailability;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
-class UsersRatingSeeder extends Seeder
+class UsersAvailabilitySeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -17,11 +17,10 @@ class UsersRatingSeeder extends Seeder
         // Get all user that has account_type of business
         $businessUsers = User::all()->where('account_type', '=', 'business');
         foreach($businessUsers as $key => $businessUser) {
-            // make factory for users rating
-            $numberofRatings = rand(1, 20);
-            $usersRating = UsersRating::factory()->count($numberofRatings)->create();
-            $usersRating->user_id = $businessUser->id;
-            // $usersRating->save();
+            // make factory for users availability
+            $numberofAvailabilities = rand(1, 10);
+            $usersAvailability = UsersAvailability::factory()->count($numberofAvailabilities)->create();
+            $usersAvailability->user_id = $businessUser->id;
         }
     }
 }

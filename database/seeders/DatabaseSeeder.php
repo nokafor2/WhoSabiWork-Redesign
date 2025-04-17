@@ -83,6 +83,7 @@ class DatabaseSeeder extends Seeder
             UserTagSeeder::class,
             UsersFeedbackSeeder::class,
             UsersRatingSeeder::class,
+            UsersAvailabilitySeeder::class,
         ]);
         
         // $this->call(UsersTableSeeder::class);

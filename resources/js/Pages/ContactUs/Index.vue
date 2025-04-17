@@ -4,56 +4,56 @@
     </div>
 
     <div class="row justify-content-center">
-            <div class="col-md-8 py-3">
-                <div v-if="page.props.flash.success" class="text-success">
-                    {{ page.props.flash.success }} 
-                </div>
-                <p>
-                    Thank you for using this website. If you have any suggestion on how this website can be improved upon, please don't hesitate to notify us on our contact page. Thank you for your patronage.
-                </p>
-                <p>
-                    You can also make your complaints to us here. We will get back to you as soon as possible.
-                </p>
-                <form @submit.prevent="submitForm">
-                    <first-and-last-name ref="firstAndLastNames" @send-first-name="updateFirstName" @send-last-name="updateLastName" :errors="formData.errors" ></first-and-last-name>
-                    <phone-and-email ref="phoneAndEmail" @send-phone-number="updatePhoneNumber" @send-email="updateEmail" :errors="formData.errors"></phone-and-email>
-                    <div class="col-sm-6 my-2">
-                        <select class="form-select" aria-label="Default select example" v-model="messageSubject.val">
-                            <option value="default">How can we assist you?</option>
-                            <option value="suggestion">Suggestion</option>
-                            <option value="complain">Complain</option>
-                            <option value="request">Request</option>
-                            <option value="other">Other</option>
-                        </select>
-                    </div>
-                    <p v-if="formData.errors.message_subject" :class="{'text-danger': formData.errors.message_subject}">{{ formData.errors.message_subject }}</p>
-                    <textarea class="rounded form-control my-3" name="messageContent" id="messageContent" placeholder="Enter your message here" rows="4" v-model="messageContent.val"></textarea>
-                    <p v-if="formData.errors.message_content" :class="{'text-danger': formData.errors.message_content}">{{ formData.errors.message_content }}</p>
-                    <div class="d-flex justify-content-end align-items-center">
-                        <p class="d-inline mb-0 pe-2">Character count:</p>
-                        <input class="form-control form-check-inline me-0 text-end" :class="{'text-danger': textLimit}" style="width: 90px;" type="text" :value="countTextInput" aria-label="Disabled input" disabled readonly>
-                    </div>
-                    
-                    <div class="row justify-content-center mt-5">
-                        <button class="btn btn-danger w-50" type="submit">Submit</button>
-                    </div>
-                </form>
+        <div class="col-md-8 py-3">
+            <div v-if="page.props.flash.success" class="text-success">
+                {{ page.props.flash.success }} 
             </div>
-            <div class="col-md-4">
-                <div>
-                    <p class="display-6">Phone Support</p>
-                    <p class="fw-bold fs-4"><i class="fa-solid fa-phone pe-2"></i>0805-736-8560</p>
-                    <p class="fw-bold fs-4"><i class="fa-solid fa-phone pe-2"></i><i class="fa-brands fa-whatsapp pe-2"></i>0907-004-6964</p>
-                    <p class="" style="font-size: 12px;">8am - 5pm (Monday - Friday)</p>
-                    <p class="" style="font-size: 12px;">8am - 12noon Weekends</p>
+            <p>
+                Thank you for using this website. If you have any suggestion on how this website can be improved upon, please don't hesitate to notify us on our contact page. Thank you for your patronage.
+            </p>
+            <p>
+                You can also make your complaints to us here. We will get back to you as soon as possible.
+            </p>
+            <form @submit.prevent="submitForm">
+                <first-and-last-name ref="firstAndLastNames" @send-first-name="updateFirstName" @send-last-name="updateLastName" :errors="formData.errors" ></first-and-last-name>
+                <phone-and-email ref="phoneAndEmail" @send-phone-number="updatePhoneNumber" @send-email="updateEmail" :errors="formData.errors"></phone-and-email>
+                <div class="col-sm-6 my-2">
+                    <select class="form-select" aria-label="Default select example" v-model="messageSubject.val">
+                        <option value="default">How can we assist you?</option>
+                        <option value="suggestion">Suggestion</option>
+                        <option value="complain">Complain</option>
+                        <option value="request">Request</option>
+                        <option value="other">Other</option>
+                    </select>
                 </div>
-                <div>
-                    <p class="display-6">Email Support</p>
-                    <p class="fw-bold fs-5"><i class="fa-regular fa-envelope me-2"></i>support@whosabiwork.com</p>
-                    <p class="" style="font-size: 12px;">We would ensure to get back to you.</p>
+                <p v-if="formData.errors.message_subject" :class="{'text-danger': formData.errors.message_subject}">{{ formData.errors.message_subject }}</p>
+                <textarea class="rounded form-control my-3" name="messageContent" id="messageContent" placeholder="Enter your message here" rows="4" v-model="messageContent.val"></textarea>
+                <p v-if="formData.errors.message_content" :class="{'text-danger': formData.errors.message_content}">{{ formData.errors.message_content }}</p>
+                <div class="d-flex justify-content-end align-items-center">
+                    <p class="d-inline mb-0 pe-2">Character count:</p>
+                    <input class="form-control form-check-inline me-0 text-end" :class="{'text-danger': textLimit}" style="width: 90px;" type="text" :value="countTextInput" aria-label="Disabled input" disabled readonly>
                 </div>
+                
+                <div class="row justify-content-center mt-5">
+                    <button class="btn btn-danger w-50" type="submit">Submit</button>
+                </div>
+            </form>
+        </div>
+        <div class="col-md-4">
+            <div>
+                <p class="display-6">Phone Support</p>
+                <p class="fw-bold fs-4"><i class="fa-solid fa-phone pe-2"></i>0805-736-8560</p>
+                <p class="fw-bold fs-4"><i class="fa-solid fa-phone pe-2"></i><i class="fa-brands fa-whatsapp pe-2"></i>0907-004-6964</p>
+                <p class="" style="font-size: 12px;">8am - 5pm (Monday - Friday)</p>
+                <p class="" style="font-size: 12px;">8am - 12noon Weekends</p>
+            </div>
+            <div>
+                <p class="display-6">Email Support</p>
+                <p class="fw-bold fs-5"><i class="fa-regular fa-envelope me-2"></i>support@whosabiwork.com</p>
+                <p class="" style="font-size: 12px;">We would ensure to get back to you.</p>
             </div>
         </div>
+    </div>
 </template>
 
 <script>

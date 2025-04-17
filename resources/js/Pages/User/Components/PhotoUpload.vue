@@ -100,7 +100,7 @@
 
                 // example of instance method call on pond reference
                 // this.$refs.pond.getFiles();
-                this.$refs.pond.insertAfter('<input type="text" />');
+                // this.$refs.pond.insertAfter('<input type="text" />');
             },
             uploadPhotos(event) {
                 this.form.post(route('photograph.store'), {

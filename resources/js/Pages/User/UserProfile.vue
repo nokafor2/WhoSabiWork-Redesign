@@ -157,7 +157,15 @@
     
             <!-- Contents for Set Availability -->
             <div v-if="businessAccount" class="tab-pane fade" id="availability" role="tabpanel" aria-labelledby="availability-tab" tabindex="0">
-                Contents for Set Availability
+                <div class="row justify-content-center">
+                    <div class="col-md-6 py-3">
+                        <DateAndTimeSelect></DateAndTimeSelect>
+                    </div>
+
+                    <div class="col-md-6">
+                        <P>Lorem ipsum dolor sit amet consectetur adipisicing elit. Amet expedita earum ipsa, magni inventore natus eveniet alias. Aperiam recusandae, obcaecati veritatis ut alias, maiores voluptatem at, ex fuga tempora impedit.</P>
+                    </div>
+                </div>
             </div>
             <!-- End of Contents for Set Availability -->
     
@@ -277,6 +285,7 @@
     import ImageCard from './Components/ImageCard.vue';
     import CommentAndReplyCard from './Components/CommentAndReplyCard.vue';
     import PhotoUpload from './Components/PhotoUpload.vue';
+    import DateAndTimeSelect from './Components/DateAndTimeSelect.vue';
 
     // import Mixins
     import MethodsMixin from './Mixins/MethodsMixin.js';
@@ -291,7 +300,7 @@
             StateSection, TownSection, BusinessCategorySection, BusinessDescriptionSection, 
             ArtisansSection, MobileMarketSection, TechnicalServiceSection, SparePartSection,
             CarBrandsSection, BusBrandsSection, TruckBrandsSection, VehicleCategorySection,
-            BusinessPageSection, ImageCard, CommentAndReplyCard, PhotoUpload
+            BusinessPageSection, ImageCard, CommentAndReplyCard, PhotoUpload, DateAndTimeSelect
         },
         mixins: [MethodsMixin],
         props: ['user', 'userCategories', 'techVehCategories', 'sPartVehCategories', 'vehicleBrands', 'allArtisans', 'allProducts',
