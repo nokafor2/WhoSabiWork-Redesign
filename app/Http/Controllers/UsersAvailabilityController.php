@@ -7,6 +7,8 @@ use App\Models\User;
 use App\Models\UsersAvailability;
 use Illuminate\Http\Request;
 
+use function PHPUnit\Framework\isNull;
+
 class UsersAvailabilityController extends Controller
 {
     use GlobalFunctions;
@@ -32,28 +34,32 @@ class UsersAvailabilityController extends Controller
      */
     public function store(Request $request)
     {
-        // dd($request->all());
         $userId = $request->user_id;
-        // $date_available = date("Y-m-d", $request->date_available);
         $date_available = $request->date_available;
         $selectedTime = $request->selectedTime;
-
-        $usersAvailability = new UsersAvailability();
-        $usersAvailability->user_id = $userId;
-        $usersAvailability->date_available = $date_available;
-        $usersAvailabilityCols = $this->getTableColumnsWithSort($usersAvailability->table, UsersAvailability::$columnsToExclude)->toArray();
-        // dd($request->selectedTime);
-        foreach ($usersAvailabilityCols as $index => $usersAvailCol) {
-            if (in_array($index, $selectedTime)) {
-                $usersAvailability->{$index} = true;
-            } else {
-                $usersAvailability->{$index} = false;
+        
+        // check if record already exists before creating a new one
+        $record = UsersAvailability::where([['user_id', '=', $userId], ['date_available', '=', $date_available]])->get();
+        if (empty($record->toArray())) {
+            // create new record
+            $usersAvailability = new UsersAvailability();
+            $usersAvailability->user_id = $userId;
+            $usersAvailability->date_available = $date_available;
+            $usersAvailabilityCols = $this->getTableColumnsWithSort($usersAvailability->table, UsersAvailability::$columnsToExclude)->toArray();
+            foreach ($usersAvailabilityCols as $index => $usersAvailCol) {
+                if (in_array($index, $selectedTime)) {
+                    $usersAvailability->{$index} = true;
+                } else {
+                    $usersAvailability->{$index} = false;
+                }
             }
-        }
-        // dd($usersAvailability->toArray());
-        $result = UsersAvailability::create($usersAvailability->toArray());
+            $result = UsersAvailability::create($usersAvailability->toArray());
 
-        return redirect()->route('users.show', $userId)->with('success', $result);
+            return redirect()->route('users.show', $userId)->with('success', $result->id);
+        } else {
+            // update the record
+            $this->update($request, $record->first());
+        }
     }
 
     /**
@@ -77,7 +83,21 @@ class UsersAvailabilityController extends Controller
      */
     public function update(Request $request, UsersAvailability $usersAvailability)
     {
-        //
+        // dd($usersAvailability);
+        $userId = $request->user_id;
+        $selectedTime = $request->selectedTime;
+
+        $usersAvailabilityCols = $this->getTableColumnsWithSort($usersAvailability->table, UsersAvailability::$columnsToExclude)->toArray();
+        foreach ($usersAvailabilityCols as $index => $usersAvailCol) {
+            if (in_array($index, $selectedTime)) {
+                $usersAvailability->{$index} = true;
+            } else {
+                $usersAvailability->{$index} = false;
+            }
+        }
+        $result = $usersAvailability->update();
+
+        return redirect()->route('users.show', $userId)->with('success', $result);
     }
 
     /**
