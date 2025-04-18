@@ -3,7 +3,7 @@
     <VueDatePicker v-model="date" inline auto-apply :enable-time-picker="false" ignore-time-validation :min-date="new Date()" model-type="yyyy-MM-dd" />
     <p v-if="date">Selected date: {{ date }}</p>
 
-    <TimePicker @selected-times="updateSelectedTimes"></TimePicker>
+    <TimePicker ref="timePicker" @selected-times="updateSelectedTimes"></TimePicker>
 
     <button class="btn btn-danger w-100" type="button" @click="createAvailability">Create Availability</button>
 </template>
@@ -42,7 +42,7 @@
                     onSuccess: (page) => {
                         if (page.props.flash.success) {
                             console.log(page);
-                            this.selectedTime = [];
+                            this.clearTime();
                         }
                     },
                     onError: (errors) => {
@@ -52,27 +52,34 @@
             },
             updateSelectedTimes(selectedTime) {
                 this.selectedTime = selectedTime;
-                console.log(selectedTime);
             },
-            format(date) {
-                // const day = date.getDate();
-                // const month = date.getMonth() + 1;
-                // const year = date.getFullYear();
-
-                // // return `Selected date is ${day}/${month}/${year}`;
-                // return `Selected date is ${year}-${month}-${day}`;
-
-                var d = new Date(date),
-                month = '' + (d.getMonth() + 1),
-                day = '' + d.getDate(),
-                year = d.getFullYear();
-
-                if (month.length < 2) 
-                    month = '0' + month;
-                if (day.length < 2) 
-                    day = '0' + day;
-
-                return [year, month, day].join('-');
+            clearTime() {
+                this.selectedTime = [];
+                this.$refs.timePicker.selectedTime = [];
+                this.$refs.timePicker.$refs.checkbox800am.timeSelected = false;
+                this.$refs.timePicker.$refs.checkbox830am.timeSelected = false;
+                this.$refs.timePicker.$refs.checkbox900am.timeSelected = false;
+                this.$refs.timePicker.$refs.checkbox930am.timeSelected = false;
+                this.$refs.timePicker.$refs.checkbox1000am.timeSelected = false;
+                this.$refs.timePicker.$refs.checkbox1030am.timeSelected = false;
+                this.$refs.timePicker.$refs.checkbox1100am.timeSelected = false;
+                this.$refs.timePicker.$refs.checkbox1130am.timeSelected = false;
+                this.$refs.timePicker.$refs.checkbox1200pm.timeSelected = false;
+                this.$refs.timePicker.$refs.checkbox1230pm.timeSelected = false;
+                this.$refs.timePicker.$refs.checkbox100pm.timeSelected = false;
+                this.$refs.timePicker.$refs.checkbox130pm.timeSelected = false;
+                this.$refs.timePicker.$refs.checkbox200pm.timeSelected = false;
+                this.$refs.timePicker.$refs.checkbox230pm.timeSelected = false;
+                this.$refs.timePicker.$refs.checkbox300pm.timeSelected = false;
+                this.$refs.timePicker.$refs.checkbox330pm.timeSelected = false;
+                this.$refs.timePicker.$refs.checkbox400pm.timeSelected = false;
+                this.$refs.timePicker.$refs.checkbox430pm.timeSelected = false;
+                this.$refs.timePicker.$refs.checkbox500pm.timeSelected = false;
+                this.$refs.timePicker.$refs.checkbox530pm.timeSelected = false;
+                this.$refs.timePicker.$refs.checkbox600pm.timeSelected = false;
+                this.$refs.timePicker.$refs.checkbox630pm.timeSelected = false;
+                this.$refs.timePicker.$refs.checkbox700pm.timeSelected = false;
+                this.$refs.timePicker.$refs.checkbox730pm.timeSelected = false;
             }
         }
     }

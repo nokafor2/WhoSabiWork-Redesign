@@ -26,7 +26,6 @@
         },
         watch: {
             timeSelected() {
-                console.log(this.timeSelected + ' ' + this.name);
                 this.$emit('time-selected', this.timeSelected, this.name);
             }
         }
