@@ -12,6 +12,8 @@ class UsersAvailability extends Model
     /** @use HasFactory<\Database\Factories\UsersAvailabilityFactory> */
     use HasFactory, GlobalFunctions, SoftDeletes;
 
+    public $table = 'users_availabilities';
+
     protected $fillable = ['user_id', 'date_available', 'eight_AM', 'eight_Thirty_AM', 
     'nine_AM', 'nine_Thirty_AM', 'ten_AM', 'ten_Thirty_AM', 'eleven_AM', 'eleven_Thirty_AM', 
     'twelve_PM', 'twelve_Thirty_PM', 'one_PM', 'one_Thirty_PM', 'two_PM', 'two_Thirty_PM', 

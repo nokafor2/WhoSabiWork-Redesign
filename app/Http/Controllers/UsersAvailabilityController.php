@@ -2,11 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Traits\GlobalFunctions;
+use App\Models\User;
 use App\Models\UsersAvailability;
 use Illuminate\Http\Request;
 
 class UsersAvailabilityController extends Controller
 {
+    use GlobalFunctions;
+    
     /**
      * Display a listing of the resource.
      */
@@ -28,7 +32,28 @@ class UsersAvailabilityController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        // dd($request->all());
+        $userId = $request->user_id;
+        // $date_available = date("Y-m-d", $request->date_available);
+        $date_available = $request->date_available;
+        $selectedTime = $request->selectedTime;
+
+        $usersAvailability = new UsersAvailability();
+        $usersAvailability->user_id = $userId;
+        $usersAvailability->date_available = $date_available;
+        $usersAvailabilityCols = $this->getTableColumnsWithSort($usersAvailability->table, UsersAvailability::$columnsToExclude)->toArray();
+        // dd($request->selectedTime);
+        foreach ($usersAvailabilityCols as $index => $usersAvailCol) {
+            if (in_array($index, $selectedTime)) {
+                $usersAvailability->{$index} = true;
+            } else {
+                $usersAvailability->{$index} = false;
+            }
+        }
+        // dd($usersAvailability->toArray());
+        $result = UsersAvailability::create($usersAvailability->toArray());
+
+        return redirect()->route('users.show', $userId)->with('success', $result);
     }
 
     /**

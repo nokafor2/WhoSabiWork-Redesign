@@ -55,7 +55,9 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::table('users_availabilities', function (Blueprint $table) {
+            $table->dropSoftDeletes();
+        });
         Schema::dropIfExists('users_availabilities');
-        Schema::dropSoftDeletes();
     }
 };

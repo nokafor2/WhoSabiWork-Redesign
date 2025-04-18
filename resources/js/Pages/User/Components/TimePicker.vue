@@ -50,6 +50,7 @@
 
     export default {
         components: {TimeCheckBox},
+        emits: ['selected-times'],
         data() {
             return {
                 am: 'AM',
@@ -88,6 +89,7 @@
                 } else {
                     this.selectedTime = this.selectedTime.filter((time) => time !== timeName);
                 }
+                this.$emit('selected-times', this.selectedTime);
             }
         }
     }

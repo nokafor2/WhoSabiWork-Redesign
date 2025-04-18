@@ -5,11 +5,12 @@ namespace App\Models;
 use App\Http\Traits\GlobalFunctions;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class UsersFeedback extends Model
 {
     /** @use HasFactory<\Database\Factories\UsersFeedbackFactory> */
-    use HasFactory, GlobalFunctions;
+    use HasFactory, GlobalFunctions, SoftDeletes;
 
     public $table = 'users_feedback';
     

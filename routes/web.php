@@ -22,6 +22,7 @@ use App\Http\Controllers\UserCommentController;
 use App\Http\Controllers\UserPhotoController;
 use App\Http\Controllers\UserTagController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\UsersAvailabilityController;
 use App\Http\Controllers\VehicleCategoryController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -88,6 +89,8 @@ Route::resource('truckbrand', TruckBrandController::class)->only('update');
 Route::resource('vehiclecategory', VehicleCategoryController::class)->only('update');
 
 Route::resource('photograph', PhotographController::class)->only('index', 'store', 'create', 'update');
+
+Route::resource('usersavailability', UsersAvailabilityController::class)->only('index', 'store', 'create', 'update');
 
 Route::get('userlogin', [AuthController::class, 'create'])->name('login');
 
