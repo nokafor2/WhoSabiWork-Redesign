@@ -7,8 +7,6 @@ use App\Models\User;
 use App\Models\UsersAvailability;
 use Illuminate\Http\Request;
 
-use function PHPUnit\Framework\isNull;
-
 class UsersAvailabilityController extends Controller
 {
     use GlobalFunctions;
@@ -37,6 +35,7 @@ class UsersAvailabilityController extends Controller
         $userId = $request->user_id;
         $date_available = $request->date_available;
         $selectedTime = $request->selectedTime;
+        // Add validation for date and time selected
         
         // check if record already exists before creating a new one
         $record = UsersAvailability::where([['user_id', '=', $userId], ['date_available', '=', $date_available]])->get();
@@ -101,14 +100,30 @@ class UsersAvailabilityController extends Controller
         }
         $result = $usersAvailability->update();
 
-        return redirect()->route('users.show', $userId)->with('success', $result);
+        if ($result) {
+            // return the update schedule
+            // $schedules = $this->getSchedule($userId);
+            $this->show($request, $userId);
+        }
+
+        // return redirect()->route('users.show', $userId)->with('success', $schedules);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(UsersAvailability $usersAvailability)
+    public function destroy(Request $request, String $id)
     {
-        //
+        $userId = $id;
+        $date_available = $request->date_available;
+
+        $record = UsersAvailability::where([['user_id', '=', $userId], ['date_available', '=', $date_available]])->get();
+        // $result = unset($record);
+        $result = $record->delete();
+
+        dd($result);
+
+        $this->show($request, $userId);
+
     }
 }

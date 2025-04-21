@@ -36,11 +36,14 @@
 
 
 <script>
+    import { useForm } from '@inertiajs/vue3';
+
     export default {
         props: ['count', 'date', 'times'],
+        emits: ['updated-schedule'],
         data() {
             return {
-
+                userId: 1,
             }
         },
         methods: {
@@ -49,6 +52,25 @@
             },
             targetId(id) {
                 return id+this.count;
+            },
+            deleteSchedule() {
+                var formData = useForm({
+                    user_id: this.userId,
+                    date_available: this.date,
+                });
+                formData.delete(route('usersavailability.destroy', this.userId), {
+                    preserveState: true,
+                    preserveScroll: true,
+                    onSuccess: (page) => {
+                        if (page.props.flash.success) {
+                            console.log(page);
+                            this.$emit('updated-schedule', page.props.flash.success);
+                        }
+                    },
+                    onError: (errors) => {
+                        console.log('Error: ', errors);
+                    }
+                });
             }
         }
     }

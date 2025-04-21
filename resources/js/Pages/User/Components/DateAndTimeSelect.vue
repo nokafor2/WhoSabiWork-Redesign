@@ -1,7 +1,10 @@
 <template>
-    <!-- <VueDatePicker v-model="date" inline auto-apply :min-date="new Date()" model-type="format" /> -->
+    <div class="d-flex justify-content-center">
+        <p class="fs-3">Set Your Availabilities</p>
+    </div>
+
     <VueDatePicker v-model="date" inline auto-apply :enable-time-picker="false" ignore-time-validation :min-date="new Date()" model-type="yyyy-MM-dd" />
-    <p v-if="date">Selected date: {{ date }}</p>
+    <!-- <p v-if="date">Selected date: {{ date }}</p> -->
 
     <TimePicker ref="timePicker" @selected-times="updateSelectedTimes"></TimePicker>
 
@@ -24,6 +27,7 @@
 
     export default {
         components: { TimePicker },
+        emits: ['update-schedule'],
         data() {
             return {
                 date: null,
@@ -43,7 +47,8 @@
                     preserveScroll: true,
                     onSuccess: (page) => {
                         if (page.props.flash.success) {
-                            console.log(page);
+                            // console.log(page);
+                            this.$emit('update-schedule', page.props.flash.success);
                             this.clearTime();
                         }
                     },

@@ -1,9 +1,12 @@
 <template>
-    <button class="btn btn-danger my-3" type="button" @click="getUserAvailabilities">Show Schedule</button>
+    <div class="d-flex justify-content-center">
+        <p class="fs-3">Your Available Schedules</p>
+    </div>
+    <!-- <button class="btn btn-danger my-3" type="button" @click="getUserAvailabilities">Show Schedule</button> -->
 
     <div class="accordion" id="accordionExample">
         <!-- <UserSchedule v-for="(date, index) in schedules" :key="index" :count="index" :date="index" :times="date.timeName" ></UserSchedule> -->
-        <UserSchedule v-for="(date, index) in schedules" :key="index" :count="index" :date="index" :times="date" ></UserSchedule>
+        <UserSchedule v-for="(date, index) in schedules" :key="index" :count="index" :date="index" :times="date" @updated-schedule="updateSchedule" ></UserSchedule>
     </div>
 </template>
 
@@ -14,10 +17,11 @@
 
     export default {
         components: { UserSchedule },
+        props: ['schedules'],
         data() {
             return {
                 userId: 1,
-                schedules: [],
+                // schedules: [],
             }
         },
         methods: {
@@ -39,6 +43,9 @@
                         console.log('Error: ', errors);
                     }
                 });
+            },
+            updateSchedule(schedule) {
+                this.schedules = schedule;
             }
         }
     }

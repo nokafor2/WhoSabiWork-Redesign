@@ -158,12 +158,12 @@
             <!-- Contents for Set Availability -->
             <div v-if="businessAccount" class="tab-pane fade" id="availability" role="tabpanel" aria-labelledby="availability-tab" tabindex="0">
                 <div class="row justify-content-center">
-                    <div class="col-md-6 py-3">
-                        <DateAndTimeSelect></DateAndTimeSelect>
+                    <div class="col-md-6">
+                        <DateAndTimeSelect @update-schedule="updateSchedule"></DateAndTimeSelect>
                     </div>
 
                     <div class="col-md-6">
-                        <UserAvailability></UserAvailability>
+                        <UserAvailability :schedules="schedules2"></UserAvailability>
                     </div>
                 </div>
             </div>
@@ -307,7 +307,7 @@
         mixins: [MethodsMixin],
         props: ['user', 'userCategories', 'techVehCategories', 'sPartVehCategories', 'vehicleBrands', 'allArtisans', 'allProducts',
             'allTechnicalServices', 'allSpareParts', 'allVehicleCategories', 'allCarBrands',
-            'allBusBrands', 'allTruckBrands'
+            'allBusBrands', 'allTruckBrands', 'schedules'
         ],
         emits: [],
         data() {
@@ -319,6 +319,7 @@
                     2: 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ad cumque adipisci possimus voluptatum? Asperiores labore, adipisci id nostrum ab ut voluptatum accusantium? Nulla similique ut aspernatur laudantium. Debitis, vitae nostrum.'
                 },
                 page: usePage(),
+                schedules2: this.schedules,
             }
         },
         methods: {
@@ -327,6 +328,9 @@
                 const imageUrl = new URL(`../../../Images/${imageName}.jpg`, import.meta.url).href;
 
                 return imageUrl;
+            },
+            updateSchedule(schedules) {
+                this.schedules2 = schedules;
             }
         },
         computed: {
