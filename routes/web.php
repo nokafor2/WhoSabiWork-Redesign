@@ -90,7 +90,7 @@ Route::resource('vehiclecategory', VehicleCategoryController::class)->only('upda
 
 Route::resource('photograph', PhotographController::class)->only('index', 'store', 'create', 'update');
 
-Route::resource('usersavailability', UsersAvailabilityController::class)->only('index', 'store', 'create', 'update');
+Route::resource('usersavailability', UsersAvailabilityController::class)->only('show', 'store', 'create', 'update');
 
 Route::get('userlogin', [AuthController::class, 'create'])->name('login');
 
