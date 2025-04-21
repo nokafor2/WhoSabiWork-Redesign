@@ -12,6 +12,7 @@ use App\Models\SparePart;
 use App\Models\TechnicalService;
 use App\Models\TruckBrand;
 use App\Models\User;
+use App\Models\UsersAvailability;
 use App\Models\VehicleCategory;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
@@ -635,6 +636,98 @@ trait GlobalFunctions {
         $refindedCols = array_diff($category, $arrayExclude);
         // reform the array
         return $this->reduceArray3($refindedCols);
+    }
+
+    public function getSchedule($userId) {
+        // get current date
+        $currentDate = date('Y-m-d');
+        $result = UsersAvailability::where([['user_id', '=', $userId], ['date_available', '>=', $currentDate]])->get();
+        // dd($result->toArray());
+        $arrayToExclude = ['id' => '', 'user_id' => '', 'created_at' => '', 'updated_at' => '', 'deleted_at' => ''];
+        $resultArray = $result->toArray();
+        $schedules = array();
+        foreach ($resultArray as $index => $array) {
+            $schedules[] = array_diff_key($array, $arrayToExclude);
+        }
+
+        $time = array();
+        $newSchedule = array();
+        $timeSchedule = array();
+        $count = 1;
+        foreach ($schedules as $key => $schedule) {
+            foreach ($schedule as $key2 => $value2) {
+                // Filter out the true schedule
+                if ($value2 === 1) {
+                    // $time[$key2] = $this->convertTime($key2);
+                    $scheduleCount = 'schedule'.$count;
+                    $timeSchedule[$scheduleCount] = $this->convertTime($key2);
+                }
+                $count++;
+            }
+            // $time['timeName'] = $timeSchedule;
+            // $newSchedule[$schedule['date_available']] = $time;
+            $newSchedule[$schedule['date_available']] = $timeSchedule;
+            // reset time
+            $time = [];
+            // reset timeSchedule
+            $timeSchedule = [];
+            // reset schedule counter
+            $count = 0;
+        }
+
+        return $newSchedule;
+    }
+
+    public function convertTime($time) {
+        if ($time === 'eight_AM') {
+            return ['time' => '8:00', 'period' => 'AM'];            
+        } elseif ($time === 'eight_Thirty_AM') {
+            return ['time' => '8:30', 'period' => 'AM'];
+        } elseif ($time === 'nine_AM') {
+            return ['time' => '9:00', 'period' => 'AM'];
+        } elseif ($time === 'nine_Thirty_AM') {
+            return ['time' => '9:30', 'period' => 'AM'];
+        } elseif ($time === 'ten_AM') {
+            return ['time' => '10:00', 'period' => 'AM'];
+        } elseif ($time === 'ten_Thirty_AM') {
+            return ['time' => '10:30', 'period' => 'AM'];
+        } elseif ($time === 'eleven_AM') {
+            return ['time' => '11:00', 'period' => 'AM'];
+        } elseif ($time === 'eleven_Thirty_AM') {
+            return ['time' => '11:30', 'period' => 'AM'];
+        } elseif ($time === 'twelve_PM') {
+            return ['time' => '12:00', 'period' => 'PM'];
+        } elseif ($time === 'twelve_Thirty_PM') {
+            return ['time' => '12:30', 'period' => 'PM'];
+        } elseif ($time === 'one_PM') {
+            return ['time' => '1:00', 'period' => 'PM'];
+        } elseif ($time === 'one_Thirty_PM') {
+            return ['time' => '1:30', 'period' => 'PM'];
+        } elseif ($time === 'two_PM') {
+            return ['time' => '2:00', 'period' => 'PM'];
+        } elseif ($time === 'two_Thirty_PM') {
+            return ['time' => '2:30', 'period' => 'PM'];
+        } elseif ($time === 'three_PM') {
+            return ['time' => '3:00', 'period' => 'PM'];
+        } elseif ($time === 'three_Thirty_PM') {
+            return ['time' => '3:30', 'period' => 'PM'];
+        } elseif ($time === 'four_PM') {
+            return ['time' => '4:00', 'period' => 'PM'];
+        } elseif ($time === 'four_Thirty_PM') {
+            return ['time' => '4:30', 'period' => 'PM'];
+        } elseif ($time === 'five_PM') {
+            return ['time' => '5:00', 'period' => 'PM'];
+        } elseif ($time === 'five_Thirty_PM') {
+            return ['time' => '5:30', 'period' => 'PM'];
+        } elseif ($time === 'six_PM') {
+            return ['time' => '6:00', 'period' => 'PM'];
+        } elseif ($time === 'six_Thirty_PM') {
+            return ['time' => '6:30', 'period' => 'PM'];
+        } elseif ($time === 'seven_PM') {
+            return ['time' => '7:00', 'period' => 'PM'];
+        } elseif ($time === 'seven_Thirty_PM') {
+            return ['time' => '7:30', 'period' => 'PM'];
+        }
     }
 }
 

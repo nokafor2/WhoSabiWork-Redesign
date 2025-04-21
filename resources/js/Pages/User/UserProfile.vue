@@ -163,7 +163,7 @@
                     </div>
 
                     <div class="col-md-6">
-                        <P>Lorem ipsum dolor sit amet consectetur adipisicing elit. Amet expedita earum ipsa, magni inventore natus eveniet alias. Aperiam recusandae, obcaecati veritatis ut alias, maiores voluptatem at, ex fuga tempora impedit.</P>
+                        <UserAvailability></UserAvailability>
                     </div>
                 </div>
             </div>
@@ -286,6 +286,7 @@
     import CommentAndReplyCard from './Components/CommentAndReplyCard.vue';
     import PhotoUpload from './Components/PhotoUpload.vue';
     import DateAndTimeSelect from './Components/DateAndTimeSelect.vue';
+    import UserAvailability from './Components/UserAvailability.vue';
 
     // import Mixins
     import MethodsMixin from './Mixins/MethodsMixin.js';
@@ -300,7 +301,8 @@
             StateSection, TownSection, BusinessCategorySection, BusinessDescriptionSection, 
             ArtisansSection, MobileMarketSection, TechnicalServiceSection, SparePartSection,
             CarBrandsSection, BusBrandsSection, TruckBrandsSection, VehicleCategorySection,
-            BusinessPageSection, ImageCard, CommentAndReplyCard, PhotoUpload, DateAndTimeSelect
+            BusinessPageSection, ImageCard, CommentAndReplyCard, PhotoUpload, DateAndTimeSelect,
+            UserAvailability
         },
         mixins: [MethodsMixin],
         props: ['user', 'userCategories', 'techVehCategories', 'sPartVehCategories', 'vehicleBrands', 'allArtisans', 'allProducts',

@@ -65,9 +65,13 @@ class UsersAvailabilityController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(UsersAvailability $usersAvailability)
+    public function show(Request $request, String $id)
     {
-        //
+        $userId = $request->user_id;
+        $schedules = $this->getSchedule($userId);
+        // dd($schedules);
+
+        return redirect()->route('users.show', $userId)->with('success', $schedules);
     }
 
     /**

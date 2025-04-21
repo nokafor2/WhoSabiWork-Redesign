@@ -5,7 +5,9 @@
 
     <TimePicker ref="timePicker" @selected-times="updateSelectedTimes"></TimePicker>
 
-    <button class="btn btn-danger w-100" type="button" @click="createAvailability">Create Availability</button>
+    <div class="d-flex justify-content-center">
+        <button class="btn btn-danger" type="button" @click="createAvailability">Create Availability</button>
+    </div>
 </template>
   
 <script setup>
