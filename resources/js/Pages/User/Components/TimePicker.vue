@@ -1,5 +1,5 @@
 <template>
-    <div class="row my-3">
+    <div class="row mb-3">
         <div class="btn-group my-2" role="group" aria-label="Basic checkbox toggle button group">
             <TimeCheckBox ref="checkbox800am" count="1" :time="eightAM" :period="am" name="eight_AM" @time-selected="updateSelectedTime"></TimeCheckBox>
             <TimeCheckBox ref="checkbox830am" count="2" :time="eightThirtyAM" :period="am" name="eight_Thirty_AM" @time-selected="updateSelectedTime"></TimeCheckBox>
