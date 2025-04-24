@@ -17,6 +17,7 @@ use App\Models\VehicleCategory;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Builder;
+use Carbon\Carbon;
 
 trait GlobalFunctions {
 
@@ -641,8 +642,7 @@ trait GlobalFunctions {
     public function getSchedule($userId) {
         // get current date
         $currentDate = date('Y-m-d');
-        $result = UsersAvailability::where([['user_id', '=', $userId], ['date_available', '>=', $currentDate]])->get();
-        // dd($result->toArray());
+        $result = UsersAvailability::where([['user_id', '=', $userId], ['date_available', '>=', $currentDate]])->orderBy('date_available', 'asc')->get();
         $arrayToExclude = ['id' => '', 'user_id' => '', 'created_at' => '', 'updated_at' => '', 'deleted_at' => ''];
         $resultArray = $result->toArray();
         $schedules = array();
@@ -650,29 +650,23 @@ trait GlobalFunctions {
             $schedules[] = array_diff_key($array, $arrayToExclude);
         }
 
-        $time = array();
         $newSchedule = array();
         $timeSchedule = array();
-        $count = 1;
         foreach ($schedules as $key => $schedule) {
+            $count = 0;
             foreach ($schedule as $key2 => $value2) {
                 // Filter out the true schedule
                 if ($value2 === 1) {
-                    // $time[$key2] = $this->convertTime($key2);
-                    $scheduleCount = 'schedule'.$count;
-                    $timeSchedule[$scheduleCount] = $this->convertTime($key2);
+                    $timeSchedule[$count] = $this->convertTime($key2);
                 }
                 $count++;
             }
-            // $time['timeName'] = $timeSchedule;
-            // $newSchedule[$schedule['date_available']] = $time;
-            $newSchedule[$schedule['date_available']] = $timeSchedule;
-            // reset time
-            $time = [];
+            // $date = Carbon::parse($schedule['date_available'])->diffForHumans();
+            // $date = Carbon::parse($schedule['date_available'])->format('l jS \\of F Y h:i:s A');
+            $date = Carbon::parse($schedule['date_available'])->format('l jS \\of F Y');
+            $newSchedule[$date] = $timeSchedule;
             // reset timeSchedule
             $timeSchedule = [];
-            // reset schedule counter
-            $count = 0;
         }
 
         return $newSchedule;

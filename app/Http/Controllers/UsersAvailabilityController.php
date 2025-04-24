@@ -54,7 +54,13 @@ class UsersAvailabilityController extends Controller
             }
             $result = UsersAvailability::create($usersAvailability->toArray());
 
-            return redirect()->route('users.show', $userId)->with('success', $result->id);
+            if ($result->id) {
+                // return the update schedule
+                $schedules = $this->getSchedule($userId);
+                return redirect()->route('users.show', $userId)->with('success', $schedules);
+            } else {
+                return redirect()->route('users.show', $userId)->with('success', false);
+            }
         } else {
             // update the record
             $this->update($request, $record->first());
@@ -68,7 +74,6 @@ class UsersAvailabilityController extends Controller
     {
         $userId = $request->user_id;
         $schedules = $this->getSchedule($userId);
-        // dd($schedules);
 
         return redirect()->route('users.show', $userId)->with('success', $schedules);
     }
@@ -98,15 +103,17 @@ class UsersAvailabilityController extends Controller
                 $usersAvailability->{$index} = false;
             }
         }
+        // update the record
+        // $result = $usersAvailability->update($usersAvailability->toArray());
         $result = $usersAvailability->update();
-
+        
         if ($result) {
             // return the update schedule
-            // $schedules = $this->getSchedule($userId);
-            $this->show($request, $userId);
+            $schedules = $this->getSchedule($userId);
+            return redirect()->route('users.show', $userId)->with('success', $schedules);
+        } else {
+            return redirect()->route('users.show', $userId)->with('success', $result);
         }
-
-        // return redirect()->route('users.show', $userId)->with('success', $schedules);
     }
 
     /**
@@ -117,13 +124,12 @@ class UsersAvailabilityController extends Controller
         $userId = $id;
         $date_available = $request->date_available;
 
-        $record = UsersAvailability::where([['user_id', '=', $userId], ['date_available', '=', $date_available]])->get();
-        // $result = unset($record);
-        $result = $record->delete();
-
-        dd($result);
-
-        $this->show($request, $userId);
-
+        $result = UsersAvailability::where([['user_id', '=', $userId], ['date_available', '=', $date_available]])->delete();
+        if ($result) {
+            $schedules = $this->getSchedule($userId);
+            return redirect()->route('users.show', $userId)->with('success', $schedules);
+        } else {
+            return redirect()->route('users.show', $userId)->with('success', $result);
+        }        
     }
 }

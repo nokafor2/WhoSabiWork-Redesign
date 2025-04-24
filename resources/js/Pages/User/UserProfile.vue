@@ -163,7 +163,7 @@
                     </div>
 
                     <div class="col-md-6">
-                        <UserAvailability :schedules="schedules2"></UserAvailability>
+                        <UserAvailability :schedules="schedules"></UserAvailability>
                     </div>
                 </div>
             </div>

@@ -5,8 +5,7 @@
     <!-- <button class="btn btn-danger my-3" type="button" @click="getUserAvailabilities">Show Schedule</button> -->
 
     <div class="accordion" id="accordionExample">
-        <!-- <UserSchedule v-for="(date, index) in schedules" :key="index" :count="index" :date="index" :times="date.timeName" ></UserSchedule> -->
-        <UserSchedule v-for="(date, index) in schedules" :key="index" :count="index" :date="index" :times="date" @updated-schedule="updateSchedule" ></UserSchedule>
+        <UserSchedule v-for="(schedule, index, index2) in schedules" :key="index2" :count="index2" :date="index" :times="schedule" @updated-schedule="updateSchedule"></UserSchedule>
     </div>
 </template>
 
@@ -21,7 +20,7 @@
         data() {
             return {
                 userId: 1,
-                // schedules: [],
+                schedules2: this.schedules,
             }
         },
         methods: {
@@ -36,7 +35,6 @@
                         if (page.props.flash.success) {
                             console.log(page);
                             this.schedules = page.props.flash.success;
-
                         }
                     },
                     onError: (errors) => {
@@ -44,8 +42,8 @@
                     }
                 });
             },
-            updateSchedule(schedule) {
-                this.schedules = schedule;
+            updateSchedule(schedules) {
+                this.schedules2 = schedules;
             }
         }
     }

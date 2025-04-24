@@ -6,6 +6,12 @@
     <VueDatePicker v-model="date" inline auto-apply :enable-time-picker="false" ignore-time-validation :min-date="new Date()" model-type="yyyy-MM-dd" />
     <!-- <p v-if="date">Selected date: {{ date }}</p> -->
 
+    <div class="form-check mt-3">
+        <input class="form-check-input" type="checkbox" value="" id="selectAll" @change="toggleSelectAll" v-model="selectAll">
+        <label class="form-check-label" for="selectAll">
+            Select All
+        </label>
+    </div>
     <TimePicker ref="timePicker" @selected-times="updateSelectedTimes"></TimePicker>
 
     <div class="d-flex justify-content-center">
@@ -33,6 +39,7 @@
                 date: null,
                 selectedTime: [],
                 userId: 1,
+                selectAll: false,
             }
         },
         methods: {
@@ -47,9 +54,10 @@
                     preserveScroll: true,
                     onSuccess: (page) => {
                         if (page.props.flash.success) {
-                            // console.log(page);
+                            console.log(page);
                             this.$emit('update-schedule', page.props.flash.success);
                             this.clearTime();
+                            this.selectAll = false;
                         }
                     },
                     onError: (errors) => {
@@ -59,6 +67,39 @@
             },
             updateSelectedTimes(selectedTime) {
                 this.selectedTime = selectedTime;
+            },
+            toggleSelectAll() {
+                if (this.selectAll) {
+                    this.selectTime();
+                } else {
+                    this.clearTime();
+                }
+            },
+            selectTime() {
+                this.$refs.timePicker.$refs.checkbox800am.timeSelected = true;
+                this.$refs.timePicker.$refs.checkbox830am.timeSelected = true;
+                this.$refs.timePicker.$refs.checkbox900am.timeSelected = true;
+                this.$refs.timePicker.$refs.checkbox930am.timeSelected = true;
+                this.$refs.timePicker.$refs.checkbox1000am.timeSelected = true;
+                this.$refs.timePicker.$refs.checkbox1030am.timeSelected = true;
+                this.$refs.timePicker.$refs.checkbox1100am.timeSelected = true;
+                this.$refs.timePicker.$refs.checkbox1130am.timeSelected = true;
+                this.$refs.timePicker.$refs.checkbox1200pm.timeSelected = true;
+                this.$refs.timePicker.$refs.checkbox1230pm.timeSelected = true;
+                this.$refs.timePicker.$refs.checkbox100pm.timeSelected = true;
+                this.$refs.timePicker.$refs.checkbox130pm.timeSelected = true;
+                this.$refs.timePicker.$refs.checkbox200pm.timeSelected = true;
+                this.$refs.timePicker.$refs.checkbox230pm.timeSelected = true;
+                this.$refs.timePicker.$refs.checkbox300pm.timeSelected = true;
+                this.$refs.timePicker.$refs.checkbox330pm.timeSelected = true;
+                this.$refs.timePicker.$refs.checkbox400pm.timeSelected = true;
+                this.$refs.timePicker.$refs.checkbox430pm.timeSelected = true;
+                this.$refs.timePicker.$refs.checkbox500pm.timeSelected = true;
+                this.$refs.timePicker.$refs.checkbox530pm.timeSelected = true;
+                this.$refs.timePicker.$refs.checkbox600pm.timeSelected = true;
+                this.$refs.timePicker.$refs.checkbox630pm.timeSelected = true;
+                this.$refs.timePicker.$refs.checkbox700pm.timeSelected = true;
+                this.$refs.timePicker.$refs.checkbox730pm.timeSelected = true;
             },
             clearTime() {
                 this.selectedTime = [];
