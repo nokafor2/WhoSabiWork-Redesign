@@ -15,7 +15,7 @@
                         <i class="fa-regular fa-star-half-stroke"></i>
                         <i class="fa-regular fa-star"></i> -->
                     </p>
-                    <p class="col-lg mb-0 mb-lg-3 bg-light text-body rounded-pill w-auto">
+                    <p class="col-lg mb-0 mb-lg-3 bg-light text-body rounded-pill w-auto" >
                         {{ advocators }} advocators
                     </p>
                 </div>
@@ -26,7 +26,7 @@
                         <i class="fa-brands fa-whatsapp px-1"></i>
                         <i class="fa-brands fa-linkedin px-1"></i>
                     </p>
-                    <p class="col-lg mb-0 mb-lg-3 bg-danger text-light rounded w-auto btn btn-sm">
+                    <p class="col-lg mb-0 mb-lg-3 bg-danger text-light rounded w-auto btn btn-sm" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
                         Set Appointment
                     </p>
                 </div>
@@ -42,10 +42,14 @@
             <p class="col mb-1 mb-md-3"><i class="fa-solid fa-globe me-2"></i>{{ email }}</p>
         </div>
     </div>
+    <SelectAppointment></SelectAppointment>
 </template>
 
 <script>
+    import SelectAppointment from './SelectAppointment.vue';
+
     export default {
+        components: {SelectAppointment},
         props: ['user'],
         data() {
             return {
