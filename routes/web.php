@@ -22,7 +22,9 @@ use App\Http\Controllers\UserCommentController;
 use App\Http\Controllers\UserPhotoController;
 use App\Http\Controllers\UserTagController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\UsersAppointmentController;
 use App\Http\Controllers\UsersAvailabilityController;
+use App\Http\Controllers\UsersAvailabilityFxns;
 use App\Http\Controllers\VehicleCategoryController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -92,6 +94,8 @@ Route::resource('photograph', PhotographController::class)->only('index', 'store
 
 Route::resource('usersavailability', UsersAvailabilityController::class)->only('show', 'store', 'create', 'update', 'destroy');
 
+Route::resource('usersappointment', UsersAppointmentController::class)->only('show', 'store', 'update', 'destroy');
+
 Route::get('userlogin', [AuthController::class, 'create'])->name('login');
 
 Route::post('userlogin', [AuthController::class, 'store'])->name('login.store');
@@ -102,6 +106,8 @@ Route::delete('userlogout', [AuthController::class, 'destroy'])->name('logout');
 Route::post('/upload', UploadTemporaryImageController::class);
 // Route::post('/revert/{folder}', DeleteTemporaryImageController::class)->name('deleteImage');
 Route::post('/revert', DeleteTemporaryImageController::class)->name('deleteImage');
+
+Route::post('/datesAvailable', [UsersAvailabilityFxns::class, 'availabilityDates'])->name('availabilityDates');
 
 // Route::get('/not-found', function () {
 //     return view('errors.404');

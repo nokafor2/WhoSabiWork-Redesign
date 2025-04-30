@@ -10,10 +10,6 @@
                 <div class="row col-12 text-center text-sm-end text-lg-start gap-1 mb-1 mb-lg-0 justify-content-center">
                     <p class="col-lg mb-0 mb-lg-3 bg-light text-body rounded-pill w-auto d-block-md">
                         <i v-for="rating in userRating" :key="rating" class="fa-solid fa-star"></i>
-                        <!-- <i class="fa-solid fa-star"></i>
-                        <i class="fa-solid fa-star"></i>
-                        <i class="fa-regular fa-star-half-stroke"></i>
-                        <i class="fa-regular fa-star"></i> -->
                     </p>
                     <p class="col-lg mb-0 mb-lg-3 bg-light text-body rounded-pill w-auto" >
                         {{ advocators }} advocators
@@ -26,14 +22,14 @@
                         <i class="fa-brands fa-whatsapp px-1"></i>
                         <i class="fa-brands fa-linkedin px-1"></i>
                     </p>
-                    <p class="col-lg mb-0 mb-lg-3 bg-danger text-light rounded w-auto btn btn-sm" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                    <p class="col-lg mb-0 mb-lg-3 bg-danger text-light rounded w-auto btn btn-sm" data-bs-toggle="modal" data-bs-target="#staticBackdrop" >
                         Set Appointment
                     </p>
+                    <SelectAppointment :datesAvailable="availableDates"></SelectAppointment>
                 </div>
             </div>
         </div>
         <div class="row mt-2">
-            <!-- <span class="badge">contact:</span> -->
             <p class="col mb-1 mb-md-3"><i class="fa-solid fa-location-dot me-2"></i>{{ userAddress }}</p>
             <div class="row">
                 <p class="col-auto mb-1 mb-md-3"><i class="fa-solid fa-phone me-2"></i>{{ phoneNumber }}</p>
@@ -42,10 +38,10 @@
             <p class="col mb-1 mb-md-3"><i class="fa-solid fa-globe me-2"></i>{{ email }}</p>
         </div>
     </div>
-    <SelectAppointment></SelectAppointment>
 </template>
 
 <script>
+    import { useForm } from '@inertiajs/vue3';
     import SelectAppointment from './SelectAppointment.vue';
 
     export default {
@@ -56,6 +52,8 @@
                 address: '',
                 adImages: ['photoSample', 'photoSample1', 'photoSample2', 'photoSample3', 'photoSample4', 'photoSample5', 'photoSample6', 'photoSample7', 'photoSample8', 'photoSample9', 'photoSample10', 'photoSample11', 'photoSample12', 'photoSample13', 'photoSample14', 'photoSample15', 'photoSample16', 'photoSample17', 'photoSample18', 'photoSample19', 'photoSample20'],
                 // userRating: '',
+                userId: 1,
+                availableDates: this.user.datesAvailable,
             }
         },
         methods: {
@@ -65,6 +63,24 @@
 
                 return imageUrl;
             },
+            // getAvailableDates() {
+            //     var formData = useForm({
+            //         'userId': this.userId
+            //     });
+            //     formData.post(route('availabilityDates', this.userId), {
+            //         preserveState: true,
+            //         preserveScroll: true,
+            //         onSuccess: (page) => {
+            //             if (page.props.flash.success) {
+            //                 console.log(page);
+            //                 this.availableDates = page.props.flash.success;
+            //             }
+            //         },
+            //         onError: (errors) => {
+            //             console.log('Error: ', errors);
+            //         }
+            //     });
+            // }
         },
         computed: {
             fullName() {

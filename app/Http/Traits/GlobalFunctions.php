@@ -562,6 +562,7 @@ trait GlobalFunctions {
                 'sPartVehCategories' => $sparePartVehCategories,
                 'vehicleBrands' => $refVehBrand,
                 'userRating' => $userRating,
+                'datesAvailable' => $this->getAvailabilityDates($userId),
         ];
     }
 
@@ -639,13 +640,19 @@ trait GlobalFunctions {
         return $this->reduceArray3($refindedCols);
     }
 
-    public function getSchedule($userId) {
+    public function getSchedule($userId, $dateAvailble, $record) {
         // get current date
         $currentDate = date('Y-m-d');
-        $result = UsersAvailability::where([['user_id', '=', $userId], ['date_available', '>=', $currentDate]])->orderBy('date_available', 'asc')->get();
+        if ($record === 'single') {
+            $result = UsersAvailability::where([['user_id', '=', $userId], ['date_available', '=', $dateAvailble]])->get();
+        } elseif ($record === 'many') {
+            $result = UsersAvailability::where([['user_id', '=', $userId], ['date_available', '>=', $currentDate]])->orderBy('date_available', 'asc')->get();
+        }
+        
         $arrayToExclude = ['id' => '', 'user_id' => '', 'created_at' => '', 'updated_at' => '', 'deleted_at' => ''];
         $resultArray = $result->toArray();
         $schedules = array();
+        // Retrieve only time schedule
         foreach ($resultArray as $index => $array) {
             $schedules[] = array_diff_key($array, $arrayToExclude);
         }
@@ -657,7 +664,7 @@ trait GlobalFunctions {
             foreach ($schedule as $key2 => $value2) {
                 // Filter out the true schedule
                 if ($value2 === 1) {
-                    $timeSchedule[$count] = $this->convertTime($key2);
+                    $timeSchedule[$key2] = $this->convertTime($key2);
                 }
                 $count++;
             }
@@ -722,6 +729,13 @@ trait GlobalFunctions {
         } elseif ($time === 'seven_Thirty_PM') {
             return ['time' => '7:30', 'period' => 'PM'];
         }
+    }
+
+    public function getAvailabilityDates($userId) {
+        // get current date
+        $currentDate = date('Y-m-d');
+        $result = UsersAvailability::where([['user_id', '=', $userId], ['date_available', '>=', $currentDate]])->orderBy('date_available', 'asc')->select('date_available')->get();
+        return $result;
     }
 }
 

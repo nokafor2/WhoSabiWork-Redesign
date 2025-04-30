@@ -1,12 +1,7 @@
 <template>
-    <!-- Button trigger modal -->
-    <!-- <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
-        Launch static backdrop modal
-    </button> -->
-
     <!-- Modal -->
     <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content">
             <div class="modal-header">
                 <h1 class="modal-title fs-5" id="staticBackdropLabel">Modal title</h1>
@@ -18,31 +13,22 @@
                     <p v-if="date">Selected date: {{ date }}</p>
                 </div>
 
-                <div class="row row-cols-5 justify-content-center mt-3">
-                    <div>
-                        <input type="checkbox" class="btn-check" id="btncheck1" autocomplete="off">
-                        <label class="btn btn-outline-primary" for="btncheck1">Checkbox 1</label>
-                    </div>
-
-                    <div>
-                        <input type="checkbox" class="btn-check" id="btncheck2" autocomplete="off">
-                        <label class="btn btn-outline-primary" for="btncheck2">Checkbox 2</label>
-                    </div>
-
-                    <div>
-                        <input type="checkbox" class="btn-check" id="btncheck3" autocomplete="off">
-                        <label class="btn btn-outline-primary" for="btncheck3">Checkbox 3</label>
-                    </div>
-
-                    <div>
-                        <input type="checkbox" class="btn-check" id="btncheck4" autocomplete="off">
-                        <label class="btn btn-outline-primary" for="btncheck4">Checkbox 4</label>
+                <p class="fs-3" v-for="(schedule, date, index) in schedules" :key="index">{{ date }}</p>
+                <div class="row row-cols-4 justify-content-center mt-3" v-for="(schedule, index) in schedules" :key="index">
+                    <div v-for="(time, index) in schedule" :key="index" class="my-2">
+                        <input type="checkbox" class="btn-check" :id="newId(index)" autocomplete="off" name="timeSelected" :value="index" v-model="timeSelected">
+                        <label class="btn btn-outline-primary" :for="newId(index)">
+                            <span class="mb-0">{{ time.time }}</span>
+                            <span class="my-0 d-flex justify-content-end" style="font-size: 10px;">{{ time.period }}</span>
+                        </label>
                     </div>
                 </div>
+
+                <textarea class="form-control" id="appointmentMessage" rows="3" v-model="appointmentMessage"></textarea>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Understood</button>
+                <button type="button" class="btn btn-danger" @click="setAppointment">Set Appointment</button>
             </div>
             </div>
         </div>
@@ -58,22 +44,78 @@
     import { useForm } from '@inertiajs/vue3';
 
     export default {
+        props: ['datesAvailable'],
         data() {
             return {
                 date: null,
+                userId: 1,
+                schedules: [],
+                availableDates: this.datesAvailable,
+                datesObj: [],
+                timeSelected: [],
+                appointmentMessage: '',
+                schedulerId: 1,
+            }
+        },
+        methods: {
+            newId(index) {
+                return 'dateBtncheck'+index;
+            },
+            setAppointment() {
+                var formData = useForm({
+                    user_id: this.userId,
+                    scheduler_id: this.schedulerId,
+                    appointment_date: this.date,
+                    hours: this.timeSelected,
+                    appointment_message: this.appointmentMessage,
+                    user_decision: 'neutral'
+                });
+                formData.post(route('usersappointment.store'), {
+                    preserveState: true,
+                    preserveScroll: true,
+                    onSuccess: (page) => {
+                        if (page.props.flash.success) {
+                            console.log(page);
+                            // clear the variables
+                            this.timeSelected = [];
+                            this.appointmentMessage = '';
+                        }
+                    },
+                    onError: (errors) => {
+                        console.log('Error: ', errors);
+                    }
+                });
             }
         },
         computed: {
             allowedDates() {
-                return [
-                    new Date(),
-                    new Date('2025-04-26'),
-                    new Date('2025-04-27'),
-                    new Date('2025-04-28'),
-                    new Date('2025-04-29'),
-                    new Date('2025-04-30'),
-                    new Date('2025-04-31'),
-                ]
+                Object.values(this.availableDates).forEach(value => {
+                    this.datesObj.push(new Date(value.date_available.toString()));
+                });
+
+                return this.datesObj;
+            }
+        },
+        watch: {
+            date() {
+                var formData = useForm({
+                    user_id: this.userId,
+                    date_available: this.date,
+                    from: 'selectAppointment',
+                });
+                formData.get(route('usersavailability.show', this.userId), {
+                    preserveState: true,
+                    preserveScroll: true,
+                    onSuccess: (page) => {
+                        if (page.props.flash.success) {
+                            // console.log(page);
+                            this.schedules = page.props.flash.success;
+                        }
+                    },
+                    onError: (errors) => {
+                        console.log('Error: ', errors);
+                    }
+                });
             }
         }
     }
