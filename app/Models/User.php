@@ -107,6 +107,10 @@ class User extends Authenticatable
         return $this->hasMany('App\Models\UsersAvailability');
     }
 
+    public function usersAppointment() {
+        return $this->hasMany('App\Models\UsersAppointment');
+    }
+
     public function tags() {
         // specify the time stamp to be displayed
         return $this->belongsToMany('App\Models\Tag', 'user_tag')->withTimestamps()->as('tagged');

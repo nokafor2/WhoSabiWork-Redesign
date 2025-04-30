@@ -332,7 +332,7 @@ class UserController extends Controller
                 'allCarBrands' => $allCarBrands,
                 'allBusBrands' => $allBusBrands,
                 'allTruckBrands' => $allTruckBrands,
-                'schedules' => $this->getSchedule($user->id)
+                'schedules' => $this->getSchedule($user->id, '', 'many')
             ]);
         }
     }

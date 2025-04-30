@@ -56,7 +56,7 @@ class UsersAvailabilityController extends Controller
 
             if ($result->id) {
                 // return the update schedule
-                $schedules = $this->getSchedule($userId);
+                $schedules = $this->getSchedule($userId, '', 'many');
                 return redirect()->route('users.show', $userId)->with('success', $schedules);
             } else {
                 return redirect()->route('users.show', $userId)->with('success', false);
@@ -73,9 +73,15 @@ class UsersAvailabilityController extends Controller
     public function show(Request $request, String $id)
     {
         $userId = $request->user_id;
-        $schedules = $this->getSchedule($userId);
-
-        return redirect()->route('users.show', $userId)->with('success', $schedules);
+        $from = $request->from;
+        $date_available = $request->date_available;
+        if ($from === 'selectAppointment') {
+            $schedules = $this->getSchedule($userId, $date_available, 'single');
+            return redirect()->route('entrepreneur.show', $userId)->with('success', $schedules);
+        } else {
+            $schedules = $this->getSchedule($userId, '', 'many');
+            return redirect()->route('users.show', $userId)->with('success', $schedules);
+        }
     }
 
     /**
@@ -109,7 +115,7 @@ class UsersAvailabilityController extends Controller
         
         if ($result) {
             // return the update schedule
-            $schedules = $this->getSchedule($userId);
+            $schedules = $this->getSchedule($userId, '', 'many');
             return redirect()->route('users.show', $userId)->with('success', $schedules);
         } else {
             return redirect()->route('users.show', $userId)->with('success', $result);
@@ -126,7 +132,7 @@ class UsersAvailabilityController extends Controller
 
         $result = UsersAvailability::where([['user_id', '=', $userId], ['date_available', '=', $date_available]])->delete();
         if ($result) {
-            $schedules = $this->getSchedule($userId);
+            $schedules = $this->getSchedule($userId, '', 'many');
             return redirect()->route('users.show', $userId)->with('success', $schedules);
         } else {
             return redirect()->route('users.show', $userId)->with('success', $result);

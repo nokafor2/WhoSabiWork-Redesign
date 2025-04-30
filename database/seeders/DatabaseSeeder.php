@@ -84,6 +84,7 @@ class DatabaseSeeder extends Seeder
             UsersFeedbackSeeder::class,
             UsersRatingSeeder::class,
             UsersAvailabilitySeeder::class,
+            UsersAppointmentSeeder::class,
         ]);
         
         // $this->call(UsersTableSeeder::class);
