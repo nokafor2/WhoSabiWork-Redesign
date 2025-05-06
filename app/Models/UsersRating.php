@@ -19,4 +19,19 @@ class UsersRating extends Model
     public function user() {
         return $this->belongsTo('App\Models\User');
     }
+
+    public function ratingCount($userRatings) {
+        return $userRatings->count();
+    }
+
+    public function avgRating($userRatings) {
+        $ratingCount = $userRatings->count();
+        $ratingSum = 0;
+        $userRatings->each(function ($userRating) use (&$ratingSum) {
+            $ratingSum += $userRating->rating;
+        });
+        $avgRating = round($ratingSum / $ratingCount);
+
+        return $avgRating;
+    }
 }

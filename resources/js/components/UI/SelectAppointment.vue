@@ -12,6 +12,7 @@
                     <VueDatePicker v-model="date" inline auto-apply :enable-time-picker="false" ignore-time-validation model-type="yyyy-MM-dd" :allowed-dates="allowedDates" />
                     <p v-if="date">Selected date: {{ date }}</p>
                 </div>
+                <p v-if="page.props.errors.appointment_date" class="text-danger">{{ page.props.errors.appointment_date }}</p>
 
                 <p class="fs-3" v-for="(schedule, date, index) in schedules" :key="index">{{ date }}</p>
                 <div class="row row-cols-4 justify-content-center mt-3" v-for="(schedule, index) in schedules" :key="index">
@@ -23,8 +24,10 @@
                         </label>
                     </div>
                 </div>
+                <p v-if="page.props.errors.hours" class="text-danger">{{ page.props.errors.hours }}</p>
 
                 <textarea class="form-control" id="appointmentMessage" rows="3" v-model="appointmentMessage"></textarea>
+                <p v-if="page.props.errors.appointment_message" class="text-danger">{{ page.props.errors.appointment_message }}</p>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -41,7 +44,7 @@
 </script>
 
 <script>
-    import { useForm } from '@inertiajs/vue3';
+    import { useForm, usePage } from '@inertiajs/vue3';
 
     export default {
         props: ['datesAvailable'],
@@ -55,6 +58,8 @@
                 timeSelected: [],
                 appointmentMessage: '',
                 schedulerId: 1,
+                errors: [],
+                page: usePage(),
             }
         },
         methods: {
@@ -83,6 +88,7 @@
                     },
                     onError: (errors) => {
                         console.log('Error: ', errors);
+                        this.errors = errors;
                     }
                 });
             }

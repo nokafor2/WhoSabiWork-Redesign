@@ -174,7 +174,7 @@
                 <div class="row gap-3 gx-1">
                     <div class="col-md">
                         <p class="bg-danger text-light text-center">Appointments requested with technicians</p>
-                        <AppointmentDetails v-for="index in 3" :key="index"></AppointmentDetails>
+                        <AppointmentDetails :appointmentDetails="neutralAppointments"></AppointmentDetails>
 
                         <div class="card col-12 mb-3">
                             <div class="card-body">
@@ -213,7 +213,7 @@
                 <div class="row gap-3 gx-1">
                     <div class="col-md">
                         <p class="bg-danger text-light text-center">Appointments requested with technicians</p>
-                        <AppointmentDetails v-for="index in 3" :key="index"></AppointmentDetails>
+                        <AppointmentDetails1 v-for="index in 1" :key="index"></AppointmentDetails1>
                         
                         <div class="card col-12 mb-3">
                             <div class="card-body">
@@ -236,7 +236,7 @@
 
                     <div class="col-md">
                         <p class="bg-danger text-light text-center">Appointments confirmed with technicians</p>
-                        <AppointmentDetails v-for="index in 1" :key="index"></AppointmentDetails>
+                        <AppointmentDetails1 v-for="index in 1" :key="index"></AppointmentDetails1>
                         <div class="card col-12 mb-3">
                             <div class="card-body">
                                 <h6 class="card-subtitle mb-2 text-body-secondary">You have no appointment confirmed yet.</h6>
@@ -307,7 +307,7 @@
         mixins: [MethodsMixin],
         props: ['user', 'userCategories', 'techVehCategories', 'sPartVehCategories', 'vehicleBrands', 'allArtisans', 'allProducts',
             'allTechnicalServices', 'allSpareParts', 'allVehicleCategories', 'allCarBrands',
-            'allBusBrands', 'allTruckBrands', 'schedules'
+            'allBusBrands', 'allTruckBrands', 'schedules', 'neutralAppointments'
         ],
         emits: [],
         data() {
