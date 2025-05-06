@@ -12,6 +12,7 @@ use App\Models\SparePart;
 use App\Models\TechnicalService;
 use App\Models\TruckBrand;
 use App\Models\User;
+use App\Models\UsersAppointment;
 use App\Models\UsersAvailability;
 use App\Models\VehicleCategory;
 use Illuminate\Support\Facades\Schema;
@@ -736,6 +737,74 @@ trait GlobalFunctions {
         $currentDate = date('Y-m-d');
         $result = UsersAvailability::where([['user_id', '=', $userId], ['date_available', '>=', $currentDate]])->orderBy('date_available', 'asc')->select('date_available')->get();
         return $result;
+    }
+
+    public function getAllScheduleTime() {
+        // Get all the columns of the array
+        $allTableColumns = Schema::getColumnListing('users_availabilities');
+        // Specify the columns to be removed from the array
+        $columnsToExclude = ['id', 'user_id', 'date_available', 'created_at', 'updated_at', 'deleted_at'];
+        // Eliminate columns that are not needed and create two new arrays
+        $refinedTableColumns = array_diff($allTableColumns, $columnsToExclude);
+
+        return $refinedTableColumns;
+    }
+
+    public function getAppointments($decision, $userId, $schedulerId) {
+        $appointments = UsersAppointment::where([['user_id', '=', $userId], ['scheduler_id', '=', $schedulerId], ['user_decision', '=', $decision]])->get();
+        $appointmentDetails = array();
+        $appointments->each(function ($appointment, $key) use(&$appointmentDetails) {
+            // Get full name
+            // $action = (empty($_POST['action'])) ? 'default' : $_POST['action'];
+            $fullName = ($appointment->user()->first()->userFullName() !== null) ? $appointment->user()->first()->userFullName() : "";
+            // Get phone number
+            $phoneNumber = $appointment->user()->first()->phone_number;
+            // Get business name
+            $businessName = $appointment->user()->first()->businessCategory()->first()->business_name;
+            // Get address
+            $address = $appointment->user()->first()->address()->first()->fullAddress();
+            // Get date
+            $date = [
+                'rawDate' => $appointment->appointment_date,
+                'prettyDate' => Carbon::parse($appointment->appointment_date)->format('l jS \\of F Y')
+            ];
+            // Get hours
+            $time = explode(",", $appointment->hours);
+            $timeConvert = array();
+            foreach ($time as $key2 => $value2) {
+                $timeConvert[$value2] = $this->convertTime($value2);
+            }
+            // dd($timeConvert);
+            // $timeString = implode(", ", $timeConvert);
+            // Get rating
+            $allRatings = $appointment->user()->first()->usersRating()->get();
+            $avgRating = $this->avgRating($allRatings);
+            $appointmentMessage = $appointment->appointment_message;
+
+            $appointmentDetails[] = [
+                'fullName' => $fullName,
+                'phoneNumber' => $phoneNumber,
+                'businessName' => $businessName,
+                'address' => $address,
+                'date' => $date,
+                'time' => $timeConvert,
+                'rating' => $avgRating,
+                'appointmentMessage' => $appointmentMessage,
+            ];
+        });
+
+        return $appointmentDetails;
+    }
+
+    public function avgRating($userRatings) {
+        $ratingCount = $userRatings->count();
+        $ratingSum = 0;
+        $userRatings->each(function ($userRating) use (&$ratingSum) {
+            $ratingSum += $userRating->rating;
+        });
+        $avgRating = round($ratingSum / $ratingCount);
+
+        return $avgRating;
     }
 }
 
