@@ -752,8 +752,9 @@ trait GlobalFunctions {
 
     public function getAppointments($decision, $userId, $schedulerId) {
         $appointments = UsersAppointment::where([['user_id', '=', $userId], ['scheduler_id', '=', $schedulerId], ['user_decision', '=', $decision]])->get();
+        $size = $appointments->count();
         $appointmentDetails = array();
-        $appointments->each(function ($appointment, $key) use(&$appointmentDetails) {
+        $appointments->each(function ($appointment, $key) use(&$appointmentDetails, $size) {
             // Get full name
             // $action = (empty($_POST['action'])) ? 'default' : $_POST['action'];
             $fullName = ($appointment->user()->first()->userFullName() !== null) ? $appointment->user()->first()->userFullName() : "";
@@ -790,6 +791,7 @@ trait GlobalFunctions {
                 'time' => $timeConvert,
                 'rating' => $avgRating,
                 'appointmentMessage' => $appointmentMessage,
+                'size' => $size,
             ];
         });
 

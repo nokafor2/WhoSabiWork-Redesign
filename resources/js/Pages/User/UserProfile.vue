@@ -178,12 +178,6 @@
 
                         <div class="card col-12 mb-3">
                             <div class="card-body">
-                            <h6 class="card-subtitle mb-2 text-body-secondary">You have 1 appointment waiting confirmation</h6>
-                            </div>
-                        </div>
-
-                        <div class="card col-12 mb-3">
-                            <div class="card-body">
                             <h6 class="card-subtitle mb-2 text-body-secondary">You have no appointment request declined.</h6>
                             </div>
                         </div>
