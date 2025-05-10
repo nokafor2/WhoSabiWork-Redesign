@@ -35,7 +35,7 @@
                 <p class="col-auto mb-1 mb-md-3"><i class="fa-solid fa-phone me-2"></i>{{ phoneNumber }}</p>
                 <p class="col-auto mb-1 mb-md-3"><i class="fa-regular fa-envelope me-2"></i>{{ email }}</p>
             </div>
-            <p class="col mb-1 mb-md-3"><i class="fa-solid fa-globe me-2"></i>{{ email }}</p>
+            <p class="col mb-1 mb-md-3"><i class="fa-solid fa-globe me-2"></i>{{ businessPage }}</p>
         </div>
     </div>
 </template>
@@ -93,23 +93,24 @@
                 const town = this.user.userDetails.address.town;
                 const state = this.user.userDetails.address.state;
 
+                var address = '';
                 if (addressLine1 !== '') {
-                    this.address = this.address + addressLine1;
+                    address = address + addressLine1;
                 }
                 if (addressLine2 !== '') {
-                    this.address = this.address + ', '+addressLine2;
+                    address = address + ', '+addressLine2;
                 }
                 if (addressLine3 !== '') {
-                    this.address = this.address + ', '+addressLine3;
+                    address = address + ', '+addressLine3;
                 }
                 if (town !== '') {
-                    this.address = this.address + ', '+town;
+                    address = address + ', '+town;
                 }
                 if (state !== '') {
-                    this.address = this.address + ', '+state;
+                    address = address + ', '+state;
                 }
 
-                return this.address;
+                return address;
             },
             phoneNumber() {
                 return this.user.userDetails.phone_number;

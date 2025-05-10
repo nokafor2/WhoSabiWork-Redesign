@@ -87,7 +87,22 @@ class UsersAppointmentController extends Controller
      */
     public function update(Request $request, UsersAppointment $usersAppointment)
     {
-        dd($usersAppointment->toArray());
+        // dd($usersAppointment->toArray());
+        $hours = implode(",", $request->hours);
+        $availableHours = $this->getAllScheduleTime();
+
+        $validated = $request->validate([
+            'hours' => ['required', 'array'],
+            'hours.*' => ['in:'.implode(",", $availableHours)],
+            'appointment_message' => ['required', 'string', 'max:250'],
+        ]);
+
+        $result = $usersAppointment->save([
+            ...$validated,
+            'hours' => $hours,
+        ]);
+
+        return redirect()->back()->with('success', $result);
     }
 
     /**
