@@ -751,10 +751,12 @@ trait GlobalFunctions {
     }
 
     public function getAppointments($decision, $userId, $schedulerId) {
-        $appointments = UsersAppointment::where([['user_id', '=', $userId], ['scheduler_id', '=', $schedulerId], ['user_decision', '=', $decision]])->get();
-        $size = $appointments->count();
+        // get current date
+        $currentDate = date('Y-m-d');
+        $appointments = UsersAppointment::where([['user_id', '=', $userId], ['scheduler_id', '=', $schedulerId], ['appointment_date', '>=', $currentDate], ['user_decision', '=', $decision]])->get();
+        $aptNum = $appointments->count();
         $appointmentDetails = array();
-        $appointments->each(function ($appointment, $key) use(&$appointmentDetails, $size) {
+        $appointments->each(function ($appointment, $key) use(&$appointmentDetails) {
             // Get full name
             // $action = (empty($_POST['action'])) ? 'default' : $_POST['action'];
             $fullName = ($appointment->user()->first()->userFullName() !== null) ? $appointment->user()->first()->userFullName() : "";
@@ -775,7 +777,6 @@ trait GlobalFunctions {
             foreach ($time as $key2 => $value2) {
                 $timeConvert[$value2] = $this->convertTime($value2);
             }
-            // dd($timeConvert);
             // $timeString = implode(", ", $timeConvert);
             // Get rating
             $allRatings = $appointment->user()->first()->usersRating()->get();
@@ -791,11 +792,13 @@ trait GlobalFunctions {
                 'time' => $timeConvert,
                 'rating' => $avgRating,
                 'appointmentMessage' => $appointmentMessage,
-                'size' => $size,
             ];
         });
 
-        return $appointmentDetails;
+        return $appointmentData[] = [
+                'appointmentDetails' => $appointmentDetails,
+                'aptNum' => $aptNum,
+        ];
     }
 
     public function avgRating($userRatings) {

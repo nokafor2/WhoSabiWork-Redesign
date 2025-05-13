@@ -1,9 +1,11 @@
 import { createStore } from 'vuex';
 import creatAccountModule from './Modules/createAccount.js';
+import appointmentModule from './Modules/appointment.js';
 
 const store = createStore({
     modules: {
-        createAccount: creatAccountModule
+        createAccount: creatAccountModule,
+        appointment: appointmentModule
     },
     state() {
         return {

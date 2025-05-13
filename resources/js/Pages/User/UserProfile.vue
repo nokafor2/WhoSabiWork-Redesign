@@ -174,7 +174,8 @@
                 <div class="row gap-3 gx-1">
                     <div class="col-md">
                         <p class="bg-danger text-light text-center">Appointments requested with technicians</p>
-                        <AppointmentDetails :appointmentDetails="neutralAppointments"></AppointmentDetails>
+                        <AppointmentDetails :appointmentDetails="neutralAppointments.appointmentDetails" :aptNum="neutralAppointments.aptNum"></AppointmentDetails>
+                        <!-- <AppointmentDetails2 :appointmentDetails="neutralAppointments"></AppointmentDetails2> -->
 
                         <div class="card col-12 mb-3">
                             <div class="card-body">
@@ -258,6 +259,7 @@
     import PasswordSection from './Components/PasswordSection.vue';
     import CommentCard from './Components/CommentCard.vue';
     import AppointmentDetails from './Components/AppointmentDetails.vue';
+    import AppointmentDetails2 from './Components/AppointmentDetails2.vue';
     import AppointmentDetails1 from './Components/AppointmentDetails1.vue';
     import BusinessNameSection from './Components/BusinessNameSection.vue';
     import AddressLine1Section from './Components/AddressLine1Section.vue';
@@ -296,7 +298,7 @@
             ArtisansSection, MobileMarketSection, TechnicalServiceSection, SparePartSection,
             CarBrandsSection, BusBrandsSection, TruckBrandsSection, VehicleCategorySection,
             BusinessPageSection, ImageCard, CommentAndReplyCard, PhotoUpload, DateAndTimeSelect,
-            UserAvailability
+            UserAvailability, AppointmentDetails2
         },
         mixins: [MethodsMixin],
         props: ['user', 'userCategories', 'techVehCategories', 'sPartVehCategories', 'vehicleBrands', 'allArtisans', 'allProducts',
