@@ -18,25 +18,28 @@ before_script:
   - apt-get update -y
   - apt-get install -y openssh-client rsync
 
-build:
+.build:
   stage: build
-  image: php:8.2-cli  # Use a PHP image with CLI
   script:
     - npm install
     - npm run build
     # - composer install --no-dev --optimize-autoloader
-
-    # Install composer
-    - php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
-    - php composer-setup.php --install-dir=/usr/local/bin --filename=composer
-    - composer --version  # Verify installation
-    # Now you can run composer commands
-    - composer install
+    # - composer install --no-dev
   artifacts:
     paths:
       - public/
       - vendor/
       - node_modules/
+
+install_composer:
+  stage: build
+  image: php:8.2-cli  # Use a PHP image with CLI
+  script:
+    - php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+    - php composer-setup.php --install-dir=/usr/local/bin --filename=composer
+    - composer --version  # Verify installation
+    # Now you can run composer commands
+    - composer install
 
 .test:
   stage: test
