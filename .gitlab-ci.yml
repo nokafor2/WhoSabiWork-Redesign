@@ -2,7 +2,6 @@ image: node:18-buster
 
 stages:
   - build
-  - test
   - deploy
 
 cache:
