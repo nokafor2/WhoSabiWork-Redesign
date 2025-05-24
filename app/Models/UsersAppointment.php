@@ -21,4 +21,8 @@ class UsersAppointment extends Model
     public function user() {
         return $this->belongsTo('App\Models\User');
     }
+
+    public function scheduler() {
+        return $this->belongsTo('App\Models\User', 'scheduler_id');
+    }
 }

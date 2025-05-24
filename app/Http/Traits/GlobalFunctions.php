@@ -757,11 +757,15 @@ trait GlobalFunctions {
         $aptNum = $appointments->count();
         $appointmentDetails = array();
         $appointments->each(function ($appointment, $key) use(&$appointmentDetails) {
-            // Get full name
+            // Get user full name
             // $action = (empty($_POST['action'])) ? 'default' : $_POST['action'];
             $fullName = ($appointment->user()->first()->userFullName() !== null) ? $appointment->user()->first()->userFullName() : "";
-            // Get phone number
+            // Get user phone number
             $phoneNumber = $appointment->user()->first()->phone_number;
+            // Get scheduler full name
+            $schedulerFullName = ($appointment->scheduler()->first()->userFullName() !== null) ? $appointment->user()->first()->userFullName() : "";
+            // Get user phone number
+            $schedulerPhoneNumber = $appointment->scheduler()->first()->phone_number;
             // Get business name
             $businessName = $appointment->user()->first()->businessCategory()->first()->business_name;
             // Get address
@@ -782,10 +786,14 @@ trait GlobalFunctions {
             $allRatings = $appointment->user()->first()->usersRating()->get();
             $avgRating = $this->avgRating($allRatings);
             $appointmentMessage = $appointment->appointment_message;
+            $appointmentId = $appointment->id;
 
             $appointmentDetails[] = [
+                'id' => $appointmentId,
                 'fullName' => $fullName,
                 'phoneNumber' => $phoneNumber,
+                'schedulerFullName' => $schedulerFullName,
+                'schedulerPhoneNumber' => $schedulerPhoneNumber,
                 'businessName' => $businessName,
                 'address' => $address,
                 'date' => $date,

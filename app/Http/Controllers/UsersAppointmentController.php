@@ -87,29 +87,64 @@ class UsersAppointmentController extends Controller
      */
     public function update(Request $request, UsersAppointment $usersAppointment)
     {
-        // dd($usersAppointment->toArray());
-        $hours = implode(",", $request->hours);
-        $availableHours = $this->getAllScheduleTime();
+        if (($request->user_decision === 'accepted') || ($request->user_decision === 'declined')) {
+            $appointmentId = $request->id;
+            $userId = $request->user_id;
+            $schedulerId = $request->scheduler_id;
+            $usersAppointment = UsersAppointment::where('id', '=', $appointmentId)->first();
+            $usersAppointment->user_decision = $request->user_decision;
+            $validated = $request->validate([
+                'user_decision' => ['required', 'string', 'max:10'],
+            ]);
+            // Check if there is a decline message
+            if ($request->user_decision === 'declined') {
+                $validated = $request->validate([
+                    'user_decline_message' => ['required', 'string', 'max:250'],
+                    'user_decision' => ['required', 'string', 'max:10'],
+                ]);
+                // $usersAppointment->user_decline_message = $request->user_decline_message;
+            }
+            $result = $usersAppointment->update($validated);
+            // Check delete status
+            if ($result) {
+                $appointmentDetails = $this->getAppointments('neutral', $userId, $schedulerId);
+                return redirect()->route('users.show', $userId)->with('success', $appointmentDetails);
+            } else {
+                return redirect()->route('users.show', $userId)->with('success', $result);
+            } 
+        } else {
+            $hours = implode(",", $request->hours);
+            $availableHours = $this->getAllScheduleTime();
 
-        $validated = $request->validate([
-            'hours' => ['required', 'array'],
-            'hours.*' => ['in:'.implode(",", $availableHours)],
-            'appointment_message' => ['required', 'string', 'max:250'],
-        ]);
+            $validated = $request->validate([
+                'hours' => ['required', 'array'],
+                'hours.*' => ['in:'.implode(",", $availableHours)],
+                'appointment_message' => ['required', 'string', 'max:250'],
+            ]);
+            $usersAppointment->hours = $hours;
+            $usersAppointment->appointment_message = $request->appointment_message;
+            $result = $usersAppointment->update();
 
-        $result = $usersAppointment->save([
-            ...$validated,
-            'hours' => $hours,
-        ]);
-
-        return redirect()->back()->with('success', $result);
+            return redirect()->back()->with('success', $result);
+        }
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(UsersAppointment $usersAppointment)
+    public function destroy(Request $request, UsersAppointment $usersAppointment)
     {
-        //
+        $appointmentId = $request->id;
+        $userId = $request->user_id;
+        $schedulerId = $request->scheduler_id;
+        $usersAppointment = UsersAppointment::where('id', '=', $appointmentId)->first();
+        $result = $usersAppointment->delete();
+        // Check delete status
+        if ($result) {
+            $appointmentDetails = $this->getAppointments($usersAppointment->user_decision, $userId, $schedulerId);
+            return redirect()->route('users.show', $userId)->with('success', $appointmentDetails);
+        } else {
+            return redirect()->route('users.show', $userId)->with('success', $result);
+        }
     }
 }
