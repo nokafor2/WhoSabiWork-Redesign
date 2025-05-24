@@ -20,12 +20,18 @@ before_script:
 
 build:
   stage: build
+  image: php:8.2-cli  # Use a PHP image with CLI
   script:
     - npm install
     - npm run build
-    # - curl -sS https://getcomposer.org/installer | php
     # - composer install --no-dev --optimize-autoloader
-    - composer install --no-dev
+
+    # Install composer
+    - php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+    - php composer-setup.php --install-dir=/usr/local/bin --filename=composer
+    - composer --version  # Verify installation
+    # Now you can run composer commands
+    - composer install
   artifacts:
     paths:
       - public/
