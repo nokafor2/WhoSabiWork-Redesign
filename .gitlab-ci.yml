@@ -2,6 +2,7 @@ image: node:18-buster
 
 stages:
   - build
+  - test
   - deploy
 
 cache:
@@ -41,7 +42,7 @@ install_composer:
     # Now you can run composer commands
     - composer install
 
-.test:
+test:
   stage: test
   script:
     - php artisan test
