@@ -23,7 +23,13 @@ build:
   script:
     - npm install
     - npm run build
-    - composer install --no-dev --optimize-autoloader
+    - curl -sS https://getcomposer.org/installer | php
+    # - composer install --no-dev --optimize-autoloader
+  artifacts:
+    paths:
+      - public/
+      - vendor/
+      - node_modules/
 
 .test:
   stage: test
