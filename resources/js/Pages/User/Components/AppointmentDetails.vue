@@ -5,7 +5,7 @@
         </div>
     </div>
     
-    <AppointmentCard v-for="(appointmentDetail, index) in appointmentDetails" :key="index" :appointmentDetail="appointmentDetail" :index="index"></AppointmentCard>
+    <AppointmentCard v-for="(appointmentDetail, index) in appointmentDetails" :key="index" :appointmentDetail="appointmentDetail" :index="index" :user="user"></AppointmentCard>
 </template>
 
 
@@ -14,7 +14,7 @@
 
     export default {
         components: {AppointmentCard},
-        props: ['appointmentDetails', 'aptNum'],
+        props: ['appointmentDetails', 'aptNum', 'user'],
         emits: [],
         data() {
             return {
@@ -26,12 +26,20 @@
         methods: {
             appointmentCount() {
                 if (this.aptNum < 1) {
-                    return "You have no appointment waiting confirmation.";
+                    return "You have no appointment request from a customer.";
                 } else if (this.aptNum === 1) {
-                    return "You have 1 appointment waiting confirmation.";
+                    return "You have 1 appointment request from a customer.";
                 } else if (this.aptNum > 1) {
-                    return "You have "+this.aptNum+" appointments waiting confirmation.";
+                    return "You have "+this.aptNum+" appointment requests from a customer.";
                 }
+
+                // if (this.aptNum < 1) {
+                //     return "You have no appointment waiting confirmation.";
+                // } else if (this.aptNum === 1) {
+                //     return "You have 1 appointment waiting confirmation.";
+                // } else if (this.aptNum > 1) {
+                //     return "You have "+this.aptNum+" appointments waiting confirmation.";
+                // }
             },
         },
     }

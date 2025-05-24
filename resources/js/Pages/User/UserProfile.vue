@@ -174,7 +174,7 @@
                 <div class="row gap-3 gx-1">
                     <div class="col-md">
                         <p class="bg-danger text-light text-center">Appointments requested with technicians</p>
-                        <AppointmentDetails :appointmentDetails="neutralAppointments.appointmentDetails" :aptNum="neutralAppointments.aptNum"></AppointmentDetails>
+                        <AppointmentDetails :appointmentDetails="neutralAppointments.appointmentDetails" :aptNum="neutralAppointments.aptNum" :user="'entrepreneur'" @update-apt-details="updateAptDetails"></AppointmentDetails>
                         <!-- <AppointmentDetails2 :appointmentDetails="neutralAppointments"></AppointmentDetails2> -->
 
                         <div class="card col-12 mb-3">
@@ -316,6 +316,7 @@
                 },
                 page: usePage(),
                 schedules2: this.schedules,
+                neutralAppointments2: this.neutralAppointments,
             }
         },
         methods: {
@@ -327,6 +328,9 @@
             },
             updateSchedule(schedules) {
                 this.schedules2 = schedules;
+            },
+            updateAptDetails(appointmentDetails) {
+                this.neutralAppointments = appointmentDetails;
             }
         },
         computed: {
