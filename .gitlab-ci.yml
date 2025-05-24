@@ -18,7 +18,7 @@ before_script:
   - apt-get update -y
   - apt-get install -y openssh-client rsync
 
-.build:
+build:
   stage: build
   script:
     - npm install
