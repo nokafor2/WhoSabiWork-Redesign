@@ -101,8 +101,19 @@ ssh_deploy:
     # Set the write permission to the file
     - chmod 644 ~/.ssh/known_hosts
   script:
+    # STEP 4: Connect to the server
     # Now connect to the recognized server
-    - ssh $REMOTE_DEPLOY_USER@$REMOTE_DEPLOY_HOST "whoami"
+    # - ssh $REMOTE_DEPLOY_USER@$REMOTE_DEPLOY_HOST "whoami"
+
+    # STEP 5: Upload files to the server
+    # Create a file
+    - touch bar.txt
+    # Copy files using the remote command securely 'scp'
+    # specify the copied file where to upload it
+    - scp bar.txt $REMOTE_DEPLOY_USER@$REMOTE_DEPLOY_HOST:/tmp
+    # Open SSH connection and connect to the server + Run commands
+    - ssh $REMOTE_DEPLOY_USER@$REMOTE_DEPLOY_HOST "whoami; touch /tmp/foo.txt; ls -l /tmp"
+
 
 .deploy:
   stage: deploy
