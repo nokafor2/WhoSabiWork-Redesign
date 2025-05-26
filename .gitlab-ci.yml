@@ -10,9 +10,9 @@ cache:
     - node_modules/
     - vendor/
 
-.variables:
-  SSH_PRIVATE_KEY: $SSH_PRIVATE_KEY
-  SSH_HOST: ec2-user@your-ec2-ip
+variables:
+  # SSH_PRIVATE_KEY: $SSH_PRIVATE_KEY
+  # SSH_HOST: ec2-user@your-ec2-ip
   SSH_PORT: 22
 
 .before_script:
@@ -55,7 +55,7 @@ ssh_deploy:
   image: alpine
   script:
     # Check if id address and port 22 is open on the server
-    - nc -zv 13.40.186.156 22
+    - nc -zv $REMOTE_DEPLOY_HOST 22
 
 .deploy:
   stage: deploy
