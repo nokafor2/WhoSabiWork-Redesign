@@ -11,7 +11,7 @@ cache:
     - vendor/
 
 variables:
-  # SSH_PRIVATE_KEY: $SSH_PRIVATE_KEY
+  SSH_PRIVATE_KEY: $SSH_PRIVATE_KEY
   # SSH_HOST: ec2-user@your-ec2-ip
   SSH_PORT: 22
 
@@ -20,7 +20,7 @@ variables:
   - apt-get install -y openssh-client rsync
 
 # working
-build:
+.build:
   stage: build
   script:
     - npm install
@@ -34,7 +34,7 @@ build:
       - node_modules/
 
 # working
-.install_composer:
+install_composer:
   stage: build
   image: php:8.2-cli  # Use a PHP image with CLI
   script:
@@ -56,6 +56,9 @@ ssh_deploy:
   script:
     # Check if id address and port 22 is open on the server
     - nc -zv $REMOTE_DEPLOY_HOST $SSH_PORT
+    # View the SSH_PRIVATE_KEY
+    - echo $SSH_PRIVATE_KEY
+    - cat $SSH_PRIVATE_KEY
 
 .deploy:
   stage: deploy
