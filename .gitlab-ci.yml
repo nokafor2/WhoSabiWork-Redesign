@@ -52,7 +52,7 @@ install_composer:
 ssh_deploy:
   stage: .pre
   image: alpine
-  script:
+  before_script:
     # STEP 1: Test for connection with the server
     # Check if id address and port 22 is open on the server
     - nc -zv $REMOTE_DEPLOY_HOST $SSH_PORT
@@ -100,8 +100,9 @@ ssh_deploy:
     - cp $SSH_KNOWN_HOSTS ~/.ssh/known_hosts
     # Set the write permission to the file
     - chmod 644 ~/.ssh/known_hosts
+  script:
     # Now connect to the recognized server
-    - ssh $REMOTE_DEPLOY_USER@$REMOTE_DEPLOY_HOST
+    - ssh $REMOTE_DEPLOY_USER@$REMOTE_DEPLOY_HOST "whoami"
 
 .deploy:
   stage: deploy
