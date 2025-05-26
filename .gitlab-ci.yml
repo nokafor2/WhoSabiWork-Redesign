@@ -19,7 +19,7 @@ variables:
   - apt-get install -y openssh-client rsync
 
 # working
-.build:
+build:
   stage: build
   script:
     - npm install
@@ -50,7 +50,7 @@ install_composer:
     - php artisan test
 
 ssh_deploy:
-  stage: .pre
+  stage: deploy
   image: alpine
   before_script:
     # STEP 1: Test for connection with the server
@@ -105,7 +105,7 @@ ssh_deploy:
     # Now connect to the recognized server
     # - ssh $REMOTE_DEPLOY_USER@$REMOTE_DEPLOY_HOST "whoami"
 
-    # STEP 5: Upload files to the server
+    # STEP 5: Testing upload of files to the server
     # Create a file
     - touch bar.txt
     # Copy files using the remote command securely 'scp'
@@ -113,6 +113,14 @@ ssh_deploy:
     - scp bar.txt $REMOTE_DEPLOY_USER@$REMOTE_DEPLOY_HOST:/tmp
     # Open SSH connection and connect to the server + Run commands
     - ssh $REMOTE_DEPLOY_USER@$REMOTE_DEPLOY_HOST "whoami; touch /tmp/foo.txt; ls -l /tmp"
+
+    # STEP 6: Upload the website files to the server
+    # Open SSH connection and connect to the server + Run commands
+    - ssh $REMOTE_DEPLOY_USER@$REMOTE_DEPLOY_HOST "whoami; touch /tmp/foo.txt; ls -l /tmp"
+    # specify the copied file where to upload it
+    # copy all files and directory (contents) from the build directory
+    # The path to copy to is: '/usr/share/nginx/html/'
+    - scp build/* $REMOTE_DEPLOY_USER@$REMOTE_DEPLOY_HOST:/usr/share/nginx/html/
 
 
 .deploy:
