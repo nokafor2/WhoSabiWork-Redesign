@@ -11,7 +11,6 @@ cache:
     - vendor/
 
 variables:
-  # SSH_PRIVATE_KEY: $SSH_PRIVATE_KEY
   # SSH_HOST: ec2-user@your-ec2-ip
   SSH_PORT: 22
 
@@ -59,6 +58,12 @@ ssh_deploy:
     # View the SSH_PRIVATE_KEY
     - echo $SSH_PRIVATE_KEY
     - cat $SSH_PRIVATE_KEY
+    # Chcek permissions
+    - ls -l $SSH_PRIVATE_KEY
+    # change permission of key to only the owner
+    # Grant read-only permission to the private key
+    - chmod 400 $SSH_PRIVATE_KEY
+    - ls -l $SSH_PRIVATE_KEY
 
 .deploy:
   stage: deploy
