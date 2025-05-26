@@ -15,7 +15,7 @@ cache:
   SSH_HOST: ec2-user@your-ec2-ip
   SSH_PORT: 22
 
-before_script:
+.before_script:
   - apt-get update -y
   - apt-get install -y openssh-client rsync
 
