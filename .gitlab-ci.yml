@@ -123,8 +123,17 @@ ssh_deploy:
     # Ensure to change ownership of files from root user to ec2-user on the server
     # Run: sudo chown -R ec2-user:ec2-user /usr/share/nginx/html/
     # Use the '-r' copying recursively to copy all files and directories
-    - scp -r build/* $REMOTE_DEPLOY_USER@$REMOTE_DEPLOY_HOST:/usr/share/nginx/html/
+    - scp -r public/* $REMOTE_DEPLOY_USER@$REMOTE_DEPLOY_HOST:/usr/share/nginx/html/
 
+    # STEP 7: Upload files using rsync instead of scp
+    # rsync allows to sychnronize only changed files between a local and remote directory
+    # rsync has to be installed, it doesn't come with alpine
+    # '-v' option makes the rsync chatty and gives feedback
+    # '-z' option compresses the data
+    # '--delete' to give permission to delete files from the server that are not local in the build directory
+    # - rsync -rvz --delete public/ $REMOTE_DEPLOY_USER@$REMOTE_DEPLOY_HOST:/usr/share/nginx/html/
+    # Modify the above
+    # - rsync -avz --exclude node_modules --exclude vendor --delete-after public/ $REMOTE_DEPLOY_USER@$REMOTE_DEPLOY_HOST:/usr/share/nginx/html/
 
 .deploy:
   stage: deploy
