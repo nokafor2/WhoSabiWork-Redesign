@@ -19,6 +19,7 @@ before_script:
   - apt-get update -y
   - apt-get install -y openssh-client rsync
 
+# working
 build:
   stage: build
   script:
@@ -32,7 +33,8 @@ build:
       - vendor/
       - node_modules/
 
-install_composer:
+# working
+.install_composer:
   stage: build
   image: php:8.2-cli  # Use a PHP image with CLI
   script:
@@ -42,10 +44,18 @@ install_composer:
     # Now you can run composer commands
     - composer install
 
-test:
+# Not working
+.test:
   stage: test
   script:
     - php artisan test
+
+ssh_deploy:
+  stage: deploy
+  image: alpine
+  before_script:
+    # Check if id address and port 22 is open on the server
+    - nc -zv 13.40.186.156 22
 
 .deploy:
   stage: deploy
