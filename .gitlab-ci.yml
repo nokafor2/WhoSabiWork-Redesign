@@ -11,7 +11,7 @@ cache:
     - vendor/
 
 variables:
-  # SSH_HOST: ec2-user@your-ec2-ip
+  SSH_HOST: ec2-user@ec2-13-40-186-156.eu-west-2.compute.amazonaws.com
   SSH_PORT: 22
 
 .before_script:
@@ -82,7 +82,26 @@ ssh_deploy:
     - ssh-add $SSH_PRIVATE_KEY
     # Connect to the server
     # This is not a secure way of connecting to the server, just for testing purposes
-    - ssh -o StrictHostKeyChecking=no ec2-user@$REMOTE_DEPLOY_HOST
+    # - ssh -o StrictHostKeyChecking=no $REMOTE_DEPLOY_USER@$REMOTE_DEPLOY_HOST
+
+    # STEP 4: Connect to the server
+    # Create the SSH directory and assign the right permissions
+    # Use ssh-keyscan <ip address> to get a finger print of the server
+    # The ssh-keyscan command should not be executed on the GitLab runner to avoid man in the middle attack
+    # Some one can instead swap the ip-address
+    # Use ssh-keyscan <ip host name> to get a finger print of the server also, it would be different
+    # Save the none commented values to the env. variable SSH_KNOWN_HOSTS file
+    # Create the .ssh folder if it doesn't exist
+    # The '-p' is used to avoid getting an error if the folder already exist
+    - mkdir -p ~/.ssh
+    # Set the write permission to the .ssh directory
+    - chmod 700 ~/.ssh
+    # copy SSH_KNOWN_HOSTS file to the .ssh/known_hosts folder
+    - cp $SSH_KNOWN_HOSTS ~/.ssh/known_hosts
+    # Set the write permission to the file
+    - chmod 644 ~/.ssh/known_hosts
+    # Now connect to the recognized server
+    - ssh $REMOTE_DEPLOY_USER@$REMOTE_DEPLOY_HOST
 
 .deploy:
   stage: deploy
