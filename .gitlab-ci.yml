@@ -55,7 +55,7 @@ ssh_deploy:
   image: alpine
   script:
     # Check if id address and port 22 is open on the server
-    - nc -zv $REMOTE_DEPLOY_HOST 22
+    - nc -zv $REMOTE_DEPLOY_HOST $SSH_PORT
 
 .deploy:
   stage: deploy
