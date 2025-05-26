@@ -120,7 +120,10 @@ ssh_deploy:
     # specify the copied file where to upload it
     # copy all files and directory (contents) from the build directory
     # The path to copy to is: '/usr/share/nginx/html/'
-    - scp build/* $REMOTE_DEPLOY_USER@$REMOTE_DEPLOY_HOST:/usr/share/nginx/html/
+    # Ensure to change ownership of files from root user to ec2-user on the server
+    # Run: sudo chown -R ec2-user:ec2-user /usr/share/nginx/html/
+    # Use the '-r' copying recursively to copy all files and directories
+    - scp -r build/* $REMOTE_DEPLOY_USER@$REMOTE_DEPLOY_HOST:/usr/share/nginx/html/
 
 
 .deploy:
