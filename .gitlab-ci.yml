@@ -53,17 +53,36 @@ ssh_deploy:
   stage: .pre
   image: alpine
   script:
+    # STEP 1: Test for connection with the server
     # Check if id address and port 22 is open on the server
     - nc -zv $REMOTE_DEPLOY_HOST $SSH_PORT
+
+    # STEP 2: Change the permission of the SSH_PRIVATE_KEY file
     # View the SSH_PRIVATE_KEY
-    - echo $SSH_PRIVATE_KEY
-    - cat $SSH_PRIVATE_KEY
+    # - echo $SSH_PRIVATE_KEY
+    # - cat $SSH_PRIVATE_KEY
     # Chcek permissions
-    - ls -l $SSH_PRIVATE_KEY
+    # - ls -l $SSH_PRIVATE_KEY
     # change permission of key to only the owner
     # Grant read-only permission to the private key
     - chmod 400 $SSH_PRIVATE_KEY
-    - ls -l $SSH_PRIVATE_KEY
+    # - ls -l $SSH_PRIVATE_KEY
+
+    # STEP 3: SSH Connection
+    # install the Openssh client, and rsync
+    - apk add openssh-client rsync zip
+    # ssh-agent is a background process that manages SSH-keys
+    # Use ssh-agent to add our SSH-key
+    # When ssh-agent runs, it outputs to the console some variables that interact with it
+    # For it to work, it is put in a sub-shell $()
+    # The eval is used to set the environment variables in current shell session
+    - eval $(ssh-agent)
+    # add the SSH_PRIVATE_KEY to the installed SSH environment with the file path variable
+    # After added, tools like SSH, SCP can use the SSH-key for authentication
+    - ssh-add $SSH_PRIVATE_KEY
+    # Connect to the server
+    # This is not a secure way of connecting to the server, just for testing purposes
+    - ssh -o StrictHostKeyChecking=no ec2-user@$REMOTE_DEPLOY_HOST
 
 .deploy:
   stage: deploy
