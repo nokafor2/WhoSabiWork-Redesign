@@ -174,7 +174,7 @@
                 <div class="row gap-3 gx-1">
                     <div class="col-md">
                         <p class="bg-danger text-light text-center">Appointments requested with technicians</p>
-                        <AppointmentDetails :appointmentDetails="neutralAppointments.appointmentDetails" :aptNum="neutralAppointments.aptNum" :user="'entrepreneur'" @update-apt-details="updateAptDetails"></AppointmentDetails>
+                        <AppointmentDetails :appointmentDetails="neutralAppointments.appointmentDetails" :aptNum="neutralAppointments.aptNum" :user="'entrepreneur'" :appointmentType="'neutral'" @update-apt-details="updateAptDetails"></AppointmentDetails>
                         <!-- <AppointmentDetails2 :appointmentDetails="neutralAppointments"></AppointmentDetails2> -->
 
                         <div class="card col-12 mb-3">
@@ -192,7 +192,7 @@
 
                     <div class="col-md">
                         <p class="bg-danger text-light text-center">Appointments confirmed with technicians</p>
-                        <AppointmentDetails v-for="index in 2" :key="index"></AppointmentDetails>
+                        <AppointmentDetails :appointmentDetails="acceptedAppointments.appointmentDetails" :aptNum="acceptedAppointments.aptNum" :user="'entrepreneur'" :appointmentType="'accepted'" @update-apt-details="updateAptDetails"></AppointmentDetails>
                         <div class="card col-12 mb-3">
                             <div class="card-body">
                                 <h6 class="card-subtitle mb-2 text-body-secondary">You have no appointment confirmed yet.</h6>
@@ -301,9 +301,10 @@
             UserAvailability, AppointmentDetails2
         },
         mixins: [MethodsMixin],
-        props: ['user', 'userCategories', 'techVehCategories', 'sPartVehCategories', 'vehicleBrands', 'allArtisans', 'allProducts',
-            'allTechnicalServices', 'allSpareParts', 'allVehicleCategories', 'allCarBrands',
-            'allBusBrands', 'allTruckBrands', 'schedules', 'neutralAppointments'
+        props: ['user', 'userCategories', 'techVehCategories', 'sPartVehCategories', 'vehicleBrands', 
+            'allArtisans', 'allProducts', 'allTechnicalServices', 'allSpareParts', 'allVehicleCategories', 
+            'allCarBrands', 'allBusBrands', 'allTruckBrands', 'schedules', 'neutralAppointments', 
+            'acceptedAppointments'
         ],
         emits: [],
         data() {

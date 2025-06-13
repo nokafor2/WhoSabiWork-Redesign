@@ -334,6 +334,7 @@ class UserController extends Controller
                 'allTruckBrands' => $allTruckBrands,
                 'schedules' => $this->getSchedule($user->id, '', 'many'),
                 'neutralAppointments' => $this->getAppointments('neutral', $user->id, '1'),
+                'acceptedAppointments' => $this->getAppointments('accepted', $user->id, '1'),
             ]);
         }
     }

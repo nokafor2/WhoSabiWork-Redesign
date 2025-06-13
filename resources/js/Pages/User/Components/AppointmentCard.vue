@@ -2,7 +2,7 @@
     <div class="card col-12 mb-3">
         <div v-if="subAptVisible" :id="subAptId(index)" class="card-body mb-2" >
             <div class="d-flex">
-                <div class="row">
+                <div v-if="checkSchdler()" class="row">
                     <img :src="imagePath(index)" style="height: 7rem; width: 100%;" class="card-img-top" alt="...">
                 </div>
                 <div class="">
@@ -56,11 +56,11 @@
         
         <div v-if="mainAptVisible" class="card-body" :id="mainSubAptId(index)" > 
             <h5 class="card-title text-center">Appointment Details</h5>
-            <div class="row mb-2">
+            <div v-if="checkSchdler()" class="row mb-2">
                 <img :src="imagePath(index)" style="height: 10rem; width: 100%;" class="card-img-top" alt="...">
             </div>
             
-            <div class="d-block d-sm-flex">
+            <div v-if="checkSchdler()" class="d-block d-sm-flex">
                 <p class="card-text col-xs-12 ps-0 ps-sm-2 mb-2">
                     <i class="fa-solid fa-shop"></i>
                     {{ appointmentDetailObj.businessName }}
@@ -78,7 +78,7 @@
                     {{ appointmentDetailObj.phoneNumber }}
                 </p>
             </div>
-            <div class="d-block d-sm-flex">
+            <div v-if="checkSchdler()" class="d-block d-sm-flex">
                 <p class="card-text col-xs-12 ps-0 ps-sm-2 mb-2">
                     <i class="fa-solid fa-location-dot"></i>
                     {{ appointmentDetailObj.address }}
@@ -110,19 +110,35 @@
             <div class="row">
                 <button :id="cancelAptId(index)" class="btn btn-white btn-sm" @click="cancelApt">Cancel Appointment</button>
             </div> -->
-            <div class="row mt-3 mb-2">
-                <button :id="acceptAptId(index)" class="btn btn-success btn-sm" @click="acceptApt">Accept Appointment</button>
-            </div>
-            <div class="row">
-                <button :id="declineAptId(index)" class="btn btn-outline-danger btn-sm" @click="showDeclineBox">Decline Appointment</button>
-            </div>
-            <div v-if="declineBox" class="my-2">
-                <textarea class="form-control" id="appointmentMessage" rows="3" v-model="declineMessage"></textarea>
-                <p v-if="page.props.errors.user_decline_message" class="text-danger">{{ declineMessageError }}</p>
-                <div class="row mt-2">
-                    <button :id="declineAptId(index)" class="btn btn-outline-danger btn-sm" @click="declineApt">Submit</button>
+            <div v-if="isNeutral()">
+                <div class="row mt-3 mb-2">
+                    <button :id="acceptAptId(index)" class="btn btn-success btn-sm" @click="acceptApt">Accept Appointment</button>
+                </div>
+                <div class="row">
+                    <button :id="declineAptId(index)" class="btn btn-outline-danger btn-sm" @click="showDeclineBox">Decline Appointment</button>
+                </div>
+                <div v-if="declineBox" class="my-2">
+                    <textarea class="form-control" id="appointmentMessage" rows="3" v-model="declineMessage"></textarea>
+                    <p v-if="page.props.errors.user_decline_message" class="text-danger">{{ declineMessageError }}</p>
+                    <div class="row mt-2">
+                        <button :id="declineAptId(index)" class="btn btn-outline-danger btn-sm" @click="declineApt">Decline</button>
+                    </div>
                 </div>
             </div>
+
+            <div v-if="isAccepted()">
+                <div class="row">
+                    <button :id="cancelAptId(index)" class="btn btn-outline-danger btn-sm" @click="showCanceleBox">Cancel Appointment</button>
+                </div>
+                <div v-if="cancelBox" class="my-2">
+                    <textarea class="form-control" id="appointmentMessage" rows="3" v-model="cancelMessage"></textarea>
+                    <p v-if="page.props.errors.user_cancel_message" class="text-danger">{{ cancelMessageError }}</p>
+                    <div class="row mt-2">
+                        <button :id="cancelAptId(index)" class="btn btn-outline-danger btn-sm" @click="cancelAcceptedApt">Cancel</button>
+                    </div>
+                </div>
+            </div>
+            
             <div class="row mt-3 ">
                 <button :id="hideAptId(index)" class="btn btn-white btn-sm" @click="hideMainApt">Hide</button>
             </div>
@@ -134,7 +150,7 @@
     import { useForm, usePage } from '@inertiajs/vue3';
 
     export default {
-        props: ['appointmentDetail', 'index', 'user'],
+        props: ['appointmentDetail', 'index', 'user', 'appointmentType'],
         emits: ['update-apt-details'],
         data() {
             return {
@@ -143,11 +159,14 @@
                 subAptVisible: true,
                 mainAptVisible: false,
                 userId: 1,
-                schedulerId: 1,
+                schedulerId: 10,
                 page: usePage(),
                 declineBox: false,
                 declineMessage: '',
                 declineMessageError: '',
+                cancelBox: false,
+                cancelMessage: '',
+                cancelMessageError: '',
                 userType: this.user,
             }
         },
@@ -296,23 +315,54 @@
                     }
                 });
             },
+            cancelAcceptedApt() {
+                var formData = useForm({
+                    user_id: this.userId,
+                    scheduler_id: this.schedulerId,
+                    appointment_date: this.appointmentDetailObj.date.rawDate,
+                    id: this.appointmentDetailObj.id,
+                    user_decision: 'cancelled',
+                    user_cancel_message: this.cancelMessage,
+                });
+                formData.put(route('usersappointment.update', this.appointmentDetailObj.id), {
+                    preserveState: true,
+                    preserveScroll: true,
+                    onSuccess: (page) => {
+                        if (page.props.flash.success) {
+                            console.log(page);
+                            // Get the new appointment details
+                            this.$emit('update-apt-details', page.props.flash.success);
+                        }
+                    },
+                    onError: (errors) => {
+                        console.log('Error: ', errors);
+                        this.declineMessageErrorFxn;
+                    }
+                });
+            },
             showDeclineBox() {
                 this.declineBox = !this.declineBox;
             },
+            showCanceleBox() {
+                this.cancelBox = !this.cancelBox;
+            },
             checkEntre() {
-                if (this.user === 'entrepreneur') {
-                    return true;
-                } else {
-                    return false;
-                }
-                 
+                return (this.user === 'entrepreneur') ? true : false;
             },
             checkSchdler() {
-                if (this.user === 'scheduler') {
-                    return true;
-                } else {
-                    return false;
-                }
+                return (this.user === 'scheduler') ? true : false;
+            },
+            isNeutral() {
+                return (this.appointmentType === 'neutral') ? true : false;
+            },
+            isAccepted() {
+                return (this.appointmentType === 'accepted') ? true : false;
+            },
+            isDeclined() {
+                return (this.appointmentType === 'declined') ? true : false;
+            },
+            isCancelled() {
+                return (this.appointmentType === 'cancelled') ? true : false;
             }
         },
         computed: {

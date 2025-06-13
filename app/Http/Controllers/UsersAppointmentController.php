@@ -87,7 +87,9 @@ class UsersAppointmentController extends Controller
      */
     public function update(Request $request, UsersAppointment $usersAppointment)
     {
-        if (($request->user_decision === 'accepted') || ($request->user_decision === 'declined')) {
+        if (($request->user_decision === 'accepted') || ($request->user_decision === 'declined')
+             || ($request->user_decision === 'cancelled')
+        ) {
             $appointmentId = $request->id;
             $userId = $request->user_id;
             $schedulerId = $request->scheduler_id;
@@ -100,6 +102,12 @@ class UsersAppointmentController extends Controller
             if ($request->user_decision === 'declined') {
                 $validated = $request->validate([
                     'user_decline_message' => ['required', 'string', 'max:250'],
+                    'user_decision' => ['required', 'string', 'max:10'],
+                ]);
+                // $usersAppointment->user_decline_message = $request->user_decline_message;
+            } elseif ($request->user_decision === 'cancelled') {
+                $validated = $request->validate([
+                    'user_cancel_message' => ['required', 'string', 'max:250'],
                     'user_decision' => ['required', 'string', 'max:10'],
                 ]);
                 // $usersAppointment->user_decline_message = $request->user_decline_message;
