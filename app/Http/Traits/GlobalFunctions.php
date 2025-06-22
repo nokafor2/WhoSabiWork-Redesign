@@ -753,7 +753,8 @@ trait GlobalFunctions {
     public function getAppointments($decision, $userId, $schedulerId) {
         // get current date
         $currentDate = date('Y-m-d');
-        $appointments = UsersAppointment::where([['user_id', '=', $userId], ['scheduler_id', '=', $schedulerId], ['appointment_date', '>=', $currentDate], ['user_decision', '=', $decision]])->get();
+        // $appointments = UsersAppointment::where([['user_id', '=', $userId], ['scheduler_id', '=', $schedulerId], ['appointment_date', '>=', $currentDate], ['user_decision', '=', $decision]])->get();
+        $appointments = UsersAppointment::where([['user_id', '=', $userId], ['appointment_date', '>=', $currentDate], ['user_decision', '=', $decision]])->get();
         $aptNum = $appointments->count();
         $appointmentDetails = array();
         $appointments->each(function ($appointment, $key) use(&$appointmentDetails) {
@@ -785,8 +786,11 @@ trait GlobalFunctions {
             // Get rating
             $allRatings = $appointment->user()->first()->usersRating()->get();
             $avgRating = $this->avgRating($allRatings);
-            $appointmentMessage = $appointment->appointment_message;
             $appointmentId = $appointment->id;
+            $appointmentMessage = $appointment->appointment_message;
+            $userDeclineMessage = $appointment->user_decline_message;
+            $userCancelMessage = $appointment->user_cancel_message;
+            $schedulerCancelMessage = $appointment->scheduler_cancel_message;
 
             $appointmentDetails[] = [
                 'id' => $appointmentId,
@@ -800,6 +804,9 @@ trait GlobalFunctions {
                 'time' => $timeConvert,
                 'rating' => $avgRating,
                 'appointmentMessage' => $appointmentMessage,
+                'userDeclineMessage' => $userDeclineMessage,
+                'userCancelMessage' => $userCancelMessage,
+                'schedulerCancelMessage' => $schedulerCancelMessage,
             ];
         });
 

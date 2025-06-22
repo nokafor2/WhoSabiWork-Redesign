@@ -1,8 +1,8 @@
 <template>
     <div class="card col-12 mb-3">
-        <div v-if="subAptVisible" :id="subAptId(index)" class="card-body mb-2" >
+        <div v-if="subAptVisible" :id="dynamicId('subApt', index)" class="card-body mb-2" >
             <div class="d-flex">
-                <div v-if="checkSchdler()" class="row">
+                <div v-if="isSchdlr()" class="row">
                     <img :src="imagePath(index)" style="height: 7rem; width: 100%;" class="card-img-top" alt="...">
                 </div>
                 <div class="">
@@ -20,26 +20,26 @@
                             </span>
                         </p>
                     </div>
-                    <div v-if="checkSchdler()" class="d-block d-sm-flex">
+                    <div v-if="isSchdlr()" class="d-block d-sm-flex">
                         <p class="card-text col-xs-12 ps-0 ps-sm-2 mb-2">
                             <i class="fa-solid fa-shop"></i>
                             {{ appointmentDetailObj.businessName }}
                         </p>
                     </div>
-                    <div v-if="checkSchdler()" class="d-block d-sm-flex">
+                    <div v-if="isSchdlr()" class="d-block d-sm-flex">
                         <p class="card-text col-xs-12 ps-0 ps-sm-2 mb-2">
                             <i class="fa-solid fa-phone"></i>
                             {{ appointmentDetailObj.phoneNumber }}
                         </p>
                     </div>
                     <!-- user === 'entrepreneur' -->
-                    <div v-if="checkEntre()" class="d-block d-sm-flex">
+                    <div v-if="isEntre()" class="d-block d-sm-flex">
                         <p class="card-text col-xs-12 ps-0 ps-sm-2 mb-2">
                             <i class="fa-regular fa-user"></i>
                             {{ appointmentDetailObj.schedulerFullName }}
                         </p>
                     </div>
-                    <div v-if="checkEntre()" class="d-block d-sm-flex">
+                    <div v-if="isEntre()" class="d-block d-sm-flex">
                         <p class="card-text col-xs-12 ps-0 ps-sm-2 mb-2">
                             <i class="fa-solid fa-phone"></i>
                             {{ appointmentDetailObj.schedulerPhoneNumber }}
@@ -49,18 +49,18 @@
             </div>
             <div class="row">
                 <div class="row mt-3 ">
-                    <button :id="showAptId(index)" class="btn btn-white btn-sm" @click="showMainApt">Show</button>
+                    <button :id="dynamicId('showBtn-subApt', index)" class="btn btn-white btn-sm" @click="showMainApt">Show</button>
                 </div>
             </div>
         </div>
         
-        <div v-if="mainAptVisible" class="card-body" :id="mainSubAptId(index)" > 
+        <div v-if="mainAptVisible" class="card-body" :id="dynamicId('main-subApt', index)" > 
             <h5 class="card-title text-center">Appointment Details</h5>
-            <div v-if="checkSchdler()" class="row mb-2">
+            <div v-if="isSchdlr()" class="row mb-2">
                 <img :src="imagePath(index)" style="height: 10rem; width: 100%;" class="card-img-top" alt="...">
             </div>
             
-            <div v-if="checkSchdler()" class="d-block d-sm-flex">
+            <div v-if="isSchdlr()" class="d-block d-sm-flex">
                 <p class="card-text col-xs-12 ps-0 ps-sm-2 mb-2">
                     <i class="fa-solid fa-shop"></i>
                     {{ appointmentDetailObj.businessName }}
@@ -78,7 +78,7 @@
                     {{ appointmentDetailObj.phoneNumber }}
                 </p>
             </div>
-            <div v-if="checkSchdler()" class="d-block d-sm-flex">
+            <div v-if="isSchdlr()" class="d-block d-sm-flex">
                 <p class="card-text col-xs-12 ps-0 ps-sm-2 mb-2">
                     <i class="fa-solid fa-location-dot"></i>
                     {{ appointmentDetailObj.address }}
@@ -98,49 +98,82 @@
                     </span>
                 </p>
             </div>
-            <div class="d-block d-sm-flex">
+
+            <div v-if="isDeclined() && isSchdlr()" class="d-block d-sm-flex">
+                <p class="card-text col-xs-12 ps-0 ps-sm-2 mb-2">
+                    <i class="fa-solid fa-message"></i>
+                    {{ appointmentDetailObj.userDeclineMessage }}
+                </p>
+            </div>
+            <div v-else-if="isCancelled() && isSchdlr()" class="d-block d-sm-flex">
+                <p class="card-text col-xs-12 ps-0 ps-sm-2 mb-2">
+                    <i class="fa-solid fa-message"></i>
+                    {{ appointmentDetailObj.userCancelMessage }}
+                </p>
+            </div>
+            <div v-else-if="isCancelled() && isEntre()" class="d-block d-sm-flex">
+                <p class="card-text col-xs-12 ps-0 ps-sm-2 mb-2">
+                    <i class="fa-solid fa-message"></i>
+                    {{ appointmentDetailObj.schedulerCancelMessage }}
+                </p>
+            </div>
+            <div v-else class="d-block d-sm-flex">
                 <p class="card-text col-xs-12 ps-0 ps-sm-2 mb-2">
                     <i class="fa-solid fa-message"></i>
                     {{ appointmentDetailObj.appointmentMessage }}
                 </p>
             </div>
-            <!-- <div class="row mt-3 mb-2">
-                <button :id="reschAptId(index)" class="btn btn-outline-danger btn-sm" @click="reschApt">Reschedule Appointment</button>
-            </div>
-            <div class="row">
-                <button :id="cancelAptId(index)" class="btn btn-white btn-sm" @click="cancelApt">Cancel Appointment</button>
+
+            <!-- <div class="row">
+                <button :id="dynamicId('cancelApt', index)" class="btn btn-white btn-sm" @click="cancelApt">Cancel Appointment</button>
             </div> -->
-            <div v-if="isNeutral()">
+            <div v-if="isNeutral() && isEntre()">
                 <div class="row mt-3 mb-2">
-                    <button :id="acceptAptId(index)" class="btn btn-success btn-sm" @click="acceptApt">Accept Appointment</button>
+                    <button :id="dynamicId('acceptApt', index)" class="btn btn-success btn-sm" @click="acceptApt">Accept Appointment</button>
                 </div>
                 <div class="row">
-                    <button :id="declineAptId(index)" class="btn btn-outline-danger btn-sm" @click="showDeclineBox">Decline Appointment</button>
+                    <button :id="dynamicId('declineAptShBox', index)" class="btn btn-outline-danger btn-sm" @click="showDeclineBox">Decline Appointment</button>
                 </div>
                 <div v-if="declineBox" class="my-2">
                     <textarea class="form-control" id="appointmentMessage" rows="3" v-model="declineMessage"></textarea>
                     <p v-if="page.props.errors.user_decline_message" class="text-danger">{{ declineMessageError }}</p>
                     <div class="row mt-2">
-                        <button :id="declineAptId(index)" class="btn btn-outline-danger btn-sm" @click="declineApt">Decline</button>
+                        <button :id="dynamicId('declineApt', index)" class="btn btn-outline-danger btn-sm" @click="declineApt">Decline</button>
                     </div>
                 </div>
             </div>
 
-            <div v-if="isAccepted()">
+            <div v-if="isAccepted() && isEntre()">
                 <div class="row">
-                    <button :id="cancelAptId(index)" class="btn btn-outline-danger btn-sm" @click="showCanceleBox">Cancel Appointment</button>
+                    <button :id="dynamicId('cancelAptShBox', index)" class="btn btn-outline-danger btn-sm" @click="showCanceleBox">Cancel Appointment</button>
                 </div>
                 <div v-if="cancelBox" class="my-2">
                     <textarea class="form-control" id="appointmentMessage" rows="3" v-model="cancelMessage"></textarea>
                     <p v-if="page.props.errors.user_cancel_message" class="text-danger">{{ cancelMessageError }}</p>
                     <div class="row mt-2">
-                        <button :id="cancelAptId(index)" class="btn btn-outline-danger btn-sm" @click="cancelAcceptedApt">Cancel</button>
+                        <button :id="dynamicId('cancelApt', index)" class="btn btn-outline-danger btn-sm" @click="cancelAcceptedApt">Cancel</button>
+                    </div>
+                </div>
+            </div>
+
+            <div v-if="isAccepted() && isSchdlr()">
+                <div class="row mt-3 mb-2">
+                    <button :id="dynamicId('reschApt', index)" class="btn btn-outline-danger btn-sm" @click="reschApt">Reschedule Appointment</button>
+                </div>
+                <div class="row">
+                    <button :id="dynamicId('schdlrCancelAptShBox', index)" class="btn btn-outline-danger btn-sm" @click="schdlrShowCanceleBox">Cancel Appointment</button>
+                </div>
+                <div v-if="schdlrCancelBox" class="my-2">
+                    <textarea class="form-control" id="appointmentMessage" rows="3" v-model="schdlrCancelMessage"></textarea>
+                    <p v-if="page.props.errors.scheduler_cancel_message" class="text-danger">{{ schdlrCancelMessageError }}</p>
+                    <div class="row mt-2">
+                        <button :id="dynamicId('schdlrCanelApt', index)" class="btn btn-outline-danger btn-sm" @click="schdlrCancelApt">Cancel</button>
                     </div>
                 </div>
             </div>
             
             <div class="row mt-3 ">
-                <button :id="hideAptId(index)" class="btn btn-white btn-sm" @click="hideMainApt">Hide</button>
+                <button :id="dynamicId('hideBtn-subApt', index)" class="btn btn-white btn-sm" @click="hideMainApt">Hide</button>
             </div>
         </div>
     </div>
@@ -159,15 +192,18 @@
                 subAptVisible: true,
                 mainAptVisible: false,
                 userId: 1,
-                schedulerId: 10,
+                schedulerId: 1,
                 page: usePage(),
+                userType: this.user,
                 declineBox: false,
                 declineMessage: '',
                 declineMessageError: '',
                 cancelBox: false,
                 cancelMessage: '',
                 cancelMessageError: '',
-                userType: this.user,
+                schdlrCancelBox: false,
+                schdlrCancelMessage: '',
+                schdlrCancelMessageError: '',
             }
         },
         methods: {
@@ -178,29 +214,8 @@
 
                 return imageUrl;
             },
-            subAptId(index) {
-                return "subApt"+index;
-            },
-            mainSubAptId(index) {
-                return "main-subApt"+index;
-            },
-            showAptId(index) {
-                return "showBtn-subApt"+index;
-            },
-            hideAptId(index) {
-                return "hideBtn-subApt"+index;
-            },
-            cancelAptId(index) {
-                return "cancelApt"+index;
-            },
-            reschAptId(index) {
-                return "reschApt"+index;
-            },
-            acceptAptId(index) {
-                return "acceptApt"+index;
-            },
-            declineAptId(index) {
-                return "declineApt"+index;
+            dynamicId(idName, index) {
+                return idName+index;
             },
             showMainApt2(event) {
                 var divId = event.currentTarget.id;
@@ -257,7 +272,7 @@
                             console.log(page);
                             // Get the new appointment details
                             // this.appointmentDetailObj = page.props.flash.success;
-                            this.$emit('update-apt-details', page.props.flash.success);
+                            // this.$emit('update-apt-details', page.props.flash.success);
                         }
                     },
                     onError: (errors) => {
@@ -281,7 +296,7 @@
                         if (page.props.flash.success) {
                             console.log(page);
                             // Get the new appointment details
-                            this.$emit('update-apt-details', page.props.flash.success);
+                            // this.$emit('update-apt-details', page.props.flash.success);
                         }
                     },
                     onError: (errors) => {
@@ -306,7 +321,7 @@
                         if (page.props.flash.success) {
                             console.log(page);
                             // Get the new appointment details
-                            this.$emit('update-apt-details', page.props.flash.success);
+                            // this.$emit('update-apt-details', page.props.flash.success);
                         }
                     },
                     onError: (errors) => {
@@ -331,12 +346,37 @@
                         if (page.props.flash.success) {
                             console.log(page);
                             // Get the new appointment details
-                            this.$emit('update-apt-details', page.props.flash.success);
+                            // this.$emit('update-apt-details', page.props.flash.success);
                         }
                     },
                     onError: (errors) => {
                         console.log('Error: ', errors);
-                        this.declineMessageErrorFxn;
+                        this.cancelMessageErrorFxn;
+                    }
+                });
+            },
+            schdlrCancelApt() {
+                var formData = useForm({
+                    user_id: this.userId,
+                    scheduler_id: this.schedulerId,
+                    appointment_date: this.appointmentDetailObj.date.rawDate,
+                    id: this.appointmentDetailObj.id,
+                    user_decision: 'cancelled',
+                    scheduler_cancel_message: this.schdlrCancelMessage,
+                });
+                formData.put(route('usersappointment.update', this.appointmentDetailObj.id), {
+                    preserveState: true,
+                    preserveScroll: true,
+                    onSuccess: (page) => {
+                        if (page.props.flash.success) {
+                            console.log(page);
+                            // Get the new appointment details
+                            // this.$emit('update-apt-details', page.props.flash.success);
+                        }
+                    },
+                    onError: (errors) => {
+                        console.log('Error: ', errors);
+                        this.schdlrCancelMessageErrorFxn;
                     }
                 });
             },
@@ -346,10 +386,13 @@
             showCanceleBox() {
                 this.cancelBox = !this.cancelBox;
             },
-            checkEntre() {
+            schdlrShowCanceleBox() {
+                this.schdlrCancelBox = !this.schdlrCancelBox;
+            },
+            isEntre() {
                 return (this.user === 'entrepreneur') ? true : false;
             },
-            checkSchdler() {
+            isSchdlr() {
                 return (this.user === 'scheduler') ? true : false;
             },
             isNeutral() {
@@ -368,6 +411,12 @@
         computed: {
             declineMessageErrorFxn() {
                 this.declineMessageError = this.page.props.errors.user_decline_message;
+            },
+            cancelMessageErrorFxn() {
+                this.cancelMessageError = this.page.props.errors.user_cancel_message;
+            },
+            schdlrCancelMessageErrorFxn() {
+                this.schdlrCancelMessageError = this.page.props.errors.scheduler_cancel_message;
             }
         }
     }

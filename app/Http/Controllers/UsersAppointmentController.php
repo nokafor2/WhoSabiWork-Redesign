@@ -39,6 +39,7 @@ class UsersAppointmentController extends Controller
         $appointmentDate = $request->appointment_date;
         $availableAppointment = UsersAppointment::where([['user_id', '=', $userId], ['scheduler_id', '=', $schedulerId], ['appointment_date', '=', $appointmentDate]])->get();
         // dd($availableAppointment->first()->id);
+        // creates new appointment if it doesn't exists
         if (empty($availableAppointment->toArray())) {
             $hours = implode(",", $request->hours);
             $availableHours = $this->getAllScheduleTime();
@@ -61,6 +62,8 @@ class UsersAppointmentController extends Controller
             return redirect()->back()->with('success', $result->id);
         } else {
             // Update the record
+            // dd($availableAppointment->first());
+            // dd($request->all());
             $this->update($request, $availableAppointment->first());
         }
     }
@@ -100,17 +103,24 @@ class UsersAppointmentController extends Controller
             ]);
             // Check if there is a decline message
             if ($request->user_decision === 'declined') {
+                // dd($request->all());
                 $validated = $request->validate([
                     'user_decline_message' => ['required', 'string', 'max:250'],
                     'user_decision' => ['required', 'string', 'max:10'],
                 ]);
                 // $usersAppointment->user_decline_message = $request->user_decline_message;
             } elseif ($request->user_decision === 'cancelled') {
-                $validated = $request->validate([
-                    'user_cancel_message' => ['required', 'string', 'max:250'],
-                    'user_decision' => ['required', 'string', 'max:10'],
-                ]);
-                // $usersAppointment->user_decline_message = $request->user_decline_message;
+                if (array_key_exists('user_cancel_message', $request->all())) {
+                    $validated = $request->validate([
+                        'user_cancel_message' => ['required', 'string', 'max:250'],
+                        'user_decision' => ['required', 'string', 'max:10'],
+                    ]);
+                } elseif (array_key_exists('scheduler_cancel_message', $request->all())) {
+                    $validated = $request->validate([
+                        'scheduler_cancel_message' => ['required', 'string', 'max:250'],
+                        'user_decision' => ['required', 'string', 'max:10'],
+                    ]);
+                }
             }
             $result = $usersAppointment->update($validated);
             // Check delete status
@@ -128,9 +138,11 @@ class UsersAppointmentController extends Controller
                 'hours' => ['required', 'array'],
                 'hours.*' => ['in:'.implode(",", $availableHours)],
                 'appointment_message' => ['required', 'string', 'max:250'],
+                'user_decision' => ['required', 'string', 'max:10'],
             ]);
             $usersAppointment->hours = $hours;
             $usersAppointment->appointment_message = $request->appointment_message;
+            $usersAppointment->user_decision = $request->user_decision;
             $result = $usersAppointment->update();
 
             return redirect()->back()->with('success', $result);

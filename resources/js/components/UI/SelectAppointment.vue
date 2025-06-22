@@ -60,7 +60,7 @@
                 datesObj: [],
                 timeSelected: [],
                 appointmentMessage: '',
-                schedulerId: 1,
+                schedulerId: 10,
                 errors: [],
                 page: usePage(),
                 success: null,

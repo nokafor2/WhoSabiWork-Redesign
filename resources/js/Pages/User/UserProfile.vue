@@ -173,31 +173,15 @@
             <div v-if="businessAccount" class="tab-pane fade" id="customersAppointments" role="tabpanel" aria-labelledby="customersAppointments-tab" tabindex="0">                    
                 <div class="row gap-3 gx-1">
                     <div class="col-md">
-                        <p class="bg-danger text-light text-center">Appointments requested with technicians</p>
                         <AppointmentDetails :appointmentDetails="neutralAppointments.appointmentDetails" :aptNum="neutralAppointments.aptNum" :user="'entrepreneur'" :appointmentType="'neutral'" @update-apt-details="updateAptDetails"></AppointmentDetails>
-                        <!-- <AppointmentDetails2 :appointmentDetails="neutralAppointments"></AppointmentDetails2> -->
 
-                        <div class="card col-12 mb-3">
-                            <div class="card-body">
-                            <h6 class="card-subtitle mb-2 text-body-secondary">You have no appointment request declined.</h6>
-                            </div>
-                        </div>
-
-                        <div class="card col-12 mb-3">
-                            <div class="card-body">
-                            <h6 class="card-subtitle mb-2 text-body-secondary">You have no appointment request canceled.</h6>
-                            </div>
-                        </div>
+                        <AppointmentDetails :appointmentDetails="declinedAppointments.appointmentDetails" :aptNum="declinedAppointments.aptNum" :user="'entrepreneur'" :appointmentType="'declined'" @update-apt-details="updateAptDetails"></AppointmentDetails>
                     </div>
 
                     <div class="col-md">
-                        <p class="bg-danger text-light text-center">Appointments confirmed with technicians</p>
                         <AppointmentDetails :appointmentDetails="acceptedAppointments.appointmentDetails" :aptNum="acceptedAppointments.aptNum" :user="'entrepreneur'" :appointmentType="'accepted'" @update-apt-details="updateAptDetails"></AppointmentDetails>
-                        <div class="card col-12 mb-3">
-                            <div class="card-body">
-                                <h6 class="card-subtitle mb-2 text-body-secondary">You have no appointment confirmed yet.</h6>
-                            </div>
-                        </div>
+
+                        <AppointmentDetails :appointmentDetails="cancelledAppointments.appointmentDetails" :aptNum="cancelledAppointments.aptNum" :user="'entrepreneur'" :appointmentType="'cancelled'" @update-apt-details="updateAptDetails"></AppointmentDetails>
                     </div>
                 </div>
             </div>
@@ -207,36 +191,15 @@
             <div class="tab-pane fade" id="myAppointments" role="tabpanel" aria-labelledby="myAppointments-tab" tabindex="0">                    
                 <div class="row gap-3 gx-1">
                     <div class="col-md">
-                        <p class="bg-danger text-light text-center">Appointments requested with technicians</p>
-                        <AppointmentDetails1 v-for="index in 1" :key="index"></AppointmentDetails1>
-                        
-                        <div class="card col-12 mb-3">
-                            <div class="card-body">
-                            <h6 class="card-subtitle mb-2 text-body-secondary">You have 1 appointment waiting confirmation</h6>
-                            </div>
-                        </div>
+                        <AppointmentDetails :appointmentDetails="neutralAppointments.appointmentDetails" :aptNum="neutralAppointments.aptNum" :user="'scheduler'" :appointmentType="'neutral'" @update-apt-details="updateAptDetails"></AppointmentDetails>
 
-                        <div class="card col-12 mb-3">
-                            <div class="card-body">
-                            <h6 class="card-subtitle mb-2 text-body-secondary">You have no appointment request declined.</h6>
-                            </div>
-                        </div>
-
-                        <div class="card col-12 mb-3">
-                            <div class="card-body">
-                            <h6 class="card-subtitle mb-2 text-body-secondary">You have no appointment request canceled.</h6>
-                            </div>
-                        </div>
+                        <AppointmentDetails :appointmentDetails="declinedAppointments.appointmentDetails" :aptNum="declinedAppointments.aptNum" :user="'scheduler'" :appointmentType="'declined'" @update-apt-details="updateAptDetails"></AppointmentDetails>
                     </div>
 
                     <div class="col-md">
-                        <p class="bg-danger text-light text-center">Appointments confirmed with technicians</p>
-                        <AppointmentDetails1 v-for="index in 1" :key="index"></AppointmentDetails1>
-                        <div class="card col-12 mb-3">
-                            <div class="card-body">
-                                <h6 class="card-subtitle mb-2 text-body-secondary">You have no appointment confirmed yet.</h6>
-                            </div>
-                        </div>
+                        <AppointmentDetails :appointmentDetails="acceptedAppointments.appointmentDetails" :aptNum="acceptedAppointments.aptNum" :user="'scheduler'" :appointmentType="'accepted'" @update-apt-details="updateAptDetails"></AppointmentDetails>
+
+                        <AppointmentDetails :appointmentDetails="cancelledAppointments.appointmentDetails" :aptNum="cancelledAppointments.aptNum" :user="'scheduler'" :appointmentType="'cancelled'" @update-apt-details="updateAptDetails"></AppointmentDetails>
                     </div>
                 </div>
             </div>
@@ -304,7 +267,7 @@
         props: ['user', 'userCategories', 'techVehCategories', 'sPartVehCategories', 'vehicleBrands', 
             'allArtisans', 'allProducts', 'allTechnicalServices', 'allSpareParts', 'allVehicleCategories', 
             'allCarBrands', 'allBusBrands', 'allTruckBrands', 'schedules', 'neutralAppointments', 
-            'acceptedAppointments'
+            'acceptedAppointments', 'declinedAppointments', 'cancelledAppointments'
         ],
         emits: [],
         data() {

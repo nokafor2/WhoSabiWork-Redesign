@@ -335,6 +335,8 @@ class UserController extends Controller
                 'schedules' => $this->getSchedule($user->id, '', 'many'),
                 'neutralAppointments' => $this->getAppointments('neutral', $user->id, '1'),
                 'acceptedAppointments' => $this->getAppointments('accepted', $user->id, '1'),
+                'declinedAppointments' => $this->getAppointments('declined', $user->id, '1'),
+                'cancelledAppointments' => $this->getAppointments('cancelled', $user->id, '1'),
             ]);
         }
     }
