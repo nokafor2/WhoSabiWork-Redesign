@@ -119,7 +119,9 @@ return [
     |
     */
 
-    'key' => env('APP_KEY'),
+    // 'key' => env('APP_KEY'),
+    // Modify the environment variable to be able to determine the APP_KEY to run on server or local
+    'key' => array_key_exists('APP_KEY', $_SERVER) ? $_SERVER['APP_KEY'] : env('APP_KEY'),
 
     'cipher' => 'AES-256-CBC',
 

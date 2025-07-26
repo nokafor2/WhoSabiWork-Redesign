@@ -65,19 +65,33 @@
                     <i class="fa-solid fa-shop"></i>
                     {{ appointmentDetailObj.businessName }}
                 </p>
-            </div>                                    
-            <div class="d-block d-sm-flex">
+            </div>
+
+            <div v-if="isSchdlr()" class="d-block d-sm-flex">
                 <p class="card-text col-xs-12 ps-0 ps-sm-2 mb-2">
                     <i class="fa-regular fa-user"></i>
                     {{ appointmentDetailObj.fullName }}
                 </p>
             </div>                                    
-            <div class="d-block d-sm-flex">
+            <div v-if="isSchdlr()" class="d-block d-sm-flex">
                 <p class="card-text col-xs-12 ps-0 ps-sm-2 mb-2">
                     <i class="fa-solid fa-phone"></i>
                     {{ appointmentDetailObj.phoneNumber }}
                 </p>
             </div>
+            <div v-if="isEntre()" class="d-block d-sm-flex">
+                <p class="card-text col-xs-12 ps-0 ps-sm-2 mb-2">
+                    <i class="fa-regular fa-user"></i>
+                    {{ appointmentDetailObj.schedulerFullName }}
+                </p>
+            </div>
+            <div v-if="isEntre()" class="d-block d-sm-flex">
+                <p class="card-text col-xs-12 ps-0 ps-sm-2 mb-2">
+                    <i class="fa-solid fa-phone"></i>
+                    {{ appointmentDetailObj.schedulerPhoneNumber }}
+                </p>
+            </div>
+
             <div v-if="isSchdlr()" class="d-block d-sm-flex">
                 <p class="card-text col-xs-12 ps-0 ps-sm-2 mb-2">
                     <i class="fa-solid fa-location-dot"></i>
@@ -158,7 +172,7 @@
 
             <div v-if="isAccepted() && isSchdlr()">
                 <div class="row mt-3 mb-2">
-                    <button :id="dynamicId('reschApt', index)" class="btn btn-outline-danger btn-sm" @click="reschApt">Reschedule Appointment</button>
+                    <button :id="dynamicId('reschApt', index)" class="btn btn-outline-danger btn-sm" @click="reschApt" data-bs-toggle="modal" data-bs-target="#staticBackdrop">Reschedule Appointment</button>
                 </div>
                 <div class="row">
                     <button :id="dynamicId('schdlrCancelAptShBox', index)" class="btn btn-outline-danger btn-sm" @click="schdlrShowCanceleBox">Cancel Appointment</button>
@@ -177,12 +191,15 @@
             </div>
         </div>
     </div>
+    <SelectAppointment v-if="availableDates.length > 0" :datesAvailable="availableDates"></SelectAppointment>
 </template>
 
 <script>
     import { useForm, usePage } from '@inertiajs/vue3';
+    import SelectAppointment from '@/components/UI/SelectAppointment.vue';
 
     export default {
+        components: {SelectAppointment},
         props: ['appointmentDetail', 'index', 'user', 'appointmentType'],
         emits: ['update-apt-details'],
         data() {
@@ -204,6 +221,7 @@
                 schdlrCancelBox: false,
                 schdlrCancelMessage: '',
                 schdlrCancelMessageError: '',
+                availableDates: [],
             }
         },
         methods: {
@@ -255,7 +273,24 @@
                 }
             },
             reschApt() {
-                return "";
+                var formData = useForm({
+                    userId: this.userId,
+                    appointment_date: this.appointmentDetailObj.date.rawDate,
+                });
+                formData.post(route('availabilityDates'), {
+                    preserveState: true,
+                    preserveScroll: true,
+                    onSuccess: (page) => {
+                        if (page.props.flash.success) {
+                            console.log(page);
+                            this.availableDates = page.props.flash.success;
+                        }
+                    },
+                    onError: (errors) => {
+                        console.log('Error: ', errors);
+                        this.errors = errors;
+                    }
+                });
             },
             cancelApt() {
                 var formData = useForm({

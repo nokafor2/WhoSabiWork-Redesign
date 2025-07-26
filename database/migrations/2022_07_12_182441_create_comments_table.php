@@ -18,7 +18,7 @@ class CreateCommentsTable extends Migration
             $table->unsignedInteger('user_id')->index();
             $table->unsignedInteger('business_id')->index();
             $table->string('author')->nullable(false)->default('');
-            $table->text('body')->nullable(false)->default('');
+            $table->text('body')->nullable(false);
             $table->timestamps();
 
             // Add foreign key

@@ -310,12 +310,22 @@ class UserController extends Controller
         $allCarBrands = $this->getTableColumnsWithSort($carBrand->table, CarBrand::$columnsToExclude);
         $allBusBrands = $this->getTableColumnsWithSort($busBrand->table, BusBrand::$columnsToExclude);
         $allTruckBrands = $this->getTableColumnsWithSort($truckBrand->table, TruckBrand::$columnsToExclude);
+        // $neutralAppointments = $this->getAppointments('neutral', $user->id, '10');
+        // $acceptedAppointments = $this->getAppointments('accepted', $user->id, '10');
+        // $declinedAppointments = $this->getAppointments('declined', $user->id, '10');
+        // $cancelledAppointments = $this->getAppointments('cancelled', $user->id, '10');
         
         // Determine if it's a regular user or business user
         $userType = $user->account_type;
         
         if ($userType === 'regular') {
-            return Inertia('User/UserProfile', ['user' => $user]);
+            return Inertia('User/UserProfile', [
+                'user' => $user,
+                'neutralAppointmentsSchdlr' => $this->getAppointments('neutral', null, $user->id),
+                'acceptedAppointmentsSchdlr' => $this->getAppointments('accepted', null, $user->id),
+                'declinedAppointmentsSchdlr' => $this->getAppointments('declined', null, $user->id),
+                'cancelledAppointmentsSchdlr' => $this->getAppointments('cancelled', null, $user->id),
+            ]);
         } elseif ($userType === 'business') {
             $userDetails = $this->getUserDetails($user->id);
             return Inertia('User/UserProfile', [
@@ -333,10 +343,14 @@ class UserController extends Controller
                 'allBusBrands' => $allBusBrands,
                 'allTruckBrands' => $allTruckBrands,
                 'schedules' => $this->getSchedule($user->id, '', 'many'),
-                'neutralAppointments' => $this->getAppointments('neutral', $user->id, '1'),
-                'acceptedAppointments' => $this->getAppointments('accepted', $user->id, '1'),
-                'declinedAppointments' => $this->getAppointments('declined', $user->id, '1'),
-                'cancelledAppointments' => $this->getAppointments('cancelled', $user->id, '1'),
+                'neutralAppointments' => $this->getAppointments('neutral', $user->id, null),
+                'acceptedAppointments' => $this->getAppointments('accepted', $user->id, null),
+                'declinedAppointments' => $this->getAppointments('declined', $user->id, null),
+                'cancelledAppointments' => $this->getAppointments('cancelled', $user->id, null),
+                'neutralAppointmentsSchdlr' => $this->getAppointments('neutral', null, $user->id),
+                'acceptedAppointmentsSchdlr' => $this->getAppointments('accepted', null, $user->id),
+                'declinedAppointmentsSchdlr' => $this->getAppointments('declined', null, $user->id),
+                'cancelledAppointmentsSchdlr' => $this->getAppointments('cancelled', null, $user->id),
             ]);
         }
     }

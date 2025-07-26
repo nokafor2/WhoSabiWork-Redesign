@@ -61,7 +61,6 @@ class EntrepreneurController extends Controller
             return Inertia('Index/Index');
             // return redirect()->route('notfound');
         }
-        
     }
 
     /**

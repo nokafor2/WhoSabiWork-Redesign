@@ -191,15 +191,15 @@
             <div class="tab-pane fade" id="myAppointments" role="tabpanel" aria-labelledby="myAppointments-tab" tabindex="0">                    
                 <div class="row gap-3 gx-1">
                     <div class="col-md">
-                        <AppointmentDetails :appointmentDetails="neutralAppointments.appointmentDetails" :aptNum="neutralAppointments.aptNum" :user="'scheduler'" :appointmentType="'neutral'" @update-apt-details="updateAptDetails"></AppointmentDetails>
+                        <AppointmentDetails :appointmentDetails="neutralAppointmentsSchdlr.appointmentDetails" :aptNum="neutralAppointmentsSchdlr.aptNum" :user="'scheduler'" :appointmentType="'neutral'" @update-apt-details="updateAptDetails"></AppointmentDetails>
 
-                        <AppointmentDetails :appointmentDetails="declinedAppointments.appointmentDetails" :aptNum="declinedAppointments.aptNum" :user="'scheduler'" :appointmentType="'declined'" @update-apt-details="updateAptDetails"></AppointmentDetails>
+                        <AppointmentDetails :appointmentDetails="declinedAppointmentsSchdlr.appointmentDetails" :aptNum="declinedAppointmentsSchdlr.aptNum" :user="'scheduler'" :appointmentType="'declined'" @update-apt-details="updateAptDetails"></AppointmentDetails>
                     </div>
 
                     <div class="col-md">
-                        <AppointmentDetails :appointmentDetails="acceptedAppointments.appointmentDetails" :aptNum="acceptedAppointments.aptNum" :user="'scheduler'" :appointmentType="'accepted'" @update-apt-details="updateAptDetails"></AppointmentDetails>
+                        <AppointmentDetails :appointmentDetails="acceptedAppointmentsSchdlr.appointmentDetails" :aptNum="acceptedAppointmentsSchdlr.aptNum" :user="'scheduler'" :appointmentType="'accepted'" @update-apt-details="updateAptDetails"></AppointmentDetails>
 
-                        <AppointmentDetails :appointmentDetails="cancelledAppointments.appointmentDetails" :aptNum="cancelledAppointments.aptNum" :user="'scheduler'" :appointmentType="'cancelled'" @update-apt-details="updateAptDetails"></AppointmentDetails>
+                        <AppointmentDetails :appointmentDetails="cancelledAppointmentsSchdlr.appointmentDetails" :aptNum="cancelledAppointmentsSchdlr.aptNum" :user="'scheduler'" :appointmentType="'cancelled'" @update-apt-details="updateAptDetails"></AppointmentDetails>
                     </div>
                 </div>
             </div>
@@ -267,7 +267,8 @@
         props: ['user', 'userCategories', 'techVehCategories', 'sPartVehCategories', 'vehicleBrands', 
             'allArtisans', 'allProducts', 'allTechnicalServices', 'allSpareParts', 'allVehicleCategories', 
             'allCarBrands', 'allBusBrands', 'allTruckBrands', 'schedules', 'neutralAppointments', 
-            'acceptedAppointments', 'declinedAppointments', 'cancelledAppointments'
+            'acceptedAppointments', 'declinedAppointments', 'cancelledAppointments', 'neutralAppointmentsSchdlr', 
+            'acceptedAppointmentsSchdlr', 'declinedAppointmentsSchdlr', 'cancelledAppointmentsSchdlr'
         ],
         emits: [],
         data() {
@@ -427,6 +428,13 @@
                 }
                 if (typeof this.vehicleBrands.sPart_truck === "object" && (this.vehicleBrands.sPart_truck !== "undefined" || this.vehicleBrands.sPart_truck !== null)) {
                     return (Object.entries(this.vehicleBrands.sPart_truck).length > 0) ? this.vehicleBrands.sPart_truck : false;
+                } else {
+                    return false;
+                }
+            },
+            hasNeutralApts() {
+                if (typeof this.neutralAppointments === "object" && (this.neutralAppointments !== "undefined" || this.neutralAppointments !== null)) {
+                    return (Object.entries(this.neutralAppointments).length > 0) ? this.neutralAppointments : false;
                 } else {
                     return false;
                 }

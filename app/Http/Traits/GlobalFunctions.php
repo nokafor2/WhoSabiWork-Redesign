@@ -557,13 +557,14 @@ trait GlobalFunctions {
             $userRating = ['ratingCount' => $ratingCount, 'avgRating' => $avgRating];
         }
 
-        return ['userDetails' => $foundUser, 
-                'userCategories' => $refinedCategoryArray,
-                'techVehCategories' => $techVehCategories,
-                'sPartVehCategories' => $sparePartVehCategories,
-                'vehicleBrands' => $refVehBrand,
-                'userRating' => $userRating,
-                'datesAvailable' => $this->getAvailabilityDates($userId),
+        return [
+            'userDetails' => $foundUser, 
+            'userCategories' => $refinedCategoryArray,
+            'techVehCategories' => $techVehCategories,
+            'sPartVehCategories' => $sparePartVehCategories,
+            'vehicleBrands' => $refVehBrand,
+            'userRating' => $userRating,
+            'datesAvailable' => $this->getAvailabilityDates($userId),
         ];
     }
 
@@ -753,8 +754,12 @@ trait GlobalFunctions {
     public function getAppointments($decision, $userId, $schedulerId) {
         // get current date
         $currentDate = date('Y-m-d');
-        // $appointments = UsersAppointment::where([['user_id', '=', $userId], ['scheduler_id', '=', $schedulerId], ['appointment_date', '>=', $currentDate], ['user_decision', '=', $decision]])->get();
-        $appointments = UsersAppointment::where([['user_id', '=', $userId], ['appointment_date', '>=', $currentDate], ['user_decision', '=', $decision]])->get();
+        if (isset($userId)) {
+            // $appointments = UsersAppointment::where([['user_id', '=', $userId], ['scheduler_id', '=', $schedulerId], ['appointment_date', '>=', $currentDate], ['user_decision', '=', $decision]])->get();
+            $appointments = UsersAppointment::where([['user_id', '=', $userId], ['appointment_date', '>=', $currentDate], ['user_decision', '=', $decision]])->get();
+        } elseif (isset($schedulerId)) {
+            $appointments = UsersAppointment::where([['scheduler_id', '=', $schedulerId], ['appointment_date', '>=', $currentDate], ['user_decision', '=', $decision]])->get();
+        }
         $aptNum = $appointments->count();
         $appointmentDetails = array();
         $appointments->each(function ($appointment, $key) use(&$appointmentDetails) {
@@ -764,7 +769,7 @@ trait GlobalFunctions {
             // Get user phone number
             $phoneNumber = $appointment->user()->first()->phone_number;
             // Get scheduler full name
-            $schedulerFullName = ($appointment->scheduler()->first()->userFullName() !== null) ? $appointment->user()->first()->userFullName() : "";
+            $schedulerFullName = ($appointment->scheduler()->first()->userFullName() !== null) ? $appointment->scheduler()->first()->userFullName() : "";
             // Get user phone number
             $schedulerPhoneNumber = $appointment->scheduler()->first()->phone_number;
             // Get business name
@@ -811,8 +816,8 @@ trait GlobalFunctions {
         });
 
         return $appointmentData[] = [
-                'appointmentDetails' => $appointmentDetails,
-                'aptNum' => $aptNum,
+            'appointmentDetails' => $appointmentDetails,
+            'aptNum' => $aptNum,
         ];
     }
 
