@@ -1,8 +1,14 @@
 <template>
     <div class="card col-12 mb-3">
+<<<<<<< HEAD
         <div v-if="subAptVisible" :id="dynamicId('subApt', index)" class="card-body mb-2" >
             <div class="d-flex">
                 <div v-if="isSchdlr()" class="row">
+=======
+        <div v-if="subAptVisible" :id="subAptId(index)" class="card-body mb-2" >
+            <div class="d-flex">
+                <div class="row">
+>>>>>>> a4aa1a46cbbd1050d9a25b087ae54b28d1a40e8f
                     <img :src="imagePath(index)" style="height: 7rem; width: 100%;" class="card-img-top" alt="...">
                 </div>
                 <div class="">
@@ -20,26 +26,42 @@
                             </span>
                         </p>
                     </div>
+<<<<<<< HEAD
                     <div v-if="isSchdlr()" class="d-block d-sm-flex">
+=======
+                    <div v-if="checkSchdler()" class="d-block d-sm-flex">
+>>>>>>> a4aa1a46cbbd1050d9a25b087ae54b28d1a40e8f
                         <p class="card-text col-xs-12 ps-0 ps-sm-2 mb-2">
                             <i class="fa-solid fa-shop"></i>
                             {{ appointmentDetailObj.businessName }}
                         </p>
                     </div>
+<<<<<<< HEAD
                     <div v-if="isSchdlr()" class="d-block d-sm-flex">
+=======
+                    <div v-if="checkSchdler()" class="d-block d-sm-flex">
+>>>>>>> a4aa1a46cbbd1050d9a25b087ae54b28d1a40e8f
                         <p class="card-text col-xs-12 ps-0 ps-sm-2 mb-2">
                             <i class="fa-solid fa-phone"></i>
                             {{ appointmentDetailObj.phoneNumber }}
                         </p>
                     </div>
                     <!-- user === 'entrepreneur' -->
+<<<<<<< HEAD
                     <div v-if="isEntre()" class="d-block d-sm-flex">
+=======
+                    <div v-if="checkEntre()" class="d-block d-sm-flex">
+>>>>>>> a4aa1a46cbbd1050d9a25b087ae54b28d1a40e8f
                         <p class="card-text col-xs-12 ps-0 ps-sm-2 mb-2">
                             <i class="fa-regular fa-user"></i>
                             {{ appointmentDetailObj.schedulerFullName }}
                         </p>
                     </div>
+<<<<<<< HEAD
                     <div v-if="isEntre()" class="d-block d-sm-flex">
+=======
+                    <div v-if="checkEntre()" class="d-block d-sm-flex">
+>>>>>>> a4aa1a46cbbd1050d9a25b087ae54b28d1a40e8f
                         <p class="card-text col-xs-12 ps-0 ps-sm-2 mb-2">
                             <i class="fa-solid fa-phone"></i>
                             {{ appointmentDetailObj.schedulerPhoneNumber }}
@@ -49,11 +71,16 @@
             </div>
             <div class="row">
                 <div class="row mt-3 ">
+<<<<<<< HEAD
                     <button :id="dynamicId('showBtn-subApt', index)" class="btn btn-white btn-sm" @click="showMainApt">Show</button>
+=======
+                    <button :id="showAptId(index)" class="btn btn-white btn-sm" @click="showMainApt">Show</button>
+>>>>>>> a4aa1a46cbbd1050d9a25b087ae54b28d1a40e8f
                 </div>
             </div>
         </div>
         
+<<<<<<< HEAD
         <div v-if="mainAptVisible" class="card-body" :id="dynamicId('main-subApt', index)" > 
             <h5 class="card-title text-center">Appointment Details</h5>
             <div v-if="isSchdlr()" class="row mb-2">
@@ -61,24 +88,43 @@
             </div>
             
             <div v-if="isSchdlr()" class="d-block d-sm-flex">
+=======
+        <div v-if="mainAptVisible" class="card-body" :id="mainSubAptId(index)" > 
+            <h5 class="card-title text-center">Appointment Details</h5>
+            <div class="row mb-2">
+                <img :src="imagePath(index)" style="height: 10rem; width: 100%;" class="card-img-top" alt="...">
+            </div>
+            
+            <div class="d-block d-sm-flex">
+>>>>>>> a4aa1a46cbbd1050d9a25b087ae54b28d1a40e8f
                 <p class="card-text col-xs-12 ps-0 ps-sm-2 mb-2">
                     <i class="fa-solid fa-shop"></i>
                     {{ appointmentDetailObj.businessName }}
                 </p>
+<<<<<<< HEAD
             </div>
 
             <div v-if="isSchdlr()" class="d-block d-sm-flex">
+=======
+            </div>                                    
+            <div class="d-block d-sm-flex">
+>>>>>>> a4aa1a46cbbd1050d9a25b087ae54b28d1a40e8f
                 <p class="card-text col-xs-12 ps-0 ps-sm-2 mb-2">
                     <i class="fa-regular fa-user"></i>
                     {{ appointmentDetailObj.fullName }}
                 </p>
             </div>                                    
+<<<<<<< HEAD
             <div v-if="isSchdlr()" class="d-block d-sm-flex">
+=======
+            <div class="d-block d-sm-flex">
+>>>>>>> a4aa1a46cbbd1050d9a25b087ae54b28d1a40e8f
                 <p class="card-text col-xs-12 ps-0 ps-sm-2 mb-2">
                     <i class="fa-solid fa-phone"></i>
                     {{ appointmentDetailObj.phoneNumber }}
                 </p>
             </div>
+<<<<<<< HEAD
             <div v-if="isEntre()" class="d-block d-sm-flex">
                 <p class="card-text col-xs-12 ps-0 ps-sm-2 mb-2">
                     <i class="fa-regular fa-user"></i>
@@ -93,6 +139,9 @@
             </div>
 
             <div v-if="isSchdlr()" class="d-block d-sm-flex">
+=======
+            <div class="d-block d-sm-flex">
+>>>>>>> a4aa1a46cbbd1050d9a25b087ae54b28d1a40e8f
                 <p class="card-text col-xs-12 ps-0 ps-sm-2 mb-2">
                     <i class="fa-solid fa-location-dot"></i>
                     {{ appointmentDetailObj.address }}
@@ -112,6 +161,7 @@
                     </span>
                 </p>
             </div>
+<<<<<<< HEAD
 
             <div v-if="isDeclined() && isSchdlr()" class="d-block d-sm-flex">
                 <p class="card-text col-xs-12 ps-0 ps-sm-2 mb-2">
@@ -132,11 +182,15 @@
                 </p>
             </div>
             <div v-else class="d-block d-sm-flex">
+=======
+            <div class="d-block d-sm-flex">
+>>>>>>> a4aa1a46cbbd1050d9a25b087ae54b28d1a40e8f
                 <p class="card-text col-xs-12 ps-0 ps-sm-2 mb-2">
                     <i class="fa-solid fa-message"></i>
                     {{ appointmentDetailObj.appointmentMessage }}
                 </p>
             </div>
+<<<<<<< HEAD
 
             <!-- <div class="row">
                 <button :id="dynamicId('cancelApt', index)" class="btn btn-white btn-sm" @click="cancelApt">Cancel Appointment</button>
@@ -192,15 +246,47 @@
         </div>
     </div>
     <SelectAppointment v-if="availableDates.length > 0" :datesAvailable="availableDates"></SelectAppointment>
+=======
+            <!-- <div class="row mt-3 mb-2">
+                <button :id="reschAptId(index)" class="btn btn-outline-danger btn-sm" @click="reschApt">Reschedule Appointment</button>
+            </div>
+            <div class="row">
+                <button :id="cancelAptId(index)" class="btn btn-white btn-sm" @click="cancelApt">Cancel Appointment</button>
+            </div> -->
+            <div class="row mt-3 mb-2">
+                <button :id="acceptAptId(index)" class="btn btn-success btn-sm" @click="acceptApt">Accept Appointment</button>
+            </div>
+            <div class="row">
+                <button :id="declineAptId(index)" class="btn btn-outline-danger btn-sm" @click="showDeclineBox">Decline Appointment</button>
+            </div>
+            <div v-if="declineBox" class="my-2">
+                <textarea class="form-control" id="appointmentMessage" rows="3" v-model="declineMessage"></textarea>
+                <p v-if="page.props.errors.user_decline_message" class="text-danger">{{ declineMessageError }}</p>
+                <div class="row mt-2">
+                    <button :id="declineAptId(index)" class="btn btn-outline-danger btn-sm" @click="declineApt">Submit</button>
+                </div>
+            </div>
+            <div class="row mt-3 ">
+                <button :id="hideAptId(index)" class="btn btn-white btn-sm" @click="hideMainApt">Hide</button>
+            </div>
+        </div>
+    </div>
+>>>>>>> a4aa1a46cbbd1050d9a25b087ae54b28d1a40e8f
 </template>
 
 <script>
     import { useForm, usePage } from '@inertiajs/vue3';
+<<<<<<< HEAD
     import SelectAppointment from '@/components/UI/SelectAppointment.vue';
 
     export default {
         components: {SelectAppointment},
         props: ['appointmentDetail', 'index', 'user', 'appointmentType'],
+=======
+
+    export default {
+        props: ['appointmentDetail', 'index', 'user'],
+>>>>>>> a4aa1a46cbbd1050d9a25b087ae54b28d1a40e8f
         emits: ['update-apt-details'],
         data() {
             return {
@@ -211,6 +297,7 @@
                 userId: 1,
                 schedulerId: 1,
                 page: usePage(),
+<<<<<<< HEAD
                 userType: this.user,
                 declineBox: false,
                 declineMessage: '',
@@ -222,6 +309,12 @@
                 schdlrCancelMessage: '',
                 schdlrCancelMessageError: '',
                 availableDates: [],
+=======
+                declineBox: false,
+                declineMessage: '',
+                declineMessageError: '',
+                userType: this.user,
+>>>>>>> a4aa1a46cbbd1050d9a25b087ae54b28d1a40e8f
             }
         },
         methods: {
@@ -232,8 +325,34 @@
 
                 return imageUrl;
             },
+<<<<<<< HEAD
             dynamicId(idName, index) {
                 return idName+index;
+=======
+            subAptId(index) {
+                return "subApt"+index;
+            },
+            mainSubAptId(index) {
+                return "main-subApt"+index;
+            },
+            showAptId(index) {
+                return "showBtn-subApt"+index;
+            },
+            hideAptId(index) {
+                return "hideBtn-subApt"+index;
+            },
+            cancelAptId(index) {
+                return "cancelApt"+index;
+            },
+            reschAptId(index) {
+                return "reschApt"+index;
+            },
+            acceptAptId(index) {
+                return "acceptApt"+index;
+            },
+            declineAptId(index) {
+                return "declineApt"+index;
+>>>>>>> a4aa1a46cbbd1050d9a25b087ae54b28d1a40e8f
             },
             showMainApt2(event) {
                 var divId = event.currentTarget.id;
@@ -273,6 +392,7 @@
                 }
             },
             reschApt() {
+<<<<<<< HEAD
                 var formData = useForm({
                     userId: this.userId,
                     appointment_date: this.appointmentDetailObj.date.rawDate,
@@ -291,6 +411,9 @@
                         this.errors = errors;
                     }
                 });
+=======
+                return "";
+>>>>>>> a4aa1a46cbbd1050d9a25b087ae54b28d1a40e8f
             },
             cancelApt() {
                 var formData = useForm({
@@ -307,7 +430,11 @@
                             console.log(page);
                             // Get the new appointment details
                             // this.appointmentDetailObj = page.props.flash.success;
+<<<<<<< HEAD
                             // this.$emit('update-apt-details', page.props.flash.success);
+=======
+                            this.$emit('update-apt-details', page.props.flash.success);
+>>>>>>> a4aa1a46cbbd1050d9a25b087ae54b28d1a40e8f
                         }
                     },
                     onError: (errors) => {
@@ -331,7 +458,11 @@
                         if (page.props.flash.success) {
                             console.log(page);
                             // Get the new appointment details
+<<<<<<< HEAD
                             // this.$emit('update-apt-details', page.props.flash.success);
+=======
+                            this.$emit('update-apt-details', page.props.flash.success);
+>>>>>>> a4aa1a46cbbd1050d9a25b087ae54b28d1a40e8f
                         }
                     },
                     onError: (errors) => {
@@ -356,7 +487,11 @@
                         if (page.props.flash.success) {
                             console.log(page);
                             // Get the new appointment details
+<<<<<<< HEAD
                             // this.$emit('update-apt-details', page.props.flash.success);
+=======
+                            this.$emit('update-apt-details', page.props.flash.success);
+>>>>>>> a4aa1a46cbbd1050d9a25b087ae54b28d1a40e8f
                         }
                     },
                     onError: (errors) => {
@@ -365,6 +500,7 @@
                     }
                 });
             },
+<<<<<<< HEAD
             cancelAcceptedApt() {
                 var formData = useForm({
                     user_id: this.userId,
@@ -441,17 +577,39 @@
             },
             isCancelled() {
                 return (this.appointmentType === 'cancelled') ? true : false;
+=======
+            showDeclineBox() {
+                this.declineBox = !this.declineBox;
+            },
+            checkEntre() {
+                if (this.user === 'entrepreneur') {
+                    return true;
+                } else {
+                    return false;
+                }
+                 
+            },
+            checkSchdler() {
+                if (this.user === 'scheduler') {
+                    return true;
+                } else {
+                    return false;
+                }
+>>>>>>> a4aa1a46cbbd1050d9a25b087ae54b28d1a40e8f
             }
         },
         computed: {
             declineMessageErrorFxn() {
                 this.declineMessageError = this.page.props.errors.user_decline_message;
+<<<<<<< HEAD
             },
             cancelMessageErrorFxn() {
                 this.cancelMessageError = this.page.props.errors.user_cancel_message;
             },
             schdlrCancelMessageErrorFxn() {
                 this.schdlrCancelMessageError = this.page.props.errors.scheduler_cancel_message;
+=======
+>>>>>>> a4aa1a46cbbd1050d9a25b087ae54b28d1a40e8f
             }
         }
     }

@@ -1,4 +1,5 @@
 <template>
+<<<<<<< HEAD
     <div v-if="isNeutral() || isAccepted()">
         <p v-if="isNeutral() && isEntre()" class="bg-primary text-light text-center">Appointments requested from customers</p>
         <p v-if="isNeutral() && isSchdlr()" class="bg-primary text-light text-center">Appointments requested with technicians</p>
@@ -36,6 +37,15 @@
 
         <AppointmentCard v-for="(appointmentDetail, index) in appointmentDetails" :key="index" :appointmentDetail="appointmentDetail" :index="index" :user="user" :appointmentType="appointmentType"></AppointmentCard>
     </div>
+=======
+    <div class="card col-12 mb-3">
+        <div class="card-body">
+            <h6 class="card-subtitle mb-2 text-body-secondary">{{ appointmentCount() }}</h6>
+        </div>
+    </div>
+    
+    <AppointmentCard v-for="(appointmentDetail, index) in appointmentDetails" :key="index" :appointmentDetail="appointmentDetail" :index="index" :user="user"></AppointmentCard>
+>>>>>>> a4aa1a46cbbd1050d9a25b087ae54b28d1a40e8f
 </template>
 
 
@@ -44,7 +54,11 @@
 
     export default {
         components: {AppointmentCard},
+<<<<<<< HEAD
         props: ['appointmentDetails', 'aptNum', 'user', 'appointmentType'],
+=======
+        props: ['appointmentDetails', 'aptNum', 'user'],
+>>>>>>> a4aa1a46cbbd1050d9a25b087ae54b28d1a40e8f
         emits: [],
         data() {
             return {
@@ -54,7 +68,11 @@
             }
         },
         methods: {
+<<<<<<< HEAD
             aptNeutralCount() {
+=======
+            appointmentCount() {
+>>>>>>> a4aa1a46cbbd1050d9a25b087ae54b28d1a40e8f
                 if (this.aptNum < 1) {
                     return "You have no appointment request from a customer.";
                 } else if (this.aptNum === 1) {
@@ -71,6 +89,7 @@
                 //     return "You have "+this.aptNum+" appointments waiting confirmation.";
                 // }
             },
+<<<<<<< HEAD
             aptAcceptedCount() {
                 if (this.aptNum < 1) {
                     return "You have no appointment accepted.";
@@ -116,6 +135,8 @@
             isCancelled() {
                 return (this.appointmentType === 'cancelled') ? true : false;
             }
+=======
+>>>>>>> a4aa1a46cbbd1050d9a25b087ae54b28d1a40e8f
         },
     }
 </script>

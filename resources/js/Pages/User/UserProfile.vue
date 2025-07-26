@@ -173,6 +173,7 @@
             <div v-if="businessAccount" class="tab-pane fade" id="customersAppointments" role="tabpanel" aria-labelledby="customersAppointments-tab" tabindex="0">                    
                 <div class="row gap-3 gx-1">
                     <div class="col-md">
+<<<<<<< HEAD
                         <AppointmentDetails :appointmentDetails="neutralAppointments.appointmentDetails" :aptNum="neutralAppointments.aptNum" :user="'entrepreneur'" :appointmentType="'neutral'" @update-apt-details="updateAptDetails"></AppointmentDetails>
 
                         <AppointmentDetails :appointmentDetails="declinedAppointments.appointmentDetails" :aptNum="declinedAppointments.aptNum" :user="'entrepreneur'" :appointmentType="'declined'" @update-apt-details="updateAptDetails"></AppointmentDetails>
@@ -182,6 +183,33 @@
                         <AppointmentDetails :appointmentDetails="acceptedAppointments.appointmentDetails" :aptNum="acceptedAppointments.aptNum" :user="'entrepreneur'" :appointmentType="'accepted'" @update-apt-details="updateAptDetails"></AppointmentDetails>
 
                         <AppointmentDetails :appointmentDetails="cancelledAppointments.appointmentDetails" :aptNum="cancelledAppointments.aptNum" :user="'entrepreneur'" :appointmentType="'cancelled'" @update-apt-details="updateAptDetails"></AppointmentDetails>
+=======
+                        <p class="bg-danger text-light text-center">Appointments requested with technicians</p>
+                        <AppointmentDetails :appointmentDetails="neutralAppointments.appointmentDetails" :aptNum="neutralAppointments.aptNum" :user="'entrepreneur'" @update-apt-details="updateAptDetails"></AppointmentDetails>
+                        <!-- <AppointmentDetails2 :appointmentDetails="neutralAppointments"></AppointmentDetails2> -->
+
+                        <div class="card col-12 mb-3">
+                            <div class="card-body">
+                            <h6 class="card-subtitle mb-2 text-body-secondary">You have no appointment request declined.</h6>
+                            </div>
+                        </div>
+
+                        <div class="card col-12 mb-3">
+                            <div class="card-body">
+                            <h6 class="card-subtitle mb-2 text-body-secondary">You have no appointment request canceled.</h6>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md">
+                        <p class="bg-danger text-light text-center">Appointments confirmed with technicians</p>
+                        <AppointmentDetails v-for="index in 2" :key="index"></AppointmentDetails>
+                        <div class="card col-12 mb-3">
+                            <div class="card-body">
+                                <h6 class="card-subtitle mb-2 text-body-secondary">You have no appointment confirmed yet.</h6>
+                            </div>
+                        </div>
+>>>>>>> a4aa1a46cbbd1050d9a25b087ae54b28d1a40e8f
                     </div>
                 </div>
             </div>
@@ -191,6 +219,7 @@
             <div class="tab-pane fade" id="myAppointments" role="tabpanel" aria-labelledby="myAppointments-tab" tabindex="0">                    
                 <div class="row gap-3 gx-1">
                     <div class="col-md">
+<<<<<<< HEAD
                         <AppointmentDetails :appointmentDetails="neutralAppointmentsSchdlr.appointmentDetails" :aptNum="neutralAppointmentsSchdlr.aptNum" :user="'scheduler'" :appointmentType="'neutral'" @update-apt-details="updateAptDetails"></AppointmentDetails>
 
                         <AppointmentDetails :appointmentDetails="declinedAppointmentsSchdlr.appointmentDetails" :aptNum="declinedAppointmentsSchdlr.aptNum" :user="'scheduler'" :appointmentType="'declined'" @update-apt-details="updateAptDetails"></AppointmentDetails>
@@ -200,6 +229,38 @@
                         <AppointmentDetails :appointmentDetails="acceptedAppointmentsSchdlr.appointmentDetails" :aptNum="acceptedAppointmentsSchdlr.aptNum" :user="'scheduler'" :appointmentType="'accepted'" @update-apt-details="updateAptDetails"></AppointmentDetails>
 
                         <AppointmentDetails :appointmentDetails="cancelledAppointmentsSchdlr.appointmentDetails" :aptNum="cancelledAppointmentsSchdlr.aptNum" :user="'scheduler'" :appointmentType="'cancelled'" @update-apt-details="updateAptDetails"></AppointmentDetails>
+=======
+                        <p class="bg-danger text-light text-center">Appointments requested with technicians</p>
+                        <AppointmentDetails1 v-for="index in 1" :key="index"></AppointmentDetails1>
+                        
+                        <div class="card col-12 mb-3">
+                            <div class="card-body">
+                            <h6 class="card-subtitle mb-2 text-body-secondary">You have 1 appointment waiting confirmation</h6>
+                            </div>
+                        </div>
+
+                        <div class="card col-12 mb-3">
+                            <div class="card-body">
+                            <h6 class="card-subtitle mb-2 text-body-secondary">You have no appointment request declined.</h6>
+                            </div>
+                        </div>
+
+                        <div class="card col-12 mb-3">
+                            <div class="card-body">
+                            <h6 class="card-subtitle mb-2 text-body-secondary">You have no appointment request canceled.</h6>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md">
+                        <p class="bg-danger text-light text-center">Appointments confirmed with technicians</p>
+                        <AppointmentDetails1 v-for="index in 1" :key="index"></AppointmentDetails1>
+                        <div class="card col-12 mb-3">
+                            <div class="card-body">
+                                <h6 class="card-subtitle mb-2 text-body-secondary">You have no appointment confirmed yet.</h6>
+                            </div>
+                        </div>
+>>>>>>> a4aa1a46cbbd1050d9a25b087ae54b28d1a40e8f
                     </div>
                 </div>
             </div>
@@ -264,11 +325,17 @@
             UserAvailability, AppointmentDetails2
         },
         mixins: [MethodsMixin],
+<<<<<<< HEAD
         props: ['user', 'userCategories', 'techVehCategories', 'sPartVehCategories', 'vehicleBrands', 
             'allArtisans', 'allProducts', 'allTechnicalServices', 'allSpareParts', 'allVehicleCategories', 
             'allCarBrands', 'allBusBrands', 'allTruckBrands', 'schedules', 'neutralAppointments', 
             'acceptedAppointments', 'declinedAppointments', 'cancelledAppointments', 'neutralAppointmentsSchdlr', 
             'acceptedAppointmentsSchdlr', 'declinedAppointmentsSchdlr', 'cancelledAppointmentsSchdlr'
+=======
+        props: ['user', 'userCategories', 'techVehCategories', 'sPartVehCategories', 'vehicleBrands', 'allArtisans', 'allProducts',
+            'allTechnicalServices', 'allSpareParts', 'allVehicleCategories', 'allCarBrands',
+            'allBusBrands', 'allTruckBrands', 'schedules', 'neutralAppointments'
+>>>>>>> a4aa1a46cbbd1050d9a25b087ae54b28d1a40e8f
         ],
         emits: [],
         data() {
@@ -431,6 +498,7 @@
                 } else {
                     return false;
                 }
+<<<<<<< HEAD
             },
             hasNeutralApts() {
                 if (typeof this.neutralAppointments === "object" && (this.neutralAppointments !== "undefined" || this.neutralAppointments !== null)) {
@@ -438,6 +506,8 @@
                 } else {
                     return false;
                 }
+=======
+>>>>>>> a4aa1a46cbbd1050d9a25b087ae54b28d1a40e8f
             }
         }
     }

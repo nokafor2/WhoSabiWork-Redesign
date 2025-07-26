@@ -557,6 +557,7 @@ trait GlobalFunctions {
             $userRating = ['ratingCount' => $ratingCount, 'avgRating' => $avgRating];
         }
 
+<<<<<<< HEAD
         return [
             'userDetails' => $foundUser, 
             'userCategories' => $refinedCategoryArray,
@@ -565,6 +566,15 @@ trait GlobalFunctions {
             'vehicleBrands' => $refVehBrand,
             'userRating' => $userRating,
             'datesAvailable' => $this->getAvailabilityDates($userId),
+=======
+        return ['userDetails' => $foundUser, 
+                'userCategories' => $refinedCategoryArray,
+                'techVehCategories' => $techVehCategories,
+                'sPartVehCategories' => $sparePartVehCategories,
+                'vehicleBrands' => $refVehBrand,
+                'userRating' => $userRating,
+                'datesAvailable' => $this->getAvailabilityDates($userId),
+>>>>>>> a4aa1a46cbbd1050d9a25b087ae54b28d1a40e8f
         ];
     }
 
@@ -754,12 +764,16 @@ trait GlobalFunctions {
     public function getAppointments($decision, $userId, $schedulerId) {
         // get current date
         $currentDate = date('Y-m-d');
+<<<<<<< HEAD
         if (isset($userId)) {
             // $appointments = UsersAppointment::where([['user_id', '=', $userId], ['scheduler_id', '=', $schedulerId], ['appointment_date', '>=', $currentDate], ['user_decision', '=', $decision]])->get();
             $appointments = UsersAppointment::where([['user_id', '=', $userId], ['appointment_date', '>=', $currentDate], ['user_decision', '=', $decision]])->get();
         } elseif (isset($schedulerId)) {
             $appointments = UsersAppointment::where([['scheduler_id', '=', $schedulerId], ['appointment_date', '>=', $currentDate], ['user_decision', '=', $decision]])->get();
         }
+=======
+        $appointments = UsersAppointment::where([['user_id', '=', $userId], ['scheduler_id', '=', $schedulerId], ['appointment_date', '>=', $currentDate], ['user_decision', '=', $decision]])->get();
+>>>>>>> a4aa1a46cbbd1050d9a25b087ae54b28d1a40e8f
         $aptNum = $appointments->count();
         $appointmentDetails = array();
         $appointments->each(function ($appointment, $key) use(&$appointmentDetails) {
@@ -769,7 +783,11 @@ trait GlobalFunctions {
             // Get user phone number
             $phoneNumber = $appointment->user()->first()->phone_number;
             // Get scheduler full name
+<<<<<<< HEAD
             $schedulerFullName = ($appointment->scheduler()->first()->userFullName() !== null) ? $appointment->scheduler()->first()->userFullName() : "";
+=======
+            $schedulerFullName = ($appointment->scheduler()->first()->userFullName() !== null) ? $appointment->user()->first()->userFullName() : "";
+>>>>>>> a4aa1a46cbbd1050d9a25b087ae54b28d1a40e8f
             // Get user phone number
             $schedulerPhoneNumber = $appointment->scheduler()->first()->phone_number;
             // Get business name
@@ -791,11 +809,16 @@ trait GlobalFunctions {
             // Get rating
             $allRatings = $appointment->user()->first()->usersRating()->get();
             $avgRating = $this->avgRating($allRatings);
+<<<<<<< HEAD
             $appointmentId = $appointment->id;
             $appointmentMessage = $appointment->appointment_message;
             $userDeclineMessage = $appointment->user_decline_message;
             $userCancelMessage = $appointment->user_cancel_message;
             $schedulerCancelMessage = $appointment->scheduler_cancel_message;
+=======
+            $appointmentMessage = $appointment->appointment_message;
+            $appointmentId = $appointment->id;
+>>>>>>> a4aa1a46cbbd1050d9a25b087ae54b28d1a40e8f
 
             $appointmentDetails[] = [
                 'id' => $appointmentId,
@@ -809,15 +832,23 @@ trait GlobalFunctions {
                 'time' => $timeConvert,
                 'rating' => $avgRating,
                 'appointmentMessage' => $appointmentMessage,
+<<<<<<< HEAD
                 'userDeclineMessage' => $userDeclineMessage,
                 'userCancelMessage' => $userCancelMessage,
                 'schedulerCancelMessage' => $schedulerCancelMessage,
+=======
+>>>>>>> a4aa1a46cbbd1050d9a25b087ae54b28d1a40e8f
             ];
         });
 
         return $appointmentData[] = [
+<<<<<<< HEAD
             'appointmentDetails' => $appointmentDetails,
             'aptNum' => $aptNum,
+=======
+                'appointmentDetails' => $appointmentDetails,
+                'aptNum' => $aptNum,
+>>>>>>> a4aa1a46cbbd1050d9a25b087ae54b28d1a40e8f
         ];
     }
 
