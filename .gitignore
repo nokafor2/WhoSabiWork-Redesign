@@ -2,13 +2,9 @@
 /public/hot
 /public/storage
 /storage/*.key
-<<<<<<< HEAD
 .env
 .env.backup
 .env.production
-=======
-.env.backup
->>>>>>> a4aa1a46cbbd1050d9a25b087ae54b28d1a40e8f
 .phpunit.result.cache
 Homestead.json
 Homestead.yaml
