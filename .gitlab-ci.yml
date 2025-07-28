@@ -39,9 +39,11 @@ install_composer:
   script:
     - php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
     - php composer-setup.php --install-dir=/usr/local/bin --filename=composer
+    - dnf install nodejs -y
+    - dnf install composer -y
     - composer --version  # Verify installation
     # Now you can run composer commands
-    - composer install
+    # - composer install
 
 # Not working
 .test:
@@ -133,7 +135,7 @@ ssh_deploy:
     # '--delete' to give permission to delete files from the server that are not local in the build directory
     # - rsync -rvz --delete public/ $REMOTE_DEPLOY_USER@$REMOTE_DEPLOY_HOST:/usr/share/nginx/html/
     # Modify the above
-    - rsync -avz --exclude node_modules --exclude vendor --delete-after ./ $REMOTE_DEPLOY_USER@$REMOTE_DEPLOY_HOST:/usr/share/nginx/html/
+    - rsync -avz --exclude node_modules --exclude vendor --delete-after ./ $REMOTE_DEPLOY_USER@$REMOTE_DEPLOY_HOST:/var/www/html/WhoSabiWork-Redesign/
 
     # STEP 8: Upload files using a deploy script
     # Create the zip file, zip is not part of alpine, so install it
