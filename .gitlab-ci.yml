@@ -39,11 +39,9 @@ install_composer:
   script:
     - php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
     - php composer-setup.php --install-dir=/usr/local/bin --filename=composer
-    - install nodejs -y
-    - install composer -y
+    # - composer install
     - composer --version  # Verify installation
     # Now you can run composer commands
-    # - composer install
 
 # Not working
 .test:
