@@ -124,6 +124,7 @@ ssh_deploy:
     # Run: sudo chown -R ec2-user:ec2-user /usr/share/nginx/html/
     # Use the '-r' copying recursively to copy all files and directories
     # - scp -r public/* $REMOTE_DEPLOY_USER@$REMOTE_DEPLOY_HOST:/usr/share/nginx/html/
+    # Run: sudo chown -R ec2-user:ec2-user /var/www/html/WhoSabiWork-Redesign/
     # - scp -r ./* $REMOTE_DEPLOY_USER@$REMOTE_DEPLOY_HOST:/var/www/html/WhoSabiWork-Redesign/
 
     # STEP 7: Upload files using rsync instead of scp
