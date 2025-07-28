@@ -133,7 +133,7 @@ ssh_deploy:
     # '--delete' to give permission to delete files from the server that are not local in the build directory
     # - rsync -rvz --delete public/ $REMOTE_DEPLOY_USER@$REMOTE_DEPLOY_HOST:/usr/share/nginx/html/
     # Modify the above
-    - rsync -avz --exclude node_modules --exclude vendor --delete-after public/ $REMOTE_DEPLOY_USER@$REMOTE_DEPLOY_HOST:/usr/share/nginx/html/
+    - rsync -avz --exclude node_modules --exclude vendor --delete-after ./ $REMOTE_DEPLOY_USER@$REMOTE_DEPLOY_HOST:/usr/share/nginx/html/
 
     # STEP 8: Upload files using a deploy script
     # Create the zip file, zip is not part of alpine, so install it
