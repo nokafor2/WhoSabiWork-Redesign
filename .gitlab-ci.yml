@@ -19,7 +19,7 @@ variables:
   - apt-get install -y openssh-client rsync
 
 # working
-build:
+.build:
   stage: build
   script:
     - npm install
@@ -33,7 +33,7 @@ build:
       - node_modules/
 
 # working
-install_composer:
+.install_composer:
   stage: build
   image: php:8.2-cli  # Use a PHP image with CLI
   script:
