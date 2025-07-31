@@ -135,7 +135,7 @@ ssh_deploy:
     # '--delete' to give permission to delete files from the server that are not local in the build directory
     # - rsync -rvz --delete public/ $REMOTE_DEPLOY_USER@$REMOTE_DEPLOY_HOST:/usr/share/nginx/html/
     # Modify the above
-    - sudo chown -R ec2-user:ec2-user /var/www/html/WhoSabiWork-Redesign/
+    - chown -R ec2-user:ec2-user /var/www/html/WhoSabiWork-Redesign/
     - rsync -avz --exclude node_modules --exclude vendor --delete-after ./ $REMOTE_DEPLOY_USER@$REMOTE_DEPLOY_HOST:/var/www/html/WhoSabiWork-Redesign/
 
     # STEP 8: Upload files using a deploy script
