@@ -156,8 +156,8 @@ ssh_deploy:
     # - ssh $SSH_HOST "php artisan migrate"
     # - ssh $SSH_HOST "php artisan config:cache"
     # - ssh $SSH_HOST "php artisan route:cache"
-    - ssh $SSH_HOST "sudo chmod -R 775 /var/www/html/storage"
-    - ssh $SSH_HOST "sudo chmod -R 775 /var/www/html/bootstrap/cache"
+    - ssh $SSH_HOST "sudo chmod -R 775 /var/www/html/WhoSabiWork-Redesign/storage"
+    - ssh $SSH_HOST "sudo chmod -R 775 /var/www/html/WhoSabiWork-Redesign/bootstrap/cache"
     - ssh $SSH_HOST "sudo systemctl restart php-fpm"
     - ssh $SSH_HOST "sudo systemctl restart nginx"
 
