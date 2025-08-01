@@ -149,8 +149,8 @@ ssh_deploy:
     #     sudo systemctl restart php-fpm &&
     #     sudo systemctl restart nginx
     #   EOF
-    - ssh $SSH_HOST "cp /var/www/html/WhoSabiWork-Redesign/.env.production /var/www/html/WhoSabiWork-Redesign/.env"
-    - ssh $SSH_HOST "cd /var/www/html/WhoSabiWork-Redesign"
+    - ssh $SSH_HOST "cp /var/www/html/WhoSabiWork-Redesign/.env.production /var/www/html/WhoSabiWork-Redesign/.env; cd /var/www/html/WhoSabiWork-Redesign"
+    # - ssh $SSH_HOST "cd /var/www/html/WhoSabiWork-Redesign"
 
 
     # STEP 8: Upload files using a deploy script
