@@ -140,14 +140,14 @@ ssh_deploy:
     - rsync -avz --exclude node_modules --exclude vendor --delete-after ./ $REMOTE_DEPLOY_USER@$REMOTE_DEPLOY_HOST:/var/www/html/WhoSabiWork-Redesign/
     - ssh $SSH_HOST << EOF
         cp /var/www/html/WhoSabiWork-Redesign/.env.production /var/www/html/WhoSabiWork-Redesign/.env &&
-        cd /var/www/html/WhoSabiWork-Redesign/ &&
+        cd /var/www/html/WhoSabiWork-Redesign &&
         php artisan migrate &&
         php artisan config:cache &&
         php artisan route:cache &&
         sudo chmod -R 775 /var/www/html/storage &&
         sudo chmod -R 775 /var/www/html/bootstrap/cache &&
         sudo systemctl restart php-fpm &&
-        sudo systemctl restart nginx &&
+        sudo systemctl restart nginx
       EOF
 
     # STEP 8: Upload files using a deploy script
