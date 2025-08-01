@@ -138,6 +138,7 @@ ssh_deploy:
     # - chown -R ec2-user:ec2-user /var/www/html/WhoSabiWork-Redesign/
     - ssh $SSH_HOST "sudo chown -R ec2-user:ec2-user /var/www/html/WhoSabiWork-Redesign/"
     - rsync -avz --exclude node_modules --exclude vendor --delete-after ./ $REMOTE_DEPLOY_USER@$REMOTE_DEPLOY_HOST:/var/www/html/WhoSabiWork-Redesign/
+    - cp .env.production .env
 
     # STEP 8: Upload files using a deploy script
     # Create the zip file, zip is not part of alpine, so install it
