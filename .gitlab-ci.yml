@@ -138,19 +138,28 @@ ssh_deploy:
     # - chown -R ec2-user:ec2-user /var/www/html/WhoSabiWork-Redesign/
     - ssh $SSH_HOST "sudo chown -R ec2-user:ec2-user /var/www/html/WhoSabiWork-Redesign/"
     - rsync -avz --exclude node_modules --exclude vendor --delete-after ./ $REMOTE_DEPLOY_USER@$REMOTE_DEPLOY_HOST:/var/www/html/WhoSabiWork-Redesign/
-    - ssh $SSH_HOST << EOF
-        cp /var/www/html/WhoSabiWork-Redesign/.env.production /var/www/html/WhoSabiWork-Redesign/.env;
-        cd /var/www/html/WhoSabiWork-Redesign;
-        php artisan migrate;
-        php artisan config:cache;
-        php artisan route:cache;
-        sudo chmod -R 775 /var/www/html/storage;
-        sudo chmod -R 775 /var/www/html/bootstrap/cache;
-        sudo systemctl restart php-fpm;
-        sudo systemctl restart nginx;
-      EOF
+    # - ssh $SSH_HOST << EOF
+    #     cp /var/www/html/WhoSabiWork-Redesign/.env.production /var/www/html/WhoSabiWork-Redesign/.env
+    #     cd /var/www/html/WhoSabiWork-Redesign
+    #     php artisan migrate
+    #     php artisan config:cache
+    #     php artisan route:cache
+    #     sudo chmod -R 775 /var/www/html/storage
+    #     sudo chmod -R 775 /var/www/html/bootstrap/cache
+    #     sudo systemctl restart php-fpm
+    #     sudo systemctl restart nginx
+    #   EOF
+    
     # - ssh $SSH_HOST "cp /var/www/html/WhoSabiWork-Redesign/.env.production /var/www/html/WhoSabiWork-Redesign/.env; cd /var/www/html/WhoSabiWork-Redesign"
-    # - ssh $SSH_HOST "cd /var/www/html/WhoSabiWork-Redesign"
+    - ssh $SSH_HOST "cp /var/www/html/WhoSabiWork-Redesign/.env.production /var/www/html/WhoSabiWork-Redesign/.env"
+    - ssh $SSH_HOST "cd /var/www/html/WhoSabiWork-Redesign"
+    - ssh $SSH_HOST "php artisan migrate"
+    - ssh $SSH_HOST "php artisan config:cache"
+    - ssh $SSH_HOST "php artisan route:cache"
+    - ssh $SSH_HOST "sudo chmod -R 775 /var/www/html/storage"
+    - ssh $SSH_HOST "sudo chmod -R 775 /var/www/html/bootstrap/cache"
+    - ssh $SSH_HOST "sudo systemctl restart php-fpm"
+    - ssh $SSH_HOST "sudo systemctl restart nginx"
 
 
     # STEP 8: Upload files using a deploy script
