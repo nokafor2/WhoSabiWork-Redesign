@@ -152,10 +152,12 @@ ssh_deploy:
     
     # - ssh $SSH_HOST "cp /var/www/html/WhoSabiWork-Redesign/.env.production /var/www/html/WhoSabiWork-Redesign/.env; cd /var/www/html/WhoSabiWork-Redesign"
     - ssh $SSH_HOST "cp /var/www/html/WhoSabiWork-Redesign/.env.production /var/www/html/WhoSabiWork-Redesign/.env"
-    - ssh $SSH_HOST "cd /var/www/html/WhoSabiWork-Redesign; php artisan migrate; php artisan config:clear; php artisan cache:clear; php artisan route:clear; php artisan config:cache"
-    # - ssh $SSH_HOST "php artisan route:cache"
+    - ssh $SSH_HOST "sudo chown -R nginx:nginx /var/www/html/WhoSabiWork-Redesign/storage"
+    - ssh $SSH_HOST "sudo chown -R nginx:nginx /var/www/html/WhoSabiWork-Redesign/bootstrap"
     - ssh $SSH_HOST "sudo chmod -R 775 /var/www/html/WhoSabiWork-Redesign/storage"
     - ssh $SSH_HOST "sudo chmod -R 775 /var/www/html/WhoSabiWork-Redesign/bootstrap"
+    - ssh $SSH_HOST "cd /var/www/html/WhoSabiWork-Redesign; php artisan migrate; php artisan config:clear; php artisan cache:clear; php artisan route:clear; php artisan config:cache"
+    # - ssh $SSH_HOST "php artisan route:cache"
     - ssh $SSH_HOST "sudo systemctl restart php-fpm"
     - ssh $SSH_HOST "sudo systemctl restart nginx"
 
