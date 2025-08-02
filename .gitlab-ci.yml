@@ -42,7 +42,7 @@ install_composer:
     # Now you can run composer commands
     - composer install
     - composer --version  # Verify installation
-    - composer install --no-dev
+    - composer install --no-dev --optimize-autoloader
 
 # Not working
 .test:
