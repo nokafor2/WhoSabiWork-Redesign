@@ -29,9 +29,11 @@ class UserController extends Controller
     {
         // Set authentication for all the methods, hence a user must be logged in to implement any
         // $this->middleware('auth');
-        // Authenticate some actions with middle ware
+
+        // Authenticate some actions with middleware
         // This can also be set in the web route file
         // $this->middleware('auth')->except('index');
+
         // Authorize certain actions
         // $this->authorizeResource(User::class, 'user');
     }
