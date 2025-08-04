@@ -24,8 +24,6 @@ build:
   script:
     - npm install
     - npm run build
-    # - composer install --no-dev --optimize-autoloader
-    # - composer install --no-dev
   artifacts:
     paths:
       - public/
@@ -44,7 +42,7 @@ install_composer:
     - composer --version  # Verify installation
     - composer install --no-dev --optimize-autoloader
 
-# Not working
+# Not using yet
 .test:
   stage: test
   script:

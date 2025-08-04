@@ -16,6 +16,7 @@
     import { reactive } from 'vue';
     // import { route } from 'Ziggy';
     import { router, useForm, usePage } from '@inertiajs/vue3';
+    // import { route } from 'vendor/tightenco/ziggy/src/js';
 
     export default {
         props: ['pageName'],
@@ -29,49 +30,68 @@
             // sendSearchVal() {
             //     console.log(this.searchVal);
             // },
-            async submitForm() {
-                const formData = reactive({
+            // async submitForm() {
+            //     const formData = reactive({
+            //         searchVal: this.searchVal,
+            //         pageName: this.pageName,
+            //     });
+
+            //     // router.post('/api/search', formData, {
+            //     //     preserveState: true, // Prevents a full page reload
+            //     //     preserveScroll: true,
+            //     //     onSuccess: (page) => {
+            //     //         console.log(page.props);
+            //     //         this.$emit('send-search-result', page.props);
+            //     //     },
+            //     //     onError: (errors) => {
+            //     //         console.log('Error: ', errors);
+            //     //     }
+            //     // });
+                
+            //     const response = await fetch('/api/search', {
+            //         method: 'POST',
+            //         headers: {
+            //                 'Content-Type': 'application/json'
+            //             },
+            //         body: JSON.stringify(formData)
+            //     });
+
+            //     // console.log(response);
+            //     if (response.ok) {
+            //         const responseData = await response.json();
+            //         if (responseData) {
+            //             console.log(responseData);
+            //             this.$emit('send-search-result', responseData);
+            //         }
+            //     } else {
+            //         // There is error
+            //         console.log('There is an error!');
+            //     }
+            // },
+
+            submitForm() {
+                const formData = useForm({
                     searchVal: this.searchVal,
                     pageName: this.pageName,
                 });
 
-                // router.post('/api/search', formData, {
-                //     preserveState: true, // Prevents a full page reload
-                //     preserveScroll: true,
-                //     onSuccess: (page) => {
-                //         console.log(page.props);
-                //         this.$emit('send-search-result', page.props);
-                //     },
-                //     onError: (errors) => {
-                //         console.log('Error: ', errors);
-                //     }
-                // });
-                
-                const response = await fetch('/api/search', {
-                    method: 'POST',
-                    headers: {
-                            'Content-Type': 'application/json'
-                        },
-                    body: JSON.stringify(formData)
-                });
-
-                // console.log(response);
-                if (response.ok) {
-                    const responseData = await response.json();
-                    if (responseData) {
-                        console.log(responseData);
-                        this.$emit('send-search-result', responseData);
+                // '/api/search'
+                formData.post(route('search.store'), {
+                    preserveState: true, // Prevents a full page reload
+                    preserveScroll: true,
+                    onSuccess: (page) => {
+                        this.$emit('send-search-result', page.props.flash.success);
+                    },
+                    onError: (errors) => {
+                        console.log('Error: ', errors);
                     }
-                } else {
-                    // There is error
-                    console.log('There is an error!');
-                }
+                });
             }
         },
         watch: {
-            searchVal() {
-                console.log(this.searchVal);
-            }
+            // searchVal() {
+            //     console.log(this.searchVal);
+            // }
         }
     }
 </script>

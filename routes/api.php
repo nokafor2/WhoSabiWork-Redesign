@@ -36,5 +36,5 @@ Route::apiResource('technicalServices', TechnicalServiceController::class)->only
 Route::apiResource('spareParts', SparePartController::class)->only('store');
 Route::apiResource('vehicleCategories', VehicleCategoryController::class)->only('store');
 Route::apiResource('vehicleBrands', VehicleBrandController::class)->only('store');
-Route::apiResource('search', SearchController::class)->only('store');
+// Route::apiResource('search', SearchController::class)->only('store');
 // Route::get('/artisans', [ArtisanController::class, index()]);

@@ -54,7 +54,8 @@ Route::get('/photofeed', [HomeController::class, 'photoFeeds'])->name('home.phot
 
 // Route::get('/contactus', [ContactUsController::class, 'index']);
 
-Route::get('/getState', [SearchController::class, 'getState']);
+Route::resource('search', SearchController::class)->only('store');
+Route::get('/getState', [SearchController::class, 'getState'])->name('search.state');
 
 // Route::get('/signup', [RegisterController::class, 'index']);
 

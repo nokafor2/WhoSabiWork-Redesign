@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Traits\GlobalFunctions;
+use App\Models\Artisan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
@@ -27,14 +28,21 @@ class SearchController extends Controller
     {
         $searchVal = $request->searchVal;
         $pageName = $request->pageName;
-
-        $searchedResult = $this->searchData($searchVal, $pageName);
         
-        // return Inertia('Artisan/Index', $searchedResult);
+        $searchedResult = $this->searchData($searchVal, $pageName);
+        // dd($searchedResult);
+        $artisans = $this->getUserCategoryDetails('artisan');
 
-        // return Redirect::route('artisans.index')->with("result", $searchedResult);
+        $artisanObj = new Artisan();
+        $artisanTypes = $this->getTableColumnsWithSort($artisanObj->table, Artisan::$columnsToExclude);
 
-        return $searchedResult;
+        // return Inertia('Artisan/Index', ['artisans' => $artisans, 'artisanTypes' => $artisanTypes])->with("result", $searchedResult);
+        // return redirect()->back()->with('result', $searchedResult);
+
+        // return Redirect::route('artisans.index')->with("success", $searchedResult);
+        return redirect()->route('artisans.index')->with("success", $searchedResult);
+
+        // return $searchedResult;
     }
 
     /**
