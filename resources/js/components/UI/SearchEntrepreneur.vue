@@ -80,6 +80,7 @@
                     preserveState: true, // Prevents a full page reload
                     preserveScroll: true,
                     onSuccess: (page) => {
+                        console.log(page);
                         this.$emit('send-search-result', page.props.flash.success);
                     },
                     onError: (errors) => {
