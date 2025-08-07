@@ -44,11 +44,11 @@ class SearchController extends Controller
         $artisanObj = new Artisan();
         $artisanTypes = $this->getTableColumnsWithSort($artisanObj->table, Artisan::$columnsToExclude);
 
-        return Inertia('Artisan/Index', ['artisans' => $artisans, 'artisanTypes' => $artisanTypes])->with("result", $searchedResult);
+        // return Inertia('Artisan/Index', ['artisans' => $artisans, 'artisanTypes' => $artisanTypes])->with("result", $searchedResult);
         // return redirect()->back()->with('result', $searchedResult);
 
         // return Redirect::route('artisans.index')->with("success", $searchedResult);
-        // return redirect()->route('artisans.index')->with("success", $searchedResult);
+        return redirect()->route('artisans.index')->with("success", $searchedResult);
 
         // return $searchedResult;
     }
