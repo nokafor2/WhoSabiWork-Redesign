@@ -58,6 +58,7 @@
     // import functions for use
     import { reactive } from 'vue';
     import { router, useForm, usePage } from '@inertiajs/vue3';
+    import axios from 'axios';
 
     export default {
         // inject: ['products'],
@@ -221,25 +222,41 @@
                     }
                 } else {
                     // This method is used when data has to expected back and waited for
-                    const response = await fetch('/api/states', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify(formData)
-                    });
+                    // const response = await fetch('/api/states', {
+                    //     method: 'POST',
+                    //     headers: {
+                    //         'Content-Type': 'application/json'
+                    //     },
+                    //     body: JSON.stringify(formData)
+                    // });
 
-                    if (response.ok) {
-                        const responseData = await response.json();
-                        if (responseData) {
-                            console.log(responseData);
-                            this.states = responseData;
+                    // if (response.ok) {
+                    //     const responseData = await response.json();
+                    //     if (responseData) {
+                    //         // console.log('running state block');
+                    //         console.log(responseData);
+                    //         this.states = responseData;
+                    //         this.stateVisible = true;
+                    //         this.vehSparePartVisible = false;
+                    //     }
+                    // } else {
+                    //     // There is an error
+                    //     console.log('There is an error!');
+                    // }
+
+                    try {
+                        const { data } = await axios.post('/api/states', formData);
+                        if (data.success) {
+                            this.states = data.data;
+
+                            console.log(data);
                             this.stateVisible = true;
                             this.vehSparePartVisible = false;
+                        } else {
+                            this.$toast.error(data.error || 'Failed to fetch states');
                         }
-                    } else {
-                        // There is an error
-                        console.log('There is an error!');
+                    } catch (error) {
+                        this.$toast.error(error.response?.data?.error || 'An unexpected error occurred');
                     }
                 }
             },

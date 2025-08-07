@@ -44,7 +44,11 @@ class StateController extends Controller
         // );
 
         // used for manual data request without inertia
-        return $states;
+        // return $states;
+        return response()->json([
+            'success' => true,
+            'data' => $states
+        ]);
     }
 
     /**
