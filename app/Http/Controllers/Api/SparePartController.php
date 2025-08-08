@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Traits\GlobalFunctions;
 use App\Models\SparePart;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 
 class SparePartController extends Controller
@@ -25,12 +26,27 @@ class SparePartController extends Controller
      */
     public function store(Request $request)
     {
-        $columnsToExclude = SparePart::$columnsToExclude;
-        $spareParts = $this->getTableColumnsWithSort('spare_parts', $columnsToExclude);
+        try {
+            Log::info('SparePartController store called');
 
-        return $spareParts;
+            $columnsToExclude = SparePart::$columnsToExclude;
+            $spareParts = $this->getTableColumnsWithSort('spare_parts', $columnsToExclude);
 
-        // return Inertia('Artisan/Index', $spareParts);
+            Log::info('SparePartController result:', ['spare_parts_count' => count($spareParts), 'spare_parts' => $spareParts]);
+
+            return response()->json([
+                'success' => true,
+                'data' => $spareParts
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('SparePartController store error: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'error' => 'Failed to fetch spare parts',
+                'message' => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**

@@ -40,7 +40,8 @@ install_composer:
     # Now you can run composer commands
     - composer install
     - composer --version  # Verify installation
-    - composer install --no-dev --optimize-autoloader
+    # Allow dev dependencies to be installed most especially Faker used for seeding
+    # - composer install --no-dev --optimize-autoloader
 
 # Not using yet
 .test:
@@ -151,8 +152,7 @@ ssh_deploy:
     
     # - ssh $SSH_HOST "cp /var/www/html/WhoSabiWork-Redesign/.env.production /var/www/html/WhoSabiWork-Redesign/.env; cd /var/www/html/WhoSabiWork-Redesign"
     - ssh $SSH_HOST "cp /var/www/html/WhoSabiWork-Redesign/.env.production /var/www/html/WhoSabiWork-Redesign/.env"
-    - ssh $SSH_HOST "cd /var/www/html/WhoSabiWork-Redesign; php artisan migrate; php artisan config:clear; php artisan cache:clear; php artisan route:clear; php artisan config:cache"
-    # - ssh $SSH_HOST "php artisan route:cache"
+    - ssh $SSH_HOST "cd /var/www/html/WhoSabiWork-Redesign; php artisan migrate:fresh --seed; php artisan config:clear; php artisan cache:clear; php artisan route:clear; php artisan view:clear; php artisan config:cache"
     - ssh $SSH_HOST "sudo chown -R nginx:nginx /var/www/html/WhoSabiWork-Redesign/storage"
     - ssh $SSH_HOST "sudo chown -R nginx:nginx /var/www/html/WhoSabiWork-Redesign/bootstrap"
     - ssh $SSH_HOST "sudo chmod -R 775 /var/www/html/WhoSabiWork-Redesign/storage"

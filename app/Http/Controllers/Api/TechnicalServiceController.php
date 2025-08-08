@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Traits\GlobalFunctions;
 use App\Models\TechnicalService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class TechnicalServiceController extends Controller
 {
@@ -24,10 +25,27 @@ class TechnicalServiceController extends Controller
      */
     public function store(Request $request)
     {
-        $columnsToExclude = TechnicalService::$columnsToExclude;
-        $techServ = $this->getTableColumnsWithSort('technical_services', $columnsToExclude);
+        try {
+            Log::info('TechnicalServiceController store called');
 
-        return $techServ;
+            $columnsToExclude = TechnicalService::$columnsToExclude;
+            $techServ = $this->getTableColumnsWithSort('technical_services', $columnsToExclude);
+
+            Log::info('TechnicalServiceController result:', ['tech_services_count' => count($techServ), 'tech_services' => $techServ]);
+
+            return response()->json([
+                'success' => true,
+                'data' => $techServ
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('TechnicalServiceController store error: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'error' => 'Failed to fetch technical services',
+                'message' => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**

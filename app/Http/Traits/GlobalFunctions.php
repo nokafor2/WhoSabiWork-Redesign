@@ -110,6 +110,11 @@ trait GlobalFunctions {
     }
 
     public function getVehCategories($pageName, $vehServiceOrSpare) {
+        // Validate input parameters
+        if (empty($vehServiceOrSpare)) {
+            return [];
+        }
+        
         if ($pageName === 'artisan') {
             // Get the specified technical service type
             $specificCategoryType = TechnicalService::where($vehServiceOrSpare, '=', 1)->select('user_id')->get();
@@ -130,6 +135,11 @@ trait GlobalFunctions {
     }
 
     public function getVehBrands($pageName, $vehServiceOrSpare, $vehType) {
+        // Validate input parameters
+        if (empty($vehServiceOrSpare)) {
+            return [];
+        }
+        
         if ($pageName === 'artisan') {
             // Get the specified technical service type
             $specificCategoryType = TechnicalService::where($vehServiceOrSpare, '=', 1)->select('user_id')->get();
@@ -201,6 +211,11 @@ trait GlobalFunctions {
 
     // Can be used to get the states or towns
     public function getStateTownTechOrSpare($pageName, $vehServOrSpare, $vehType, $vehBrand, $state) {
+        // Validate input parameters
+        if (empty($vehServOrSpare)) {
+            return [];
+        }
+        
         if ($pageName === 'artisan') {
             // Get the specified technical service type
             $specificCategoryType = TechnicalService::where($vehServOrSpare, '=', 1)->select('user_id')->get();

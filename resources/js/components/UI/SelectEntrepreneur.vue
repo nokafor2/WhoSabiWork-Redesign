@@ -181,82 +181,87 @@
                 this.$emit('send-category-type', []);
                 
                 if (this.selectedOption === 'mechanic') {
-                    const response = await fetch('/api/technicalServices', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify(formData)
-                    });
+                    try {
+                        const response = await fetch('/api/technicalService', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-Requested-With': 'XMLHttpRequest'
+                            },
+                            body: JSON.stringify(formData),
+                            signal: AbortSignal.timeout(10000) // 10 second timeout
+                        });
 
-                    if (response.ok) {
-                        const responseData = await response.json();
-                        if (responseData) {
-                            console.log(responseData);
-                            this.technicalServices = responseData;
-                            this.vehServiceVisible = true;
+                        if (response.ok) {
+                            const responseData = await response.json();
+                            if (responseData && responseData.success) {
+                                console.log(responseData);
+                                this.technicalServices = responseData.data || responseData;
+                                this.vehServiceVisible = true;
+                            } else {
+                                console.error('Invalid response format:', responseData);
+                            }
+                        } else {
+                            console.error('HTTP Error:', response.status, response.statusText);
                         }
-                    } else {
-                        // There is error
-                        console.log('There is an error!');
+                    } catch (error) {
+                        if (error.name === 'AbortError') {
+                            console.error('Request timeout');
+                        } else {
+                            console.error('Network error:', error);
+                        }
                     }
                 } else if (this.selectedOption === 'spare_parts') {
-                    const response = await fetch('/api/spareParts', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify(formData)
-                    });
+                    try {
+                        const response = await fetch('/api/spareParts', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-Requested-With': 'XMLHttpRequest'
+                            },
+                            body: JSON.stringify(formData),
+                            signal: AbortSignal.timeout(10000)
+                        });
 
-                    if (response.ok) {
-                        const responseData = await response.json();
-                        if (responseData) {
-                            console.log(responseData);
-                            this.spareParts = responseData;
-                            this.vehSparePartVisible = true;
+                        if (response.ok) {
+                            const responseData = await response.json();
+                            if (responseData && responseData.success) {
+                                console.log(responseData);
+                                this.spareParts = responseData.data || responseData;
+                                this.stateVisible = true;
+                                this.vehSparePartVisible = true;
+                            } else {
+                                console.error('Invalid response format:', responseData);
+                            }
+                        } else {
+                            console.error('HTTP Error:', response.status, response.statusText);
                         }
-                    } else {
-                        // There is error
-                        console.log('There is an error!');
+                    } catch (error) {
+                        if (error.name === 'AbortError') {
+                            console.error('Request timeout');
+                        } else {
+                            console.error('Network error:', error);
+                        }
                     }
                 } else {
-                    // This method is used when data has to expected back and waited for
-                    // const response = await fetch('/api/states', {
-                    //     method: 'POST',
-                    //     headers: {
-                    //         'Content-Type': 'application/json'
-                    //     },
-                    //     body: JSON.stringify(formData)
-                    // });
-
-                    // if (response.ok) {
-                    //     const responseData = await response.json();
-                    //     if (responseData) {
-                    //         // console.log('running state block');
-                    //         console.log(responseData);
-                    //         this.states = responseData;
-                    //         this.stateVisible = true;
-                    //         this.vehSparePartVisible = false;
-                    //     }
-                    // } else {
-                    //     // There is an error
-                    //     console.log('There is an error!');
-                    // }
-
                     try {
-                        const { data } = await axios.post('/api/states', formData);
+                        const { data } = await axios.post('/api/states', formData, {
+                            timeout: 10000,
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest'
+                            }
+                        });
+                        
                         if (data.success) {
                             this.states = data.data;
-
                             console.log(data);
                             this.stateVisible = true;
                             this.vehSparePartVisible = false;
                         } else {
-                            this.$toast.error(data.error || 'Failed to fetch states');
+                            console.error('API Error:', data.error || 'Failed to fetch states');
                         }
                     } catch (error) {
-                        this.$toast.error(error.response?.data?.error || 'An unexpected error occurred');
+                        console.error('Axios error:', error.response?.data || error.message);
                     }
                 }
             },
@@ -274,34 +279,23 @@
                 this.submitBtnVisible = false;
                 this.$emit('send-category-type', []);
 
-                // router.post('/api/vehicleCategories', formData, {
-                //     preserveState: true, // Prevents a full page reload
-                //     onSuccess: (page) => {
-                //         console.log(page);
-                //     },
-                //     onError: (errors) => {
-                //         console.log('Error: ', errors);
-                //     }
-                // });
-                
-                const response = await fetch('/api/vehicleCategories', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(formData)
-                });
+                try {
+                    const { data } = await axios.post('/api/vehicleCategories', formData, {
+                        timeout: 10000,
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    });
 
-                if (response.ok) {
-                    const responseData = await response.json();
-                    if (responseData) {
-                        console.log(responseData);
-                        this.vehicleCategories = responseData;
+                    if (data.success) {
+                        console.log(data);
+                        this.vehicleCategories = data.data || data;
                         this.vehTypeVisible = true;
+                    } else {
+                        console.error('API Error:', data.error || 'Failed to fetch vehicle categories');
                     }
-                } else {
-                    // There is error
-                    console.log('There is an error!');
+                } catch (error) {
+                    console.error('Axios error:', error.response?.data || error.message);
                 }
             },
 
@@ -320,24 +314,23 @@
                 this.submitBtnVisible = false;
                 this.$emit('send-category-type', []);
                 
-                const response = await fetch('/api/vehicleCategories', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(formData)
-                });
+                try {
+                    const { data } = await axios.post('/api/vehicleCategories', formData, {
+                        timeout: 10000,
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    });
 
-                if (response.ok) {
-                    const responseData = await response.json();
-                    if (responseData) {
-                        console.log(responseData);
-                        this.vehicleCategories = responseData;
+                    if (data.success) {
+                        console.log(data);
+                        this.vehicleCategories = data.data || data;
                         this.vehTypeVisible = true;
+                    } else {
+                        console.error('API Error:', data.error || 'Failed to fetch vehicle categories');
                     }
-                } else {
-                    // There is error
-                    console.log('There is an error!');
+                } catch (error) {
+                    console.error('Axios error:', error.response?.data || error.message);
                 }
             },
 
@@ -360,24 +353,23 @@
                 this.submitBtnVisible = false;
                 this.$emit('send-category-type', []);
 
-                const response = await fetch('/api/vehicleBrands', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(formData)
-                });
+                try {
+                    const { data } = await axios.post('/api/vehicleBrands', formData, {
+                        timeout: 10000,
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    });
 
-                if (response.ok) {
-                    const responseData = await response.json();
-                    if (responseData) {
-                        console.log(responseData);
-                        this.vehicleBrands = responseData;
+                    if (data.success) {
+                        console.log(data);
+                        this.vehicleBrands = data.data || data;
                         this.vehBrandVisible = true;
+                    } else {
+                        console.error('API Error:', data.error || 'Failed to fetch vehicle brands');
                     }
-                } else {
-                    // There is error
-                    console.log('There is an error!');
+                } catch (error) {
+                    console.error('Axios error:', error.response?.data || error.message);
                 }
             },
 
@@ -401,35 +393,23 @@
                 this.submitBtnVisible = false;
                 this.$emit('send-category-type', []);
 
-                // router.post('/api/states', formData, {
-                //     preserveState: true, // Prevents a full page reload
-                //     onSuccess: (page) => {
-                //         console.log(page);
-                //     },
-                //     onError: (errors) => {
-                //         console.log('Error: ', errors);
-                //     }
-                // });
+                try {
+                    const { data } = await axios.post('/api/states', formData, {
+                        timeout: 10000,
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    });
 
-                // This method is used when data has to expected back and waited for
-                const response = await fetch('/api/states', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(formData)
-                });
-
-                if (response.ok) {
-                    const responseData = await response.json();
-                    if (responseData) {
-                        console.log(responseData);
-                        this.states = responseData;
+                    if (data.success) {
+                        console.log(data);
+                        this.states = data.data || data;
                         this.stateVisible = true;
+                    } else {
+                        console.error('API Error:', data.error || 'Failed to fetch states');
                     }
-                } else {
-                    // There is an error
-                    console.log('There is an error!');
+                } catch (error) {
+                    console.error('Axios error:', error.response?.data || error.message);
                 }
             },
 
@@ -455,27 +435,24 @@
                 this.submitBtnVisible = false;
                 this.$emit('send-category-type', []);
 
-                // This method is used when data has to expected back and waited for
-                const response = await fetch('/api/towns', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(formData)
-                });
+                try {
+                    const { data } = await axios.post('/api/towns', formData, {
+                        timeout: 10000,
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    });
 
-                if (response.ok) {
-                    const responseData = await response.json();
-                    if (responseData) {
-                        console.log(responseData);
-                        this.towns = responseData;
+                    if (data.success) {
+                        console.log(data);
+                        this.towns = data.data || data;
                         this.townVisible = true;
+                    } else {
+                        console.error('API Error:', data.error || 'Failed to fetch towns');
                     }
-                } else {
-                    // There is error
-                    console.log('There is an error!');
+                } catch (error) {
+                    console.error('Axios error:', error.response?.data || error.message);
                 }
-                
             },
 
             selectedTown() {
