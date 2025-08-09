@@ -134,7 +134,7 @@ class UserController extends Controller
         $user = User::create([
             ...$validatedUserVals,
             'password' => Hash::make($request->password),
-            'password' => $request->password,
+            // 'password' => $request->password,
             'remember_token' => Str::random(10),
             'account_status' => 'active',
             'account_type' => $accountType,
