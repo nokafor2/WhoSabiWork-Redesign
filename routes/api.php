@@ -24,12 +24,25 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-// Route::middleware('auth:api')->get('/user', function (Request $request) {
-//     return $request->user();
-// });
+// Routes requiring authentication
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/user', function (Request $request) {
+        return $request->user();
+    });
+    
+    // Add other protected API routes here
+    Route::post('/logout', [App\Http\Controllers\AuthController::class, 'destroy']);
+    Route::apiResource('user', UserController::class)->except(['store']);
+});
 
+// Public API routes (no authentication required)
+
+// Authentication routes
+Route::post('/login', [App\Http\Controllers\AuthController::class, 'store']);
+Route::post('/register', [UserController::class, 'store']);
+
+// Other public routes
 Route::apiResource('artisan', ArtisanController::class);
-Route::apiResource('user', UserController::class);
 Route::apiResource('states', StateController::class)->only('store');
 Route::apiResource('towns', TownController::class)->only('store');
 Route::apiResource('technicalService', TechnicalServiceController::class)->only('store');

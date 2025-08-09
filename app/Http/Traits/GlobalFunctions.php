@@ -778,19 +778,21 @@ trait GlobalFunctions {
         $aptNum = $appointments->count();
         $appointmentDetails = array();
         $appointments->each(function ($appointment, $key) use(&$appointmentDetails) {
-            // Get user full name
-            // $action = (empty($_POST['action'])) ? 'default' : $_POST['action'];
-            $fullName = ($appointment->user()->first()->userFullName() !== null) ? $appointment->user()->first()->userFullName() : "";
-            // Get user phone number
-            $phoneNumber = $appointment->user()->first()->phone_number;
-            // Get scheduler full name
-            $schedulerFullName = ($appointment->scheduler()->first()->userFullName() !== null) ? $appointment->scheduler()->first()->userFullName() : "";
-            // Get user phone number
-            $schedulerPhoneNumber = $appointment->scheduler()->first()->phone_number;
+            // Get user details
+            $user = $appointment->user()->first();
+            $fullName = $user ? $user->userFullName() : "";
+            $phoneNumber = $user ? $user->phone_number : null;
+
+            // Get scheduler details
+            $scheduler = $appointment->scheduler()->first();
+            $schedulerFullName = $scheduler ? $scheduler->userFullName() : "";
+            $schedulerPhoneNumber = $scheduler ? $scheduler->phone_number : null;
             // Get business name
-            $businessName = $appointment->user()->first()->businessCategory()->first()->business_name;
+            $businessCategory = $appointment->user()->first()->businessCategory()->first();
+            $businessName = $businessCategory ? $businessCategory->business_name : null;
             // Get address
-            $address = $appointment->user()->first()->address()->first()->fullAddress();
+            $userAddress = $appointment->user()->first()->address()->first();
+            $address = $userAddress ? $userAddress->fullAddress() : null;
             // Get date
             $date = [
                 'rawDate' => $appointment->appointment_date,
@@ -838,6 +840,10 @@ trait GlobalFunctions {
 
     public function avgRating($userRatings) {
         $ratingCount = $userRatings->count();
+        if ($ratingCount === 0) {
+            return 0;
+        }
+        
         $ratingSum = 0;
         $userRatings->each(function ($userRating) use (&$ratingSum) {
             $ratingSum += $userRating->rating;

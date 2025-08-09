@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -19,7 +20,7 @@ use Illuminate\Support\Facades\Schema;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable, SoftDeletes, GlobalFunctions;
+    use HasApiTokens, HasFactory, Notifiable, SoftDeletes, GlobalFunctions;
 
     /**
      * The attributes that are mass assignable.
@@ -192,10 +193,10 @@ class User extends Authenticatable
 
     // Setting up mutator and accessor method for password.
     // This would automatically Hash the password after validation.
-    public function password(): Attribute {
-        return Attribute::make(
-            get: fn ($value) => $value,
-            set: fn ($value) => Hash::make($value),
-        );
-    }
+    // public function password(): Attribute {
+    //     return Attribute::make(
+    //         get: fn ($value) => $value,
+    //         set: fn ($value) => Hash::make($value),
+    //     );
+    // }
 }
