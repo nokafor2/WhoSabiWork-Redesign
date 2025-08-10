@@ -94,14 +94,15 @@ deploy_production:
     - ssh $SSH_HOST "sudo chown -R $REMOTE_DEPLOY_USER:$REMOTE_DEPLOY_USER $DEPLOY_PATH/"
     
     # Sync files (excluding sensitive directories)
-    - rsync -avz 
-        --exclude=node_modules 
-        --exclude=.git 
-        --exclude=storage/logs 
-        --exclude=storage/framework/cache 
-        --exclude=storage/framework/sessions 
-        --exclude=storage/framework/views 
-        --delete-after 
+    - |
+      rsync -avz \
+        --exclude=node_modules \
+        --exclude=.git \
+        --exclude=storage/logs \
+        --exclude=storage/framework/cache \
+        --exclude=storage/framework/sessions \
+        --exclude=storage/framework/views \
+        --delete-after \
         ./ $SSH_HOST:$DEPLOY_PATH/
     
     # Laravel deployment commands
