@@ -1,0 +1,100 @@
+image: node:18-buster
+
+stages:
+  - build
+  - test
+  - deploy
+
+cache:
+  paths:
+    - node_modules/
+    - vendor/
+
+variables:
+  REMOTE_DEPLOY_USER: ec2-user
+  REMOTE_DEPLOY_HOST: ec2-13-40-186-156.eu-west-2.compute.amazonaws.com
+  SSH_HOST: $REMOTE_DEPLOY_USER@$REMOTE_DEPLOY_HOST
+  SSH_PORT: 22
+  DEPLOY_PATH: /var/www/html/WhoSabiWork-Redesign
+
+# Template for composer jobs
+.composer_base:
+  image: php:8.2-cli
+  before_script:
+    - apt-get update -y
+    - apt-get install -y git unzip
+    - php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+    - php composer-setup.php --install-dir=/usr/local/bin --filename=composer
+
+# Frontend build
+build_frontend:
+  stage: build
+  script:
+    - npm install
+    - npm run build
+  artifacts:
+    paths:
+      - public/
+    expire_in: 1 hour
+
+# Backend for development/seeding (with dev dependencies)
+build_backend_dev:
+  extends: .composer_base
+  stage: build
+  script:
+    - composer install --optimize-autoloader  # Includes dev dependencies
+  artifacts:
+    paths:
+      - vendor/
+    expire_in: 1 hour
+  only:
+    - develop
+    - staging
+    - main
+    - master
+
+# Backend for production (no dev dependencies)
+build_backend_prod:
+  extends: .composer_base
+  stage: build
+  script:
+    - composer install --no-dev --optimize-autoloader
+  artifacts:
+    paths:
+      - vendor/
+    expire_in: 1 hour
+  only:
+    - production
+
+# Deployment to staging/dev (with seeding)
+deploy_staging:
+  stage: deploy
+  image: alpine:latest
+  dependencies:
+    - build_frontend
+    - build_backend_dev
+  script:
+    # ... (same SSH setup as before)
+    - ssh $SSH_HOST << 'EOF'
+        cd $DEPLOY_PATH
+        cp .env.staging .env
+        php artisan migrate:fresh --seed --force
+        # Keep dev dependencies for future seeding
+      EOF
+  only:
+    - develop
+    - staging
+
+# Deployment to production (optimized)
+deploy_production:
+  stage: deploy
+  image: alpine:latest
+  dependencies:
+    - build_frontend
+    - build_backend_dev  # Start with dev dependencies for seeding
+  script:
+    # ... (same deployment script as the fixed version)
+  only:
+    - main
+    - master
+  when: manual

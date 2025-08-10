@@ -1,0 +1,96 @@
+image: node:18-buster
+
+stages:
+  - build
+  - test
+  - deploy
+
+variables:
+  REMOTE_DEPLOY_USER: ec2-user
+  REMOTE_DEPLOY_HOST: ec2-13-40-186-156.eu-west-2.compute.amazonaws.com
+  SSH_HOST: $REMOTE_DEPLOY_USER@$REMOTE_DEPLOY_HOST
+  SSH_PORT: 22
+  DEPLOY_PATH: /var/www/html/WhoSabiWork-Redesign
+  # Control seeding behavior
+  ENABLE_SEEDING: "true"      # Set to "false" to skip seeding
+  KEEP_DEV_DEPS: "false"      # Set to "true" to keep dev dependencies after deployment
+
+# Frontend build
+build_frontend:
+  stage: build
+  script:
+    - npm install
+    - npm run build
+  artifacts:
+    paths:
+      - public/
+    expire_in: 1 hour
+
+# Backend dependencies (always include dev for flexibility)
+build_backend:
+  stage: build
+  image: php:8.2-cli
+  before_script:
+    - apt-get update -y
+    - apt-get install -y git unzip
+  script:
+    - php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+    - php composer-setup.php --install-dir=/usr/local/bin --filename=composer
+    - composer install --optimize-autoloader  # Include dev dependencies
+    - composer --version
+  artifacts:
+    paths:
+      - vendor/
+    expire_in: 1 hour
+
+deploy_production:
+  stage: deploy
+  image: alpine:latest
+  dependencies:
+    - build_frontend
+    - build_backend
+  before_script:
+    # ... (same SSH setup)
+  script:
+    - ssh $SSH_HOST << EOF
+        cd $DEPLOY_PATH
+        cp .env.production .env
+        
+        # Laravel optimizations
+        php artisan config:clear
+        php artisan cache:clear
+        php artisan route:clear
+        php artisan view:clear
+        
+        # Conditional seeding
+        if [ "$ENABLE_SEEDING" = "true" ]; then
+          echo "Running migrations with seeding..."
+          php artisan migrate:fresh --seed --force
+        else
+          echo "Running migrations without seeding..."
+          php artisan migrate --force
+        fi
+        
+        # Conditional dev dependency removal
+        if [ "$KEEP_DEV_DEPS" = "false" ]; then
+          echo "Removing dev dependencies for production..."
+          composer install --no-dev --optimize-autoloader
+        else
+          echo "Keeping dev dependencies..."
+        fi
+        
+        # Cache optimizations
+        php artisan config:cache
+        php artisan route:cache
+        php artisan view:cache
+        
+        # Set permissions and restart services
+        sudo chown -R nginx:nginx storage bootstrap/cache
+        sudo chmod -R 775 storage bootstrap/cache
+        sudo systemctl restart php-fpm
+        sudo systemctl restart nginx
+      EOF
+  only:
+    - main
+    - master
+  when: manual
