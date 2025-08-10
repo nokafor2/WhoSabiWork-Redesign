@@ -11,6 +11,8 @@ cache:
     - vendor/
 
 variables:
+  REMOTE_DEPLOY_USER: ec2-user
+  REMOTE_DEPLOY_HOST: ec2-13-40-186-156.eu-west-2.compute.amazonaws.com
   SSH_HOST: ec2-user@ec2-13-40-186-156.eu-west-2.compute.amazonaws.com
   SSH_PORT: 22
 
@@ -34,6 +36,12 @@ build:
 install_composer:
   stage: build
   image: php:8.2-cli  # Use a PHP image with CLI
+  before_script:
+    # Install system dependencies
+    - apt-get update -y
+    - apt-get install -y git unzip zip libzip-dev
+    # Install PHP zip extension
+    - docker-php-ext-install zip
   script:
     - php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
     - php composer-setup.php --install-dir=/usr/local/bin --filename=composer
@@ -42,6 +50,10 @@ install_composer:
     - composer --version  # Verify installation
     # Allow dev dependencies to be installed most especially Faker used for seeding
     # - composer install --no-dev --optimize-autoloader
+  artifacts:
+    paths:
+      - vendor/
+    expire_in: 1 hour
 
 # Not using yet
 .test:
@@ -52,6 +64,9 @@ install_composer:
 ssh_deploy:
   stage: deploy
   image: alpine
+  dependencies:
+    - build
+    - install_composer
   before_script:
     # STEP 1: Test for connection with the server
     # Check if id address and port 22 is open on the server
@@ -138,7 +153,7 @@ ssh_deploy:
     # - chown -R ec2-user:ec2-user /var/www/html/WhoSabiWork-Redesign/
     - ssh $SSH_HOST "sudo chown -R ec2-user:ec2-user /var/www/html/WhoSabiWork-Redesign/"
     # - rsync -avz --exclude node_modules --exclude vendor --delete-after ./ $REMOTE_DEPLOY_USER@$REMOTE_DEPLOY_HOST:/var/www/html/WhoSabiWork-Redesign/
-    - rsync -avz --exclude node_modules --delete-after ./ $REMOTE_DEPLOY_USER@$REMOTE_DEPLOY_HOST:/var/www/html/WhoSabiWork-Redesign/
+    - rsync -avz --exclude node_modules --delete-after ./ $SSH_HOST:/var/www/html/WhoSabiWork-Redesign/
     # - ssh $SSH_HOST << EOF
     #   cp /var/www/html/WhoSabiWork-Redesign/.env.production /var/www/html/WhoSabiWork-Redesign/.env
     #   cd /var/www/html/WhoSabiWork-Redesign
