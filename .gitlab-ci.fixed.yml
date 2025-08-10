@@ -1,0 +1,144 @@
+image: node:18-buster
+
+stages:
+  - build
+  - test
+  - deploy
+
+cache:
+  paths:
+    - node_modules/
+    - vendor/
+
+variables:
+  REMOTE_DEPLOY_USER: ec2-user
+  REMOTE_DEPLOY_HOST: ec2-13-40-186-156.eu-west-2.compute.amazonaws.com
+  SSH_HOST: $REMOTE_DEPLOY_USER@$REMOTE_DEPLOY_HOST
+  SSH_PORT: 22
+  DEPLOY_PATH: /var/www/html/WhoSabiWork-Redesign
+
+before_script:
+  - apt-get update -y
+  - apt-get install -y openssh-client rsync
+
+# Frontend build
+build_frontend:
+  stage: build
+  script:
+    - npm install
+    - npm run build
+  artifacts:
+    paths:
+      - public/
+    expire_in: 1 hour
+
+# Backend dependencies with dev tools for seeding
+build_backend:
+  stage: build
+  image: php:8.2-cli
+  before_script:
+    - apt-get update -y
+    - apt-get install -y git unzip
+  script:
+    - php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+    - php composer-setup.php --install-dir=/usr/local/bin --filename=composer
+    # Install with dev dependencies for seeding (includes Faker)
+    - composer install --optimize-autoloader
+    - composer --version
+  artifacts:
+    paths:
+      - vendor/
+    expire_in: 1 hour
+
+# Tests (currently disabled)
+.test:
+  stage: test
+  image: php:8.2-cli
+  script:
+    - php artisan test
+
+deploy_production:
+  stage: deploy
+  image: alpine:latest
+  dependencies:
+    - build_frontend
+    - build_backend
+  before_script:
+    # Install required packages
+    - apk add --no-cache openssh-client rsync netcat-openbsd
+
+    # Test server connectivity
+    - nc -zv $REMOTE_DEPLOY_HOST $SSH_PORT
+
+    # Setup SSH
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    
+    # Write SSH private key to file (assuming SSH_PRIVATE_KEY contains the key content)
+    - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+    - chmod 600 ~/.ssh/id_rsa
+    
+    # Setup known hosts
+    - echo "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
+    - chmod 644 ~/.ssh/known_hosts
+    
+    # Start SSH agent and add key
+    - eval $(ssh-agent -s)
+    - ssh-add ~/.ssh/id_rsa
+
+  script:
+    # Test SSH connection
+    # - ssh -o ConnectTimeout=10 $SSH_HOST "whoami"
+    
+    # Ensure proper ownership before sync
+    - ssh $SSH_HOST "sudo chown -R $REMOTE_DEPLOY_USER:$REMOTE_DEPLOY_USER $DEPLOY_PATH/"
+    
+    # Sync files (excluding sensitive directories)
+    - |
+      rsync -avz \
+        --exclude=node_modules \
+        --exclude=.git \
+        --exclude=storage/logs \
+        --exclude=storage/framework/cache \
+        --exclude=storage/framework/sessions \
+        --exclude=storage/framework/views \
+        --delete-after \
+        ./ $SSH_HOST:$DEPLOY_PATH/
+    
+    # Laravel deployment commands
+    - ssh $SSH_HOST << 'EOF'
+        cd $DEPLOY_PATH
+        
+        # Copy production environment file
+        cp .env.production .env
+        
+        # Laravel optimizations
+        php artisan config:clear
+        php artisan cache:clear
+        php artisan route:clear
+        php artisan view:clear
+        
+        # Run migrations and seeding (requires dev dependencies for Faker)
+        php artisan migrate:fresh --seed --force
+        
+        # Remove dev dependencies after seeding for production optimization
+        composer install --no-dev --optimize-autoloader
+        
+        # Cache optimizations for production
+        php artisan config:cache
+        php artisan route:cache
+        php artisan view:cache
+        
+        # Set proper permissions
+        sudo chown -R nginx:nginx storage bootstrap/cache
+        sudo chmod -R 775 storage bootstrap/cache
+        
+        # Restart services
+        sudo systemctl restart php-fpm
+        sudo systemctl restart nginx
+      EOF
+
+  only:
+    - main
+    - master
+  when: manual
