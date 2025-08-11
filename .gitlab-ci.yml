@@ -15,6 +15,8 @@ variables:
   REMOTE_DEPLOY_HOST: ec2-13-40-186-156.eu-west-2.compute.amazonaws.com
   SSH_HOST: ec2-user@ec2-13-40-186-156.eu-west-2.compute.amazonaws.com
   SSH_PORT: 22
+  AWS_DOMAIN: ec2-13-40-186-156.eu-west-2.compute.amazonaws.com
+  AWS_IP: 13.40.186.156
 
 .before_script:
   - apt-get update -y
@@ -174,7 +176,7 @@ ssh_deploy:
     
     - ssh $SSH_HOST "cp /var/www/html/WhoSabiWork-Redesign/.env.production /var/www/html/WhoSabiWork-Redesign/.env; cd /var/www/html/WhoSabiWork-Redesign"
     - ssh $SSH_HOST "cp /var/www/html/WhoSabiWork-Redesign/.env.production /var/www/html/WhoSabiWork-Redesign/.env"
-    - ssh $SSH_HOST "cd /var/www/html/WhoSabiWork-Redesign; php artisan migrate:fresh --seed; php artisan config:clear; php artisan cache:clear; php artisan route:clear; php artisan view:clear; php artisan config:cache; php artisan route:cache;"
+    - ssh $SSH_HOST "cd /var/www/html/WhoSabiWork-Redesign; php artisan vendor:publish --provider='Laravel\Sanctum\SanctumServiceProvider' --tag='sanctum-migrations' --force || true; php artisan session:table || true; php artisan migrate:fresh --seed --force; php artisan config:clear; php artisan cache:clear; php artisan route:clear; php artisan view:clear; php artisan config:cache; php artisan route:cache;"
     - ssh $SSH_HOST "sudo chown -R nginx:nginx /var/www/html/WhoSabiWork-Redesign/storage"
     - ssh $SSH_HOST "sudo chown -R nginx:nginx /var/www/html/WhoSabiWork-Redesign/bootstrap"
     - ssh $SSH_HOST "sudo chmod -R 775 /var/www/html/WhoSabiWork-Redesign/storage"

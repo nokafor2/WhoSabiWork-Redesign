@@ -1,3 +1,6 @@
+# AWS EC2 Production Environment Configuration for Laravel Sanctum
+# Copy this entire content to your .env.production file on AWS server
+
 APP_NAME=Laravel
 APP_ENV=production
 APP_KEY=base64:IdAnZVa7IcfK6H3NUky7KTxgC/Okewscj2F3A4OQzHE=
