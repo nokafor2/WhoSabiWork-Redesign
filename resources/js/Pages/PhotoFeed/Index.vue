@@ -1,6 +1,7 @@
 <template>
     <div class="row p-3 justify-content-evenly">
         <ad-card v-for="(entrepreneur, index) in entrepreneurs" :key="index"
+            :userId=entrepreneur.id
             :businessName=entrepreneur.business_category.business_name
             :index=index
             :imagePath=imagePath(index)

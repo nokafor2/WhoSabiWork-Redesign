@@ -2,7 +2,7 @@
     <div class="card m-3 shadow bg-light" style="width: 20rem;">
         <div class="d-flex mt-2 mb-1 align-middle">
             <img class="rounded-circle me-2" style="height: 25px; width: 25px;" :src="imagePath(index)">
-            <a href="#" class="text-decoration-none me-3 text-dark"><h5 class="card-title">{{ businessName }}</h5></a>
+            <a :href="route('entrepreneur.show', userId)" class="text-decoration-none me-3 text-dark"><h5 class="card-title">{{ businessName }}</h5></a>
         </div>
         <img :src="imagePath(index)" style="height: 18rem;" class="card-img-top" alt="...">
         <!-- <img :src="imagePath" style="height: 18rem;" class="card-img-top" alt="..."> -->
@@ -20,7 +20,7 @@
 </template>
 
 <script setup>
-    const props = defineProps(['businessName', 'index', 'imagePath']);
+    const props = defineProps(['userId', 'businessName', 'index', 'imagePath']);
 
     const adImages = ['photoSample', 'photoSample1', 'photoSample2', 'photoSample3', 'photoSample4', 'photoSample5', 'photoSample6', 'photoSample7', 'photoSample8', 'photoSample9', 'photoSample10', 'photoSample11', 'photoSample12', 'photoSample13', 'photoSample14', 'photoSample15', 'photoSample16', 'photoSample17', 'photoSample18', 'photoSample19', 'photoSample20'];
 
