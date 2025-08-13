@@ -51,7 +51,7 @@
                 const dataToSend = useForm({
                     updateVal: this.techniciansInput,
                 });
-                dataToSend.put(route('technicalServices.update', this.userId), {
+                dataToSend.put(route('technicalservices.update', this.userId), {
                     preserveState: true,
                     preserveScroll: true,
                     onSuccess: (page) => {

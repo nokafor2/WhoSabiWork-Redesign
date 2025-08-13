@@ -51,7 +51,7 @@
                 const dataToSend = useForm({
                     updateVal: this.productsInput,
                 });
-                dataToSend.put(route('mobileMarketers.update', this.userId), {
+                dataToSend.put(route('mobilemarketers.update', this.userId), {
                     preserveState: true,
                     preserveScroll: true,
                     onSuccess: (page) => {

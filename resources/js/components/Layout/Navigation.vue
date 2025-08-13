@@ -18,7 +18,7 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-danger" :href="route('mobileMarketers.index')">
+                        <a class="nav-link text-danger" :href="route('mobilemarketers.index')">
                             <i class="fas fa-store fa-1x"></i> Mobile Market                            
                         </a>
                     </li>

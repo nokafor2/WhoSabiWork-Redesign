@@ -130,7 +130,7 @@
                 // console.log(this.form.images);
                 // router.delete("/revert/"+uniqueId);
                 this.sendId = useForm(this.todelete);
-                this.sendId.post(route('deleteImage'));
+                this.sendId.post(route('deleteimage'));
                 
 
                 // report an error

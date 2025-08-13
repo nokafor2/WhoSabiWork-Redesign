@@ -277,7 +277,7 @@
                     userId: this.userId,
                     appointment_date: this.appointmentDetailObj.date.rawDate,
                 });
-                formData.post(route('availabilityDates'), {
+                formData.post(route('availabilitydates'), {
                     preserveState: true,
                     preserveScroll: true,
                     onSuccess: (page) => {

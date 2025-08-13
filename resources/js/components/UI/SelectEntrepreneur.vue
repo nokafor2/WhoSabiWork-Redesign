@@ -144,7 +144,7 @@
                         }
                     });
                 } else if (this.pageName === 'seller') {
-                    router.post('/mobileMarketers', formData, {
+                    router.post('/mobilemarketers', formData, {
                         preserveState: true, // Prevents a full page reload
                         onSuccess: (page) => {
                             console.log('Data fetched: ');
@@ -182,7 +182,7 @@
                 
                 if (this.selectedOption === 'mechanic') {
                     try {
-                        const response = await fetch('/api/technicalService', {
+                        const response = await fetch('/api/technicalservice', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
@@ -213,7 +213,7 @@
                     }
                 } else if (this.selectedOption === 'spare_parts') {
                     try {
-                        const response = await fetch('/api/spareParts', {
+                        const response = await fetch('/api/spareparts', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
@@ -280,7 +280,7 @@
                 this.$emit('send-category-type', []);
 
                 try {
-                    const { data } = await axios.post('/api/vehicleCategories', formData, {
+                    const { data } = await axios.post('/api/vehiclecategories', formData, {
                         timeout: 10000,
                         headers: {
                             'X-Requested-With': 'XMLHttpRequest'
@@ -315,7 +315,7 @@
                 this.$emit('send-category-type', []);
                 
                 try {
-                    const { data } = await axios.post('/api/vehicleCategories', formData, {
+                    const { data } = await axios.post('/api/vehiclecategories', formData, {
                         timeout: 10000,
                         headers: {
                             'X-Requested-With': 'XMLHttpRequest'
@@ -354,7 +354,7 @@
                 this.$emit('send-category-type', []);
 
                 try {
-                    const { data } = await axios.post('/api/vehicleBrands', formData, {
+                    const { data } = await axios.post('/api/vehiclebrands', formData, {
                         timeout: 10000,
                         headers: {
                             'X-Requested-With': 'XMLHttpRequest'

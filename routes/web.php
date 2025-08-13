@@ -69,11 +69,11 @@ Route::resource('users', UserController::class);
 Route::resource('artisans', ArtisanController::class)->only('index', 'store', 'update');
 
 // resource() method is for a resource controller
-Route::resource('mobileMarketers', MobileMarketController::class)->only('index', 'store', 'update');
+Route::resource('mobilemarketers', MobileMarketController::class)->only('index', 'store', 'update');
 
 Route::resource('contactus', ContactUsController::class)->only('index', 'store', 'create');
 
-Route::resource('technicalServices', TechnicalServiceController::class)->only('store', 'update');
+Route::resource('technicalservices', TechnicalServiceController::class)->only('store', 'update');
 
 Route::resource('entrepreneur', EntrepreneurController::class)->only('show');
 
@@ -106,11 +106,11 @@ Route::delete('userlogout', [AuthController::class, 'destroy'])->name('logout');
 // Route::post('/posts', StorePostController::class); Use photograph controller
 Route::post('/upload', UploadTemporaryImageController::class);
 // Route::post('/revert/{folder}', DeleteTemporaryImageController::class)->name('deleteImage');
-Route::post('/revert', DeleteTemporaryImageController::class)->name('deleteImage');
+Route::post('/revert', DeleteTemporaryImageController::class)->name('deleteimage');
 
-Route::post('/datesAvailable', [UsersAvailabilityFxns::class, 'availabilityDates'])->name('availabilityDates');
+Route::post('/datesavailable', [UsersAvailabilityFxns::class, 'availabilityDates'])->name('availabilitydates');
 
-// Route::get('/not-found', function () {
+// Route::get('/not-found', function () {busin
 //     return view('errors.404');
 // })->name('notfound');
 
