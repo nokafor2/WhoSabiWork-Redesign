@@ -32,7 +32,7 @@ class UserController extends Controller
 
         // Authenticate some actions with middleware
         // This can also be set in the web route file
-        // $this->middleware('auth')->except('index');
+        $this->middleware('auth')->except('index', 'create');
 
         // Authorize certain actions
         // $this->authorizeResource(User::class, 'user');
@@ -313,10 +313,6 @@ class UserController extends Controller
         $allCarBrands = $this->getTableColumnsWithSort($carBrand->table, CarBrand::$columnsToExclude);
         $allBusBrands = $this->getTableColumnsWithSort($busBrand->table, BusBrand::$columnsToExclude);
         $allTruckBrands = $this->getTableColumnsWithSort($truckBrand->table, TruckBrand::$columnsToExclude);
-        // $neutralAppointments = $this->getAppointments('neutral', $user->id, '10');
-        // $acceptedAppointments = $this->getAppointments('accepted', $user->id, '10');
-        // $declinedAppointments = $this->getAppointments('declined', $user->id, '10');
-        // $cancelledAppointments = $this->getAppointments('cancelled', $user->id, '10');
         
         // Determine if it's a regular user or business user
         $userType = $user->account_type;

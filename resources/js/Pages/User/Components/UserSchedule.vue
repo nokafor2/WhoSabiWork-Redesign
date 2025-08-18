@@ -23,15 +23,21 @@
 
 
 <script>
-    import { useForm } from '@inertiajs/vue3';
+    import { useForm, usePage } from '@inertiajs/vue3';
 
     export default {
         props: ['count', 'date', 'times'],
         emits: ['updated-schedule'],
         data() {
             return {
-                userId: 1,
+                // userId: 1,
+                page: usePage(),
                 timeArray: Object.values(this.times),
+            }
+        },
+        computed: {
+            userId() {
+                return this.page.props.user.id;
             }
         },
         methods: {
@@ -43,9 +49,11 @@
             },
             deleteSchedule() {
                 var formData = useForm({
-                    user_id: this.userId,
+                    // user_id: this.userId,
+                    user_id: this.page.props.user.id,
                     date_available: this.date,
                 });
+                console.log(this.date);
                 formData.delete(route('usersavailability.destroy', this.userId), {
                     preserveState: true,
                     preserveScroll: true,

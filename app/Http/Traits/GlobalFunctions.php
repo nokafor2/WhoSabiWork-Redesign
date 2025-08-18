@@ -782,11 +782,13 @@ trait GlobalFunctions {
             $user = $appointment->user()->first();
             $fullName = $user ? $user->userFullName() : "";
             $phoneNumber = $user ? $user->phone_number : null;
+            $userId = $user ? $appointment->user_id : null;
 
             // Get scheduler details
             $scheduler = $appointment->scheduler()->first();
             $schedulerFullName = $scheduler ? $scheduler->userFullName() : "";
             $schedulerPhoneNumber = $scheduler ? $scheduler->phone_number : null;
+            $schedulerId = $scheduler ? $scheduler->id : null;
             // Get business name
             $businessCategory = $appointment->user()->first()->businessCategory()->first();
             $businessName = $businessCategory ? $businessCategory->business_name : null;
@@ -816,6 +818,8 @@ trait GlobalFunctions {
 
             $appointmentDetails[] = [
                 'id' => $appointmentId,
+                'userId' => $userId,
+                'schedulerId' => $schedulerId,
                 'fullName' => $fullName,
                 'phoneNumber' => $phoneNumber,
                 'schedulerFullName' => $schedulerFullName,
@@ -851,6 +855,58 @@ trait GlobalFunctions {
         $avgRating = round($ratingSum / $ratingCount);
 
         return $avgRating;
+    }
+
+    /**
+     * Converts date from 'Sunday 17th of August 2025' format to 'YYYY-MM-DD'
+     * 
+     * @param string $dateString The date string in format 'Weekday DDth of Month YYYY'
+     * @return string|false The date in YYYY-MM-DD format or false on failure
+     * 
+     * @example
+     * $this->convertDateToYMD('Sunday 17th of August 2025') // Returns '2025-08-17'
+     * $this->convertDateToYMD('Monday 1st of January 2024') // Returns '2024-01-01'
+     */
+    public function convertDateToYMD($dateString) {
+        try {
+            // Trim whitespace
+            $dateString = trim($dateString);
+            
+            // Remove ordinal suffixes (st, nd, rd, th) from the day
+            $cleanedDate = preg_replace('/(\d+)(st|nd|rd|th)/', '$1', $dateString);
+            
+            // Remove the day name (everything before the first number)
+            $cleanedDate = preg_replace('/^[A-Za-z]+\s+/', '', $cleanedDate);
+            
+            // Remove 'of' between day and month
+            $cleanedDate = str_replace(' of ', ' ', $cleanedDate);
+            
+            // Try different date formats
+            $formats = [
+                'j F Y',     // 17 August 2025
+                'd F Y',     // 17 August 2025 (with leading zero)
+                'j M Y',     // 17 Aug 2025
+                'd M Y'      // 17 Aug 2025 (with leading zero)
+            ];
+            
+            foreach ($formats as $format) {
+                $dateTime = \DateTime::createFromFormat($format, $cleanedDate);
+                if ($dateTime !== false) {
+                    return $dateTime->format('Y-m-d');
+                }
+            }
+            
+            // If none of the formats work, try strtotime as last resort
+            $timestamp = strtotime($cleanedDate);
+            if ($timestamp !== false) {
+                return date('Y-m-d', $timestamp);
+            }
+            
+            return false;
+            
+        } catch (\Exception $e) {
+            return false;
+        }
     }
 }
 

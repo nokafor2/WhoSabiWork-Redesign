@@ -9,6 +9,8 @@ use App\Http\Traits\GlobalFunctions;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
+use function PHPUnit\Framework\isNull;
+
 class UsersAppointmentController extends Controller
 {
     use GlobalFunctions;
@@ -36,6 +38,13 @@ class UsersAppointmentController extends Controller
         // Check if appointment exists
         $userId = $request->user_id;
         $schedulerId = $request->scheduler_id;
+        // Alternative schedulerId is the id of the logged in user
+        $schedulerIdAlt = $request->user()->id;
+        if (is_null($schedulerId)) {
+            $schedulerId = $schedulerIdAlt;
+        } elseif ($schedulerId !== $schedulerIdAlt) {
+            $schedulerId = $schedulerIdAlt;
+        }
         $appointmentDate = $request->appointment_date;
         $availableAppointment = UsersAppointment::where([['user_id', '=', $userId], ['scheduler_id', '=', $schedulerId], ['appointment_date', '=', $appointmentDate]])->get();
         // dd($availableAppointment->first()->id);
@@ -46,7 +55,7 @@ class UsersAppointmentController extends Controller
 
             $validated = $request->validate([
                 'user_id' => ['required', 'numeric'],
-                'scheduler_id' => ['required', 'numeric'],
+                // 'scheduler_id' => ['required', 'numeric'],
                 'appointment_date' => ['required', 'date_format:Y-m-d'],
                 'hours' => ['required', 'array'],
                 'hours.*' => ['in:'.implode(",", $availableHours)],
@@ -56,6 +65,7 @@ class UsersAppointmentController extends Controller
 
             $result = UsersAppointment::create([
                 ...$validated,
+                'scheduler_id' => $schedulerId,
                 'hours' => $hours,
             ]);
 
@@ -94,8 +104,11 @@ class UsersAppointmentController extends Controller
              || ($request->user_decision === 'cancelled')
         ) {
             $appointmentId = $request->id;
+            // $aptUserId = UsersAppointment::find($appointmentId)->user_id;
+            // $aptSchedulerId = UsersAppointment::find($appointmentId)->scheduler_id;
             $userId = $request->user_id;
             $schedulerId = $request->scheduler_id;
+            // dd($aptUserId, $aptSchedulerId, $userId, $schedulerId);
             $usersAppointment = UsersAppointment::where('id', '=', $appointmentId)->first();
             $usersAppointment->user_decision = $request->user_decision;
             $validated = $request->validate([

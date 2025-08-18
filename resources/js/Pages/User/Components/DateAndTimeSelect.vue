@@ -29,17 +29,18 @@
 
 <script>
     import TimePicker from './TimePicker.vue';
-    import { useForm } from '@inertiajs/vue3';
+    import { useForm, usePage } from '@inertiajs/vue3';
 
     export default {
         components: { TimePicker },
         emits: ['update-schedule'],
+        
         data() {
             return {
                 date: null,
                 selectedTime: [],
-                userId: 1,
                 selectAll: false,
+                page: usePage(),
             }
         },
         methods: {
@@ -47,7 +48,9 @@
                 var formData = useForm({
                     date_available: this.date,
                     selectedTime: this.selectedTime,
-                    user_id: this.userId
+                    // user_id: this.userId
+                    // user_id: usePage().props.user.id
+                    user_id: this.page.props.user.id
                 });
                 formData.post(route('usersavailability.store'), {
                     preserveState: true,

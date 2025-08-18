@@ -191,7 +191,7 @@
             </div>
         </div>
     </div>
-    <SelectAppointment v-if="availableDates.length > 0" :datesAvailable="availableDates"></SelectAppointment>
+    <SelectAppointment v-if="availableDates.length > 0" :entrepreneurId="appointmentDetailObj.user_id" :datesAvailable="availableDates"></SelectAppointment>
 </template>
 
 <script>
@@ -208,8 +208,6 @@
                 adImages: ['photoSample', 'photoSample1', 'photoSample2', 'photoSample3', 'photoSample4', 'photoSample5', 'photoSample6', 'photoSample7', 'photoSample8', 'photoSample9', 'photoSample10', 'photoSample11', 'photoSample12', 'photoSample13', 'photoSample14', 'photoSample15', 'photoSample16', 'photoSample17', 'photoSample18', 'photoSample19', 'photoSample20'],
                 subAptVisible: true,
                 mainAptVisible: false,
-                userId: 1,
-                schedulerId: 1,
                 page: usePage(),
                 userType: this.user,
                 declineBox: false,
@@ -391,6 +389,16 @@
                 });
             },
             schdlrCancelApt() {
+                // Debug logging to trace the values being sent
+                console.log('=== schdlrCancelApt Debug ===');
+                console.log('this.userId:', this.userId);
+                console.log('this.schedulerId:', this.schedulerId);
+                console.log('this.page.props.user:', this.page.props.user);
+                console.log('this.appointmentDetailObj:', this.appointmentDetailObj);
+                console.log('appointmentDetailObj.schedulerId:', this.appointmentDetailObj.schedulerId);
+                console.log('appointmentDetailObj.userId:', this.appointmentDetailObj.userId);
+                console.log('=== End Debug ===');
+
                 var formData = useForm({
                     user_id: this.userId,
                     scheduler_id: this.schedulerId,
@@ -399,6 +407,9 @@
                     user_decision: 'cancelled',
                     scheduler_cancel_message: this.schdlrCancelMessage,
                 });
+                
+                console.log('FormData being sent:', formData.data());
+                
                 formData.put(route('usersappointment.update', this.appointmentDetailObj.id), {
                     preserveState: true,
                     preserveScroll: true,
@@ -444,6 +455,24 @@
             }
         },
         computed: {
+            userId() {
+                // For scheduler operations, we need the entrepreneur's ID (from appointment)
+                // For entrepreneur operations, we need the current user's ID
+                if (this.isSchdlr()) {
+                    return this.appointmentDetailObj.userId; // Entrepreneur who made the appointment
+                } else {
+                    return this.page.props.user.id; // Current user (entrepreneur)
+                }
+            },
+            schedulerId() {
+                // For scheduler operations, we need the current user's ID (scheduler)
+                // For entrepreneur operations, we need the scheduler from appointment
+                if (this.isSchdlr()) {
+                    return this.page.props.user.id; // Current user (scheduler)
+                } else {
+                    return this.appointmentDetailObj.schedulerId; // Scheduler from appointment
+                }
+            },
             declineMessageErrorFxn() {
                 this.declineMessageError = this.page.props.errors.user_decline_message;
             },

@@ -34,7 +34,9 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-danger" @click="setAppointment">Set Appointment</button>
+                    <button type="button" class="btn btn-danger" @click="setAppointment" :disabled="!currentUser">
+                        {{ currentUser ? 'Set Appointment' : 'Please Log In' }}
+                    </button>
                 </div>
             </div>
         </div>
@@ -50,20 +52,20 @@
     import { useForm, usePage } from '@inertiajs/vue3';
 
     export default {
-        props: ['datesAvailable'],
+        props: ['entrepreneurId', 'datesAvailable'],
+        
         data() {
             return {
                 date: null,
-                userId: 1,
+                userId: this.entrepreneurId,
                 schedules: [],
-                availableDates: this.datesAvailable,
+                availableDates: this.datesAvailable || [],
                 datesObj: [],
                 timeSelected: [],
                 appointmentMessage: '',
-                schedulerId: 10,
                 errors: [],
-                page: usePage(),
                 success: null,
+                page: usePage(),
             }
         },
         methods: {
@@ -71,6 +73,18 @@
                 return 'dateBtncheck'+index;
             },
             setAppointment() {
+                // Validate user is logged in
+                if (!this.currentUser) {
+                    alert('Please log in to set an appointment');
+                    return;
+                }
+                
+                // Validate required fields
+                if (!this.userId) {
+                    alert('Entrepreneur ID is required');
+                    return;
+                }
+
                 var formData = useForm({
                     user_id: this.userId,
                     scheduler_id: this.schedulerId,
@@ -106,7 +120,20 @@
             }
         },
         computed: {
+            // Safe access to current user
+            currentUser() {
+                return this.page?.props?.user || null;
+            },
+            
+            // Safe access to scheduler ID
+            schedulerId() {
+                return this.currentUser?.id || null;
+            },
+            
             allowedDates() {
+                // Reset datesObj to prevent duplicates
+                this.datesObj = [];
+                
                 Object.values(this.availableDates).forEach(value => {
                     this.datesObj.push(new Date(value.date_available.toString()));
                 });
@@ -116,6 +143,10 @@
         },
         watch: {
             date() {
+                if (!this.userId || !this.date) {
+                    return;
+                }
+                
                 var formData = useForm({
                     user_id: this.userId,
                     date_available: this.date,

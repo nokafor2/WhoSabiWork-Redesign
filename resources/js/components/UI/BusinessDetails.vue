@@ -25,7 +25,7 @@
                     <p class="col-lg mb-0 mb-lg-3 bg-danger text-light rounded w-auto btn btn-sm" data-bs-toggle="modal" data-bs-target="#staticBackdrop" >
                         Set Appointment
                     </p>
-                    <SelectAppointment :datesAvailable="availableDates"></SelectAppointment>
+                    <SelectAppointment :entrepreneurId="entrepreneurId" :datesAvailable="availableDates"></SelectAppointment>
                 </div>
             </div>
         </div>
@@ -52,7 +52,7 @@
                 address: '',
                 adImages: ['photoSample', 'photoSample1', 'photoSample2', 'photoSample3', 'photoSample4', 'photoSample5', 'photoSample6', 'photoSample7', 'photoSample8', 'photoSample9', 'photoSample10', 'photoSample11', 'photoSample12', 'photoSample13', 'photoSample14', 'photoSample15', 'photoSample16', 'photoSample17', 'photoSample18', 'photoSample19', 'photoSample20'],
                 // userRating: '',
-                userId: 1,
+                entrepreneurId: this.user.userDetails.id,
                 availableDates: this.user.datesAvailable,
             }
         },

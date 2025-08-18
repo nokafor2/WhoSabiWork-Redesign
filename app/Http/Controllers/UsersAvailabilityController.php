@@ -6,6 +6,7 @@ use App\Http\Traits\GlobalFunctions;
 use App\Models\User;
 use App\Models\UsersAvailability;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class UsersAvailabilityController extends Controller
 {
@@ -33,6 +34,12 @@ class UsersAvailabilityController extends Controller
     public function store(Request $request)
     {
         $userId = $request->user_id;
+        $userIdAlt = Auth::user()->id;
+        if (is_null($userId)) {
+            $userId = $userIdAlt;
+        } elseif ($userId !== $userIdAlt) {
+            $userId = $userIdAlt;
+        }
         $date_available = $request->date_available;
         $selectedTime = $request->selectedTime;
         // Add validation for date and time selected
@@ -128,8 +135,8 @@ class UsersAvailabilityController extends Controller
     public function destroy(Request $request, String $id)
     {
         $userId = $id;
-        $date_available = $request->date_available;
-
+        // Convert date format
+        $date_available = $this->convertDateToYMD($request->date_available);
         $result = UsersAvailability::where([['user_id', '=', $userId], ['date_available', '=', $date_available]])->delete();
         if ($result) {
             $schedules = $this->getSchedule($userId, '', 'many');

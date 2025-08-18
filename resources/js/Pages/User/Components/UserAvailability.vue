@@ -11,7 +11,7 @@
 
 
 <script>
-    import { useForm } from '@inertiajs/vue3';
+    import { useForm, usePage } from '@inertiajs/vue3';
     import UserSchedule from './UserSchedule.vue';
 
     export default {
@@ -19,14 +19,14 @@
         props: ['schedules'],
         data() {
             return {
-                userId: 1,
+                page: usePage(),
                 schedules2: this.schedules,
             }
         },
         methods: {
             getUserAvailabilities() {
                 var formData = useForm({
-                    user_id: this.userId,
+                    user_id: this.page.props.user.id,
                 });
                 formData.get(route('usersavailability.show', this.userId), {
                     preserveState: true,
