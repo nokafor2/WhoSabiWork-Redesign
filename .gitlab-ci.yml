@@ -12,11 +12,11 @@ cache:
 
 variables:
   REMOTE_DEPLOY_USER: ec2-user
-  REMOTE_DEPLOY_HOST: ec2-13-40-186-156.eu-west-2.compute.amazonaws.com
-  SSH_HOST: ec2-user@ec2-13-40-186-156.eu-west-2.compute.amazonaws.com
+  REMOTE_DEPLOY_HOST: ec2-3-8-161-2.eu-west-2.compute.amazonaws.com
+  SSH_HOST: ec2-user@ec2-3-8-161-2.eu-west-2.compute.amazonaws.com
   SSH_PORT: 22
-  AWS_DOMAIN: ec2-13-40-186-156.eu-west-2.compute.amazonaws.com
-  AWS_IP: 13.40.186.156
+  AWS_DOMAIN: ec2-3-8-161-2.eu-west-2.compute.amazonaws.com
+  AWS_IP: 3.8.161.2
 
 .before_script:
   - apt-get update -y
