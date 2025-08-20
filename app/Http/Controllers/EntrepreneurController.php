@@ -6,6 +6,7 @@ use App\Http\Traits\GlobalFunctions;
 use App\Models\Address;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 
 class EntrepreneurController extends Controller
@@ -49,14 +50,22 @@ class EntrepreneurController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Request $request, $id)
     {
+        // Debug: Check if user is authenticated
+        $currentUser = $request->user();
+        Log::info('EntrepreneurController::show - Current user:', [
+            'authenticated' => $currentUser ? true : false,
+            'user_id' => $currentUser ? $currentUser->id : null,
+            'viewing_entrepreneur_id' => $id
+        ]);
+
         // Check if user has a business account
         $foundUser = User::find($id);
         if ($foundUser->account_type === 'business') {
             $foundUser = $this->getUserDetails($id);
             // dd($foundUser);
-            return Inertia('Entrepreneur/Index', ['user' => $foundUser]);
+            return Inertia('Entrepreneur/Index', ['entrepreneur' => $foundUser]);
         } else {
             return Inertia('Index/Index');
             // return redirect()->route('notfound');

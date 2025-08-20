@@ -172,7 +172,7 @@
 
             <div v-if="isAccepted() && isSchdlr()">
                 <div class="row mt-3 mb-2">
-                    <button :id="dynamicId('reschApt', index)" class="btn btn-outline-danger btn-sm" @click="reschApt" data-bs-toggle="modal" data-bs-target="#staticBackdrop">Reschedule Appointment</button>
+                    <button :id="dynamicId('reschApt', index)" class="btn btn-outline-danger btn-sm" @click="reschApt">Reschedule Appointment</button>
                 </div>
                 <div class="row">
                     <button :id="dynamicId('schdlrCancelAptShBox', index)" class="btn btn-outline-danger btn-sm" @click="schdlrShowCanceleBox">Cancel Appointment</button>
@@ -191,15 +191,22 @@
             </div>
         </div>
     </div>
-    <SelectAppointment v-if="availableDates.length > 0" :entrepreneurId="appointmentDetailObj.user_id" :datesAvailable="availableDates"></SelectAppointment>
+    <RescheduleModal 
+        :isOpen="showRescheduleModal"
+        :existingAppointment="appointmentDetailObj"
+        :availableDates="availableDates"
+        @close="closeRescheduleModal"
+        @success="onRescheduleSuccess"
+    />
 </template>
 
 <script>
     import { useForm, usePage } from '@inertiajs/vue3';
     import SelectAppointment from '@/components/UI/SelectAppointment.vue';
+    import RescheduleModal from '@/components/UI/RescheduleModal.vue';
 
     export default {
-        components: {SelectAppointment},
+        components: {SelectAppointment, RescheduleModal},
         props: ['appointmentDetail', 'index', 'user', 'appointmentType'],
         emits: ['update-apt-details'],
         data() {
@@ -220,6 +227,7 @@
                 schdlrCancelMessage: '',
                 schdlrCancelMessageError: '',
                 availableDates: [],
+                showRescheduleModal: false,
             }
         },
         methods: {
@@ -271,25 +279,55 @@
                 }
             },
             reschApt() {
+                console.log('Reschedule button clicked!');
+                console.log('Current appointment data:', this.appointmentDetailObj);
+                console.log('User ID:', this.userId);
+                
+                // Fetch available dates for rescheduling
                 var formData = useForm({
                     userId: this.userId,
                     appointment_date: this.appointmentDetailObj.date.rawDate,
                 });
+                
+                console.log('Fetching available dates for rescheduling...', formData.data());
+                
                 formData.post(route('availabilitydates'), {
                     preserveState: true,
                     preserveScroll: true,
                     onSuccess: (page) => {
+                        console.log('API Success response:', page);
                         if (page.props.flash.success) {
-                            console.log(page);
+                            console.log('Available dates loaded:', page.props.flash.success);
                             this.availableDates = page.props.flash.success;
+                            this.showRescheduleModal = true;
+                            console.log('Modal opened successfully with available dates');
+                        } else {
+                            console.warn('No success data in response, opening modal anyway');
+                            this.availableDates = []; // Empty array as fallback
+                            this.showRescheduleModal = true;
                         }
                     },
                     onError: (errors) => {
-                        console.log('Error: ', errors);
+                        console.error('API Error:', errors);
                         this.errors = errors;
+                        // Still open modal even on error, user can try to reschedule manually
+                        console.log('Opening modal despite API error');
+                        this.availableDates = [];
+                        this.showRescheduleModal = true;
                     }
                 });
             },
+            closeRescheduleModal() {
+                console.log('Closing reschedule modal');
+                this.showRescheduleModal = false;
+            },
+            onRescheduleSuccess(successData) {
+                console.log('Reschedule successful:', successData);
+                // Emit update to parent component if needed
+                this.$emit('update-apt-details', successData);
+                // You can add more success handling here, like refreshing appointment data
+            },
+
             cancelApt() {
                 var formData = useForm({
                     user_id: this.userId,
@@ -389,16 +427,6 @@
                 });
             },
             schdlrCancelApt() {
-                // Debug logging to trace the values being sent
-                console.log('=== schdlrCancelApt Debug ===');
-                console.log('this.userId:', this.userId);
-                console.log('this.schedulerId:', this.schedulerId);
-                console.log('this.page.props.user:', this.page.props.user);
-                console.log('this.appointmentDetailObj:', this.appointmentDetailObj);
-                console.log('appointmentDetailObj.schedulerId:', this.appointmentDetailObj.schedulerId);
-                console.log('appointmentDetailObj.userId:', this.appointmentDetailObj.userId);
-                console.log('=== End Debug ===');
-
                 var formData = useForm({
                     user_id: this.userId,
                     scheduler_id: this.schedulerId,

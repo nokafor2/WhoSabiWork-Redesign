@@ -1,8 +1,8 @@
 <template>
     <section class="row row-cols-xs-1 row-cols-2 justify-content-evenly">
-        <BusinessDetails :user="user"></BusinessDetails>
+        <BusinessDetails :user="entrepreneur"></BusinessDetails>
         
-        <BusinessDetails2 :user="user"></BusinessDetails2>
+        <BusinessDetails2 :user="entrepreneur"></BusinessDetails2>
     </section>
 
     <!-- Tab Menu for Photo Gallery and Comments -->
@@ -65,10 +65,18 @@
     import PhotoCard from '@/components/UI/PhotoCard.vue';
     import MessageCard from '@/components/UI/MessageCard.vue';
 
+    import { usePage } from '@inertiajs/vue3';
+
     export default {
         components: {BusinessDetails, BusinessDetails2, PhotoCard, MessageCard},
-        props: ['user'],
+        props: ['entrepreneur'],
         emits: [],
+        
+        setup() {
+            const page = usePage();
+            return { page };
+        },
+        
         data() {
             return {
                 adImages: ['photoSample', 'photoSample1', 'photoSample2', 'photoSample3', 'photoSample4', 'photoSample5', 'photoSample6', 'photoSample7', 'photoSample8', 'photoSample9', 'photoSample10', 'photoSample11', 'photoSample12', 'photoSample13', 'photoSample14', 'photoSample15', 'photoSample16', 'photoSample17', 'photoSample18', 'photoSample19', 'photoSample20'],

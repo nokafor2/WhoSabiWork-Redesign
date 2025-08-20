@@ -4,7 +4,9 @@
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="staticBackdropLabel">Modal title</h1>
+                    <h1 class="modal-title fs-5" id="staticBackdropLabel">
+                        {{ isRescheduling ? 'Reschedule Appointment' : 'Set New Appointment' }}
+                    </h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -35,7 +37,7 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     <button type="button" class="btn btn-danger" @click="setAppointment" :disabled="!currentUser">
-                        {{ currentUser ? 'Set Appointment' : 'Please Log In' }}
+                        {{ currentUser ? (isRescheduling ? 'Reschedule Appointment' : 'Set Appointment') : 'Please Log In' }}
                     </button>
                 </div>
             </div>
@@ -52,7 +54,7 @@
     import { useForm, usePage } from '@inertiajs/vue3';
 
     export default {
-        props: ['entrepreneurId', 'datesAvailable'],
+        props: ['entrepreneurId', 'datesAvailable', 'isRescheduling', 'existingAppointment'],
         
         data() {
             return {
@@ -93,31 +95,138 @@
                     appointment_message: this.appointmentMessage,
                     user_decision: 'neutral'
                 });
-                formData.post(route('usersappointment.store'), {
-                    preserveState: true,
-                    preserveScroll: true,
-                    onSuccess: (page) => {
-                        if (page.props.flash.success) {
-                            console.log(page);
-                            // clear the variables
-                            this.timeSelected = [];
-                            this.appointmentMessage = '';
-                            this.success = page.props.flash.success;
+
+                // Determine if this is a reschedule or new appointment
+                if (this.isRescheduling && this.existingAppointment) {
+                    // For rescheduling, add the appointment ID and use PUT method
+                    formData.data().id = this.existingAppointment.id;
+                    formData.put(route('usersappointment.update', this.existingAppointment.id), {
+                        preserveState: true,
+                        preserveScroll: true,
+                        onSuccess: (page) => {
+                            if (page.props.flash.success) {
+                                console.log(page);
+                                // clear the variables
+                                this.timeSelected = [];
+                                this.appointmentMessage = '';
+                                this.success = page.props.flash.success;
+                                
+                                // Close the modal after successful appointment update
+                                setTimeout(() => {
+                                    this.closeModal();
+                                    this.resetModalState();
+                                }, 1500); // Wait 1.5 seconds to show success message
+                            }
+                        },
+                        onError: (errors) => {
+                            console.log('Error: ', errors);
+                            this.errors = errors;
                         }
-                    },
-                    onError: (errors) => {
-                        console.log('Error: ', errors);
-                        this.errors = errors;
-                    }
-                });
+                    });
+                } else {
+                    // For new appointments, use POST method
+                    formData.post(route('usersappointment.store'), {
+                        preserveState: true,
+                        preserveScroll: true,
+                        onSuccess: (page) => {
+                            if (page.props.flash.success) {
+                                console.log(page);
+                                // clear the variables
+                                this.timeSelected = [];
+                                this.appointmentMessage = '';
+                                this.success = page.props.flash.success;
+                                
+                                // Close the modal after successful appointment creation
+                                setTimeout(() => {
+                                    this.closeModal();
+                                    this.resetModalState();
+                                }, 1500); // Wait 1.5 seconds to show success message
+                            }
+                        },
+                        onError: (errors) => {
+                            console.log('Error: ', errors);
+                            this.errors = errors;
+                        }
+                    });
+                }
             },
             closeModal() {
-                const myModal = new bootstrap.Modal.getInstance(document.getElementById("staticBackdrop"));
-                myModal.hide();
+                try {
+                    // Method 1: Try using Bootstrap JS API
+                    if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+                        const modalElement = document.getElementById("staticBackdrop");
+                        if (modalElement) {
+                            const myModal = bootstrap.Modal.getInstance(modalElement);
+                            if (myModal) {
+                                myModal.hide();
+                                console.log('Modal closed using Bootstrap API');
+                                return;
+                            }
+                            // If no instance exists, try creating one and hiding it
+                            const newModal = new bootstrap.Modal(modalElement);
+                            newModal.hide();
+                            console.log('Modal closed using new Bootstrap instance');
+                            return;
+                        }
+                    }
+                    
+                    // Method 2: Try using jQuery if available
+                    if (typeof $ !== 'undefined') {
+                        $('#staticBackdrop').modal('hide');
+                        console.log('Modal closed using jQuery');
+                        return;
+                    }
+                    
+                    // Method 3: Manual modal closing
+                    const modal = document.getElementById('staticBackdrop');
+                    if (modal) {
+                        modal.style.display = 'none';
+                        modal.classList.remove('show');
+                        modal.setAttribute('aria-hidden', 'true');
+                        document.body.classList.remove('modal-open');
+                        
+                        // Remove all backdrops (in case there are multiple)
+                        const backdrops = document.querySelectorAll('.modal-backdrop');
+                        backdrops.forEach(backdrop => backdrop.remove());
+                        
+                        console.log('Modal closed manually');
+                    }
+                } catch (error) {
+                    console.error('Error closing modal:', error);
+                }
+            },
+            resetModalState() {
+                // Reset all modal data to initial state
+                this.date = null;
+                this.schedules = [];
+                this.timeSelected = [];
+                this.appointmentMessage = '';
+                this.success = null;
+                this.errors = [];
             },
             displayMessage() {
                 return this.success !== null ? 'active' : 'inactive';
+            },
+            populateExistingData() {
+                if (this.isRescheduling && this.existingAppointment) {
+                    // Pre-populate the appointment message
+                    this.appointmentMessage = this.existingAppointment.appointmentMessage || '';
+                    
+                    // Pre-select the current appointment date if available
+                    if (this.existingAppointment.date && this.existingAppointment.date.rawDate) {
+                        this.date = this.existingAppointment.date.rawDate;
+                    }
+                    
+                    console.log('Pre-populated form with existing appointment data:', {
+                        message: this.appointmentMessage,
+                        date: this.date
+                    });
+                }
             }
+        },
+        mounted() {
+            // Populate form with existing data if rescheduling
+            this.populateExistingData();
         },
         computed: {
             // Safe access to current user

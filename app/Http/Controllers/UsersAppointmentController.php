@@ -7,6 +7,7 @@ use App\Http\Requests\StoreUsersAppointmentRequest;
 use App\Http\Requests\UpdateUsersAppointmentRequest;
 use App\Http\Traits\GlobalFunctions;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
 
 use function PHPUnit\Framework\isNull;
@@ -100,6 +101,13 @@ class UsersAppointmentController extends Controller
      */
     public function update(Request $request, UsersAppointment $usersAppointment)
     {
+        // Add debugging
+        Log::info('UsersAppointmentController::update called', [
+            'request_data' => $request->all(),
+            'appointment_id' => $usersAppointment->id,
+            'expects_json' => $request->expectsJson(),
+            'user_decision' => $request->user_decision
+        ]);
         if (($request->user_decision === 'accepted') || ($request->user_decision === 'declined')
              || ($request->user_decision === 'cancelled')
         ) {
@@ -136,27 +144,101 @@ class UsersAppointmentController extends Controller
                 }
             }
             $result = $usersAppointment->update($validated);
-            // Check delete status
+            // Check update status
             if ($result) {
+                // Return JSON response for AJAX requests instead of redirect to prevent user switching
+                if ($request->expectsJson()) {
+                    $appointmentDetails = $this->getAppointments('neutral', $userId, $schedulerId);
+                    return response()->json([
+                        'success' => true,
+                        'message' => 'Appointment updated successfully!',
+                        'appointments' => $appointmentDetails
+                    ]);
+                }
+                
+                // For web requests, redirect back instead of to specific user
                 $appointmentDetails = $this->getAppointments('neutral', $userId, $schedulerId);
-                return redirect()->route('users.show', $userId)->with('success', $appointmentDetails);
+                return redirect()->back()->with('success', $appointmentDetails);
             } else {
-                return redirect()->route('users.show', $userId)->with('success', $result);
+                if ($request->expectsJson()) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Failed to update appointment'
+                    ], 422);
+                }
+                return redirect()->back()->with('error', 'Failed to update appointment');
             } 
         } else {
+            // Handle rescheduling (updating appointment details)
+            Log::info('Processing appointment reschedule', [
+                'appointment_id' => $usersAppointment->id,
+                'new_date' => $request->appointment_date,
+                'new_hours' => $request->hours,
+                'new_message' => $request->appointment_message
+            ]);
+            
             $hours = implode(",", $request->hours);
             $availableHours = $this->getAllScheduleTime();
 
             $validated = $request->validate([
+                'appointment_date' => ['required', 'date_format:Y-m-d'],
                 'hours' => ['required', 'array'],
                 'hours.*' => ['in:'.implode(",", $availableHours)],
                 'appointment_message' => ['required', 'string', 'max:250'],
                 'user_decision' => ['required', 'string', 'max:10'],
             ]);
-            $usersAppointment->hours = $hours;
-            $usersAppointment->appointment_message = $request->appointment_message;
-            $usersAppointment->user_decision = $request->user_decision;
-            $result = $usersAppointment->update();
+            
+            // Update the appointment fields
+            try {
+                $usersAppointment->appointment_date = $request->appointment_date;
+                $usersAppointment->hours = $hours;
+                $usersAppointment->appointment_message = $request->appointment_message;
+                $usersAppointment->user_decision = $request->user_decision;
+                
+                Log::info('About to update appointment', [
+                    'appointment_before' => $usersAppointment->getOriginal(),
+                    'appointment_changes' => $usersAppointment->getDirty()
+                ]);
+                
+                $result = $usersAppointment->update();
+            } catch (\Exception $e) {
+                Log::error('Error updating appointment', [
+                    'error' => $e->getMessage(),
+                    'appointment_id' => $usersAppointment->id
+                ]);
+                
+                if ($request->expectsJson()) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Database error: ' . $e->getMessage()
+                    ], 500);
+                }
+                
+                return redirect()->back()->with('error', 'Failed to update appointment: ' . $e->getMessage());
+            }
+            
+            // Get fresh data for logging
+            $freshAppointment = $usersAppointment->fresh();
+            Log::info('Appointment update result', [
+                'result' => $result,
+                'appointment_after' => $freshAppointment ? $freshAppointment->toArray() : null
+            ]);
+
+            // Return JSON response for AJAX requests instead of redirect
+            if ($request->expectsJson()) {
+                if ($result) {
+                    return response()->json([
+                        'success' => true,
+                        'message' => 'Appointment rescheduled successfully!',
+                        'appointment' => $freshAppointment
+                    ]);
+                } else {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Failed to reschedule appointment'
+                    ], 422);
+                }
+            }
 
             return redirect()->back()->with('success', $result);
         }
