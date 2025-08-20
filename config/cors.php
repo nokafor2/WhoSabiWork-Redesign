@@ -20,7 +20,7 @@ return [
     'allowed_methods' => ['*'],
 
     'allowed_origins' => env('APP_ENV') === 'production' 
-        ? explode(',', env('CORS_ALLOWED_ORIGINS', 'http://ec2-3-8-161-2.eu-west-2.compute.amazonaws.com,http://3.8.161.2'))
+        ? explode(',', env('CORS_ALLOWED_ORIGINS', 'http://ayuaprojects.com,http://ec2-3-8-161-2.eu-west-2.compute.amazonaws.com,http://3.8.161.2'))
         : ['*'],
 
     'allowed_origins_patterns' => [],
