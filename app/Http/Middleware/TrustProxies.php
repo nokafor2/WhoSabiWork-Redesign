@@ -13,7 +13,7 @@ class TrustProxies extends Middleware
      *
      * @var array|string|null
      */
-    protected $proxies;
+    protected $proxies = '*'; // Trust all proxies for AWS ALB/Load Balancer
 
     /**
      * The headers that should be used to detect proxies.

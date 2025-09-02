@@ -130,9 +130,23 @@
                 const formData = reactive(this.dataToSend);
 
                 if (this.pageName === 'artisan') {
+                    // Ensure CSRF token is available
+                    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+                    console.log('CSRF Token found:', csrfToken ? 'Yes' : 'No');
+                    
                     router.post('/artisans', formData, {
                         preserveState: true, // Prevents a full page reload
+                        preserveScroll: true,
+                        headers: {
+                            'X-CSRF-TOKEN': csrfToken,
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
+                        },
+                        onStart: () => {
+                            console.log('Starting artisans search request...');
+                        },
                         onSuccess: (page) => {
+                            console.log('Artisans search success!');
                             console.log('Data fetched: ');
                             console.log(page.props.artisans);
                             this.artisans = [];
@@ -140,13 +154,32 @@
                             this.$emit('send-category-type', this.artisans);
                         },
                         onError: (errors) => {
-                            console.log('Error: ', errors);
+                            console.log('Artisans search error: ', errors);
+                            console.log('Error details:', {
+                                status: errors.status || 'Unknown',
+                                message: errors.message || 'Unknown error',
+                                response: errors.response || 'No response'
+                            });
                         }
                     });
                 } else if (this.pageName === 'seller') {
+                    // Ensure CSRF token is available
+                    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+                    console.log('CSRF Token found:', csrfToken ? 'Yes' : 'No');
+                    
                     router.post('/mobilemarketers', formData, {
                         preserveState: true, // Prevents a full page reload
+                        preserveScroll: true,
+                        headers: {
+                            'X-CSRF-TOKEN': csrfToken,
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
+                        },
+                        onStart: () => {
+                            console.log('Starting mobilemarketers search request...');
+                        },
                         onSuccess: (page) => {
+                            console.log('Mobilemarketers search success!');
                             console.log('Data fetched: ');
                             console.log(page.props.mobileMarketers);
                             this.mobileMarketers = [];
@@ -154,7 +187,12 @@
                             this.$emit('send-category-type', this.mobileMarketers);
                         },
                         onError: (errors) => {
-                            console.log('Error: ', errors);
+                            console.log('Mobilemarketers search error: ', errors);
+                            console.log('Error details:', {
+                                status: errors.status || 'Unknown',
+                                message: errors.message || 'Unknown error',
+                                response: errors.response || 'No response'
+                            });
                         }
                     });
                 }
