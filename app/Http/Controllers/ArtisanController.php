@@ -26,7 +26,7 @@ class ArtisanController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index() {
-        $artisans = $this->getUserCategoryDetails('artisan');
+        $artisans = [];
 
         $artisanObj = new Artisan();
         $artisanTypes = $this->getTableColumnsWithSort($artisanObj->table, Artisan::$columnsToExclude);
@@ -86,7 +86,14 @@ class ArtisanController extends Controller
             $artisans = $this->getSpecifiedUserDetails($businessCategory, $categoryType, $state, $town);
         }
 
-        return inertia('Artisan/Index', [ 'artisans' => $artisans, ]);
+        // Get artisan types for the dropdown
+        $artisanObj = new Artisan();
+        $artisanTypes = $this->getTableColumnsWithSort($artisanObj->table, Artisan::$columnsToExclude);
+
+        return inertia('Artisan/Index', [ 
+            'artisans' => $artisans,
+            'artisanTypes' => $artisanTypes
+        ]);
     }
 
     /**

@@ -63,7 +63,7 @@
     export default {
         // inject: ['products'],
         props: ['pageName', 'selectArray'],
-        emits: ['send-artisans'],
+        emits: ['send-artisans', 'send-category-type', 'search-started'],
         data() {
             return {
                 selectedOption: 'default',
@@ -134,6 +134,9 @@
                     const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
                     console.log('CSRF Token found:', csrfToken ? 'Yes' : 'No');
                     
+                    // Emit search started event
+                    this.$emit('search-started');
+                    
                     router.post('/artisans', formData, {
                         preserveState: true, // Prevents a full page reload
                         preserveScroll: true,
@@ -166,6 +169,9 @@
                     // Ensure CSRF token is available
                     const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
                     console.log('CSRF Token found:', csrfToken ? 'Yes' : 'No');
+                    
+                    // Emit search started event
+                    this.$emit('search-started');
                     
                     router.post('/mobilemarketers', formData, {
                         preserveState: true, // Prevents a full page reload

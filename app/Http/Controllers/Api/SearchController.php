@@ -40,9 +40,15 @@ class SearchController extends Controller
         // return redirect()->back()->with('result', $searchedResult);
 
         // return Redirect::route('artisans.index')->with("success", $searchedResult);
-        return redirect()->route('artisans.index')->with("success", $searchedResult);
+        // return redirect()->route('artisans.index')->with("success", $searchedResult);
 
         // return $searchedResult;
+        return response()->json([
+            'success' => true,
+            'data' => $searchedResult,
+            'pageName' => $pageName,
+            'count' => count($searchedResult)
+        ]);
     }
 
     /**

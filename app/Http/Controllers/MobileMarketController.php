@@ -18,8 +18,7 @@ class MobileMarketController extends Controller
      */
     public function index()
     {
-        
-        $mobileMarketers = $this->getUserCategoryDetails('seller');
+        $mobileMarketers = [];
 
         $productObj = new Product();
         $sellers = $this->getTableColumnsWithSort($productObj->table, Product::$columnsToExclude);

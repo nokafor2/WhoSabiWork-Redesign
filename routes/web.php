@@ -110,7 +110,7 @@ Route::post('/revert', DeleteTemporaryImageController::class)->name('deleteimage
 
 Route::post('/datesavailable', [UsersAvailabilityFxns::class, 'availabilityDates'])->name('availabilitydates');
 
-// Route::get('/not-found', function () {busin
+// Route::get('/not-found', function () {
 //     return view('errors.404');
 // })->name('notfound');
 

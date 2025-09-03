@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Http\Traits\GlobalFunctions;
 use App\Models\Artisan;
+use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
@@ -29,6 +30,8 @@ class SearchController extends Controller
         //
     }
 
+
+
     /**
      * Store a newly created resource in storage.
      */
@@ -39,18 +42,14 @@ class SearchController extends Controller
         
         $searchedResult = $this->searchData($searchVal, $pageName);
         // dd($searchedResult);
-        $artisans = $this->getUserCategoryDetails('artisan');
 
-        $artisanObj = new Artisan();
-        $artisanTypes = $this->getTableColumnsWithSort($artisanObj->table, Artisan::$columnsToExclude);
-
-        // return Inertia('Artisan/Index', ['artisans' => $artisans, 'artisanTypes' => $artisanTypes])->with("result", $searchedResult);
-        // return redirect()->back()->with('result', $searchedResult);
-
-        // return Redirect::route('artisans.index')->with("success", $searchedResult);
-        return redirect()->route('artisans.index')->with("success", $searchedResult);
-
-        // return $searchedResult;
+        // return redirect()->back()->with('success', $searchedResult);
+        return response()->json([
+            'success' => true,
+            'data' => $searchedResult,
+            'pageName' => $pageName,
+            'count' => count($searchedResult)
+        ]);
     }
 
     /**
