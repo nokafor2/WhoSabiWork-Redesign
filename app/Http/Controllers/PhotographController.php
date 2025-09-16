@@ -51,8 +51,8 @@ class PhotographController extends Controller
         foreach ($temporaryImages as $temporaryImage) {
             Storage::copy('images/tmp/'.$temporaryImage->folder.'/'.$temporaryImage->file, 'images/'.$temporaryImage->folder.'/'.$temporaryImage->file);
             $result = Photograph::create([
-                // 'user_id' => Auth::user()->id,
-                'user_id' => 1,
+                'user_id' => Auth::user()->id,
+                // 'user_id' => 1,
                 'filename' => $temporaryImage->file,
                 'path' => $temporaryImage->folder.'/'.$temporaryImage->file,
                 'size' => $temporaryImage->size,

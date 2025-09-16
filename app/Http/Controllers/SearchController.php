@@ -86,11 +86,10 @@ class SearchController extends Controller
 
     public function getState(Request $request)
     {
-        // dd($request->selectedOption);
-
         $selectedOption = $request->selectedOption;
+        $pageName = $request->pageName;
 
-        $states = $this->getBussUserState($selectedOption);
+        $states = $this->getBussUserState($selectedOption, $pageName);
 
         // return inertia(
         //     'Artisan/Index', 
