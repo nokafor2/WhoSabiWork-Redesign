@@ -92,6 +92,7 @@ Route::resource('truckbrand', TruckBrandController::class)->only('update');
 Route::resource('vehiclecategory', VehicleCategoryController::class)->only('update');
 
 Route::resource('photograph', PhotographController::class)->only('index', 'store', 'create', 'update');
+Route::post('/cleanup-temp-files', [PhotographController::class, 'cleanupOldTempFiles'])->name('cleanup.temp.files');
 
 Route::resource('usersavailability', UsersAvailabilityController::class)->only('show', 'store', 'create', 'update', 'destroy');
 
