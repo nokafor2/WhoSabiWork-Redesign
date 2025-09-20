@@ -144,12 +144,12 @@
     "src": "resources/homePageImages/slideShowImageO.jpg"
   },
   "resources/js/app.js": {
-    "file": "assets/app-CXhmTFMw.js",
+    "file": "assets/app-BxAbrbzL.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true,
     "css": [
-      "assets/app-C6px3Dzu.css"
+      "assets/app-GN-0Y920.css"
     ],
     "assets": [
       "assets/photoSample-DKwCuY33.jpg",

@@ -33,11 +33,14 @@ class PhotographController extends Controller
      */
     public function store(Request $request)
     {
+        // dd($request->captions);
         try {
             Log::info('PhotographController::store called', [
                 'all_request_data' => $request->all(),
                 'temp_images' => $request->tempImages ?? [],
+                'captions' => $request->captions ?? [],
                 'has_temp_images' => $request->has('tempImages'),
+                'has_captions' => $request->has('captions'),
                 'auth_user' => Auth::user() ? Auth::user()->id : 'Not authenticated'
             ]);
 
@@ -46,11 +49,43 @@ class PhotographController extends Controller
                 return redirect()->back()->with('error', 'You must be logged in to upload images');
             }
 
-            // Get raw temporary images data
+            // Get raw temporary images data and captions
             $rawTempImages = $request->input('tempImages', []);
-            Log::info('Raw temp images received', [
-                'raw_data' => $rawTempImages,
-                'count' => count($rawTempImages)
+            $rawCaptions = $request->input('captions', []);
+            
+            // Clean caption keys the same way we clean temp image IDs
+            $captions = [];
+            foreach ($rawCaptions as $rawKey => $captionText) {
+                if (is_string($rawKey)) {
+                    // Find position of <link> tag and extract everything before it
+                    $linkPosition = strpos($rawKey, '<link');
+                    if ($linkPosition !== false) {
+                        $cleanKey = trim(substr($rawKey, 0, $linkPosition));
+                    } else {
+                        // No <link> tag found, use the whole string
+                        $cleanKey = trim($rawKey);
+                    }
+                    
+                    // Only add if it's not empty and looks like our image format
+                    if (!empty($cleanKey) && strpos($cleanKey, 'image-') === 0) {
+                        $captions[$cleanKey] = $captionText;
+                    }
+                } else {
+                    // If it's not a string, use as-is
+                    $captions[$rawKey] = $captionText;
+                }
+            }
+            
+            Log::info('Raw temp images and captions received', [
+                'raw_temp_images' => $rawTempImages,
+                'temp_images_count' => count($rawTempImages),
+                'raw_captions' => $rawCaptions,
+                'raw_captions_count' => count($rawCaptions),
+                'cleaned_captions' => $captions,
+                'cleaned_captions_count' => count($captions),
+                'raw_caption_keys' => array_keys($rawCaptions),
+                'cleaned_caption_keys' => array_keys($captions),
+                'first_caption_example' => !empty($captions) ? array_slice($captions, 0, 1, true) : 'No captions'
             ]);
             
             // Extract clean image folder names (remove everything after <link> tag)
@@ -144,15 +179,37 @@ class PhotographController extends Controller
                         continue;
                     }
 
+                    // Get caption for this image (if provided)
+                    // dd($temporaryImage->folder);
+                    $imageCaption = $captions[$temporaryImage->folder] ?? '';
+                    // dd($imageCaption);
+                    
+                    Log::info('Caption mapping for image', [
+                        'image_folder' => $temporaryImage->folder,
+                        'available_caption_keys' => array_keys($captions),
+                        'caption_exists_for_image' => array_key_exists($temporaryImage->folder, $captions),
+                        'extracted_caption' => $imageCaption,
+                        'caption_length' => strlen($imageCaption),
+                        'is_caption_empty' => empty($imageCaption)
+                    ]);
+                    
                     // Create photograph record
                     $photograph = Photograph::create([
                         'user_id' => Auth::user()->id,
                         'filename' => $filename,
                         'path' => $permanentPath,
                         'size' => $temporaryImage->size,
-                        'caption' => '',
+                        'caption' => $imageCaption,
                         'photo_type' => 'gallery',
                         'visible' => true,
+                    ]);
+                    
+                    Log::info('Photograph created with caption', [
+                        'photograph_id' => $photograph->id,
+                        'image_folder' => $temporaryImage->folder,
+                        'saved_caption' => $photograph->caption,
+                        'caption_length' => strlen($photograph->caption ?? ''),
+                        'database_record' => $photograph->toArray()
                     ]);
                     
                     $savedPhotographs[] = $photograph;

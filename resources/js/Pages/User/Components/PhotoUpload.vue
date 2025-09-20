@@ -27,6 +27,83 @@
             />
         </div>
 
+        <!-- Caption Input Section - Positioned right under FilePond -->
+        <div v-if="form.tempImages.length > 0" class="row justify-content-center mt-4">
+            <div class="col-md-10">
+                <!-- Compact Caption Interface -->
+                <div class="caption-interface p-3 bg-light border rounded">
+                    <!-- Image Selection Info -->
+                    <div v-if="!selectedImageId" class="text-center text-muted py-2">
+                        <p class="mb-1">
+                            <i class="fas fa-mouse-pointer me-2"></i>
+                            Click on any image above to add a caption
+                        </p>
+                        <small>{{ form.tempImages.length }} image{{ form.tempImages.length > 1 ? 's' : '' }} ready for captioning</small>
+                    </div>
+                    
+                    <!-- Selected Image Caption Input -->
+                    <div v-else>
+                        <div class="mb-2">
+                            <small class="text-muted fw-bold">
+                                <i class="fas fa-image me-1"></i>
+                                Caption for Image {{ getImageIndex(selectedImageId) }} of {{ form.tempImages.length }}
+                            </small>
+                        </div>
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="fas fa-comment"></i>
+                            </span>
+                            <input 
+                                type="text" 
+                                class="form-control" 
+                                placeholder="Enter a caption for this image..." 
+                                v-model="currentCaption"
+                                @input="updateCurrentCaption($event.target.value)"
+                                maxlength="255"
+                            >
+                            <button 
+                                class="btn btn-outline-secondary" 
+                                type="button" 
+                                @click="selectedImageId = null; currentCaption = ''"
+                                title="Clear selection"
+                            >
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <div class="d-flex justify-content-between mt-1">
+                            <small class="text-muted">
+                                {{ currentCaption.length }}/255 characters
+                            </small>
+                            <small class="text-success" v-if="currentCaption.trim()">
+                                <i class="fas fa-check me-1"></i>Caption saved
+                            </small>
+                        </div>
+                    </div>
+                    
+                    <!-- Caption Summary for Multiple Images -->
+                    <div v-if="form.tempImages.length > 1" class="mt-2 pt-2 border-top">
+                        <div class="d-flex align-items-center justify-content-between flex-wrap">
+                            <small class="text-muted me-2">Caption Status:</small>
+                            <div class="d-flex flex-wrap gap-1">
+                                <span 
+                                    v-for="(imageObj, index) in form.tempImages" 
+                                    :key="imageObj.id"
+                                    class="badge badge-sm"
+                                    :class="imageObj.caption && imageObj.caption.trim() ? 'bg-success' : 'bg-secondary'"
+                                    style="cursor: pointer; font-size: 0.7rem;"
+                                    @click="selectImageForCaptioning(imageObj.id)"
+                                    :title="imageObj.caption ? imageObj.caption : 'No caption'"
+                                >
+                                    {{ index + 1 }}
+                                    <i class="fas fa-check ms-1" v-if="imageObj.caption && imageObj.caption.trim()"></i>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Compression Statistics Display -->
         <div v-if="compressionStats.originalSize > 0" class="row justify-content-center mt-2">
             <div class="col-auto">
@@ -73,7 +150,8 @@
             <div class="col-auto">
                 <small class="text-muted text-center d-block">
                     <strong>Step 1:</strong> Drop images above for preview and compression<br>
-                    <strong>Step 2:</strong> Click "Upload" button to save to your gallery<br>
+                    <strong>Step 2:</strong> Click on any image to add a caption (optional)<br>
+                    <strong>Step 3:</strong> Click "Upload" button to save to your gallery<br>
                     <em>Images compressed to 85% quality, original dimensions preserved • Max: 5MB per image, 50MB total</em>
                 </small>
             </div>
@@ -177,7 +255,7 @@
         data: function () {
             return { 
                 form: useForm({
-                    tempImages: [] // Will hold temporary image IDs for upload
+                    tempImages: [] // Will hold image objects: [{id: "image-abc", caption: "My caption"}, ...]
                 }),
                 page: usePage(),
                 compressionStats: {
@@ -189,7 +267,9 @@
                     show: false,
                     percent: 0,
                     message: ''
-                }
+                },
+                selectedImageId: null, // Currently selected image for captioning
+                currentCaption: '' // Caption for currently selected image
             };
         },
         methods: {
@@ -209,8 +289,21 @@
                     return;
                 }
 
-                console.log('Temporary images to process:', this.form.tempImages);
-                console.log('Form data being sent:', this.form);
+                // Transform object structure to backend format
+                const tempImageIds = this.form.tempImages.map(img => img.id);
+                const captions = {};
+                this.form.tempImages.forEach(img => {
+                    captions[img.id] = img.caption || '';
+                });
+
+                console.log('=== FRONTEND UPLOAD DEBUG ===');
+                console.log('Temporary images to process:', tempImageIds);
+                console.log('Captions to send:', captions);
+                console.log('Image objects:', this.form.tempImages);
+                console.log('Caption keys:', Object.keys(captions));
+                console.log('Caption values:', Object.values(captions));
+                console.log('Non-empty captions:', Object.entries(captions).filter(([key, value]) => value.trim() !== ''));
+                console.log('===========================');
                 
                 // Debug CSRF token
                 const csrfToken = this.page.props.csrf_token || document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
@@ -222,7 +315,12 @@
                 this.uploadProgress.message = 'Preparing upload...';
 
                 // Post with temporary image IDs - ensure CSRF token is included
-                this.form.post(route('photograph.store'), {
+                this.form
+                .transform((data) => ({
+                    tempImages: tempImageIds,
+                    captions: captions
+                }))
+                .post(route('photograph.store'), {
                         preserveState: true,
                         preserveScroll: true,
                         headers: {
@@ -231,7 +329,9 @@
                         },
                         onStart: () => {
                             this.uploadProgress.percent = 25;
-                            this.uploadProgress.message = `Uploading ${this.form.tempImages.length} image${this.form.tempImages.length > 1 ? 's' : ''}...`;
+                            const imageCount = this.form.tempImages.length;
+                            const captionCount = this.form.tempImages.filter(img => img.caption && img.caption.trim() !== '').length;
+                            this.uploadProgress.message = `Uploading ${imageCount} image${imageCount > 1 ? 's' : ''} with ${captionCount} caption${captionCount > 1 ? 's' : ''}...`;
                         },
                         onProgress: (progress) => {
                             // Map Inertia progress (0-1) to percentage (25-90)
@@ -249,6 +349,11 @@
                             this.$refs.pond.removeFiles();
                             // Reset the form data
                             this.form.tempImages = [];
+                            // Reset caption selection
+                            this.selectedImageId = null;
+                            this.currentCaption = '';
+                            // Clean up all click handlers
+                            this.removeAllClickHandlers();
                             // Reset compression statistics
                             this.resetCompressionStats();
                             
@@ -275,13 +380,24 @@
             },
             handleFilePondLoad(response) {
                 // The response from /upload is the temporary folder ID
-                this.form.tempImages.push(response);
-                console.log('File uploaded to temp storage:', response);
+                // Create image object with ID and empty caption
+                const imageObject = {
+                    id: response,
+                    caption: ''
+                };
+                this.form.tempImages.push(imageObject);
+                console.log('File uploaded to temp storage:', response, 'Total images:', this.form.tempImages.length);
                 return response;
             },
             async handleFilePondRevert(uniqueId, load, error) {
-                // Remove the temporary file from server and our array
-                this.form.tempImages = this.form.tempImages.filter((id) => id !== uniqueId);
+                // Remove the image object from our array
+                this.form.tempImages = this.form.tempImages.filter((imageObj) => imageObj.id !== uniqueId);
+                
+                // Reset selection if this was the selected image
+                if (this.selectedImageId === uniqueId) {
+                    this.selectedImageId = null;
+                    this.currentCaption = '';
+                }
                 
                 // Get CSRF token for deletion request
                 const csrfToken = this.page.props.csrf_token || document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
@@ -302,10 +418,19 @@
                     // Call load to complete the revert
                     load();
                     
+                    // Refresh click handlers after DOM updates
+                    this.$nextTick(() => {
+                        this.refreshImageClickHandlers();
+                    });
+                    
                 } catch (error) {
                     console.error('Error deleting temp file:', error);
-                    // Re-add the image ID back if deletion failed
-                    this.form.tempImages.push(uniqueId);
+                    // Re-add the image object back if deletion failed
+                    const imageObject = {
+                        id: uniqueId,
+                        caption: ''
+                    };
+                    this.form.tempImages.push(imageObject);
                     // Call error callback to let FilePond know deletion failed
                     error('Failed to delete temporary file');
                 }
@@ -320,6 +445,19 @@
                 this.compressionStats.originalSize += file.fileSize;
                 console.log(`Added file: ${file.filename} (${this.formatFileSize(file.fileSize)})`);
             },
+            handleFileRemove(error, file) {
+                if (error) {
+                    console.error('File remove error:', error);
+                    return;
+                }
+                
+                console.log('File removed from FilePond:', file.filename);
+                
+                // Refresh click handlers after DOM updates to ensure sync
+                this.$nextTick(() => {
+                    this.refreshImageClickHandlers();
+                });
+            },
             handleFileProcess(error, file) {
                 if (error) {
                     console.error('File process error:', error);
@@ -328,6 +466,11 @@
                 
                 // File has been processed and uploaded to temp storage
                 console.log(`File processed: ${file.filename}`);
+                
+                // Refresh click handlers to ensure proper synchronization
+                this.$nextTick(() => {
+                    this.refreshImageClickHandlers();
+                });
             },
             handleFilePondError(error, file, status) {
                 console.error('FilePond error:', error, status);
@@ -354,6 +497,224 @@
                     compressedSize: 0,
                     compressionRatio: 0
                 };
+            },
+            selectImageForCaptioning(imageId) {
+                // Save current caption if there was a previously selected image
+                if (this.selectedImageId && this.currentCaption !== this.getCurrentImageCaption(this.selectedImageId)) {
+                    this.updateImageCaption(this.selectedImageId, this.currentCaption);
+                }
+                
+                // Select the new image and load its caption
+                this.selectedImageId = imageId;
+                this.currentCaption = this.getCurrentImageCaption(imageId);
+                
+                // Update visual selection
+                this.$nextTick(() => {
+                    this.updateImageSelection();
+                });
+                
+                console.log('Selected image for captioning:', imageId, 'Caption:', this.currentCaption);
+            },
+            updateCurrentCaption(caption) {
+                this.currentCaption = caption;
+                if (this.selectedImageId) {
+                    this.updateImageCaption(this.selectedImageId, caption);
+                }
+            },
+            getCurrentImageCaption(imageId) {
+                const imageObj = this.form.tempImages.find(img => img.id === imageId);
+                return imageObj ? imageObj.caption : '';
+            },
+            updateImageCaption(imageId, caption) {
+                const imageObj = this.form.tempImages.find(img => img.id === imageId);
+                if (imageObj) {
+                    imageObj.caption = caption;
+                }
+            },
+            getImageIndex(imageId) {
+                const index = this.form.tempImages.findIndex(img => img.id === imageId);
+                return index !== -1 ? index + 1 : 0;
+            },
+            addImageClickHandlers() {
+                // Add click handlers to FilePond image previews
+                const filePondItems = document.querySelectorAll('.filepond--item');
+                const filePondFiles = this.$refs.pond ? this.$refs.pond.getFiles() : [];
+                
+                console.log('Adding click handlers:', {
+                    domItemsCount: filePondItems.length,
+                    filePondFilesCount: filePondFiles.length,
+                    tempImagesCount: this.form.tempImages.length
+                });
+                
+                filePondItems.forEach((item, domIndex) => {
+                    // Remove existing click handlers to avoid duplicates
+                    const existingHandler = item.getAttribute('data-caption-handler');
+                    if (existingHandler) return;
+                    
+                    // Mark as having a handler
+                    item.setAttribute('data-caption-handler', 'true');
+                    
+                    // Add visual styling for clickable state
+                    item.style.cursor = 'pointer';
+                    item.style.transition = 'all 0.2s ease';
+                    
+                    const imagePreview = item.querySelector('.filepond--image-preview');
+                    if (imagePreview) {
+                        imagePreview.style.border = '2px solid transparent';
+                        imagePreview.style.borderRadius = '6px';
+                        imagePreview.style.transition = 'all 0.2s ease';
+                    }
+                    
+                    // Store the server ID directly on the DOM element for reliable identification
+                    const filePondFile = filePondFiles[domIndex];
+                    if (filePondFile && filePondFile.serverId) {
+                        item.setAttribute('data-server-id', filePondFile.serverId);
+                    }
+                    
+                    // Add click event listener
+                    const clickHandler = (e) => {
+                        // Prevent FilePond's default handling
+                        e.stopPropagation();
+                        
+                        // Find the matching FilePond file by comparing DOM element properties
+                        const currentFiles = this.$refs.pond ? this.$refs.pond.getFiles() : [];
+                        
+                        // Try to find file by checking if the clicked element belongs to this file
+                        let matchedFile = null;
+                        let actualIndex = -1;
+                        
+                        // Method 1: Check by filename in DOM (most reliable)
+                        const filenameElement = item.querySelector('.filepond--file-info-main');
+                        if (filenameElement && filenameElement.textContent) {
+                            const displayedFilename = filenameElement.textContent.trim();
+                            matchedFile = currentFiles.find((file, index) => {
+                                const match = file.filename === displayedFilename || file.file.name === displayedFilename;
+                                if (match) actualIndex = index;
+                                return match;
+                            });
+                        }
+                        
+                        // Method 2: Fallback to DOM index if filename matching fails
+                        if (!matchedFile && domIndex < currentFiles.length) {
+                            matchedFile = currentFiles[domIndex];
+                            actualIndex = domIndex;
+                        }
+                        
+                        if (!matchedFile || !matchedFile.serverId) {
+                            console.warn('No valid FilePond file found for clicked item:', {
+                                domIndex: domIndex,
+                                actualIndex: actualIndex,
+                                currentFilesCount: currentFiles.length,
+                                displayedFilename: filenameElement ? filenameElement.textContent : 'unknown',
+                                availableFiles: currentFiles.map(f => f.filename),
+                                availableServerIds: currentFiles.map(f => f.serverId)
+                            });
+                            return;
+                        }
+                        
+                        console.log('Image clicked (reliable matching):', {
+                            serverId: matchedFile.serverId,
+                            domIndex: domIndex,
+                            actualIndex: actualIndex,
+                            filename: matchedFile.filename,
+                            currentSelection: this.selectedImageId,
+                            matchMethod: filenameElement ? 'filename' : 'index'
+                        });
+                        
+                        // Select image using server ID
+                        this.selectImageForCaptioning(matchedFile.serverId);
+                        this.updateImageSelection();
+                    };
+                    
+                    item.addEventListener('click', clickHandler);
+                    
+                    // Store handler reference for cleanup
+                    item._captionClickHandler = clickHandler;
+                });
+            },
+            refreshImageClickHandlers() {
+                // Clean up all existing click handlers first
+                this.removeAllClickHandlers();
+                
+                // Wait longer for DOM to stabilize (FilePond needs more time for deletions)
+                setTimeout(() => {
+                    this.addImageClickHandlers();
+                    // Update visual selection state
+                    this.updateImageSelection();
+                }, 300); // Increased from 100ms to 300ms
+            },
+            removeAllClickHandlers() {
+                // Remove all existing click handlers and styling
+                const filePondItems = document.querySelectorAll('.filepond--item');
+                
+                filePondItems.forEach((item) => {
+                    // Remove click handler if it exists
+                    if (item._captionClickHandler) {
+                        item.removeEventListener('click', item._captionClickHandler);
+                        delete item._captionClickHandler;
+                    }
+                    
+                    // Remove our custom attributes and styles
+                    item.removeAttribute('data-caption-handler');
+                    item.removeAttribute('data-server-id'); // Clean up server ID too
+                    item.style.cursor = '';
+                    item.style.transition = '';
+                    
+                    // Reset image preview styling
+                    const imagePreview = item.querySelector('.filepond--image-preview');
+                    if (imagePreview) {
+                        imagePreview.style.border = '';
+                        imagePreview.style.borderRadius = '';
+                        imagePreview.style.transition = '';
+                        imagePreview.style.boxShadow = '';
+                    }
+                });
+            },
+            updateImageSelection() {
+                // Update visual selection state of all images
+                const filePondItems = document.querySelectorAll('.filepond--item');
+                const currentFiles = this.$refs.pond ? this.$refs.pond.getFiles() : [];
+                
+                filePondItems.forEach((item, domIndex) => {
+                    const imagePreview = item.querySelector('.filepond--image-preview');
+                    if (!imagePreview) return;
+                    
+                    // Find the matching FilePond file using same reliable method as click handler
+                    let matchedFile = null;
+                    
+                    // Method 1: Check by filename in DOM (most reliable)
+                    const filenameElement = item.querySelector('.filepond--file-info-main');
+                    if (filenameElement && filenameElement.textContent) {
+                        const displayedFilename = filenameElement.textContent.trim();
+                        matchedFile = currentFiles.find((file) => {
+                            return file.filename === displayedFilename || file.file.name === displayedFilename;
+                        });
+                    }
+                    
+                    // Method 2: Fallback to DOM index if filename matching fails
+                    if (!matchedFile && domIndex < currentFiles.length) {
+                        matchedFile = currentFiles[domIndex];
+                    }
+                    
+                    if (!matchedFile || !matchedFile.serverId) {
+                        // Reset styling if no valid file found
+                        imagePreview.style.border = '2px solid transparent';
+                        imagePreview.style.boxShadow = 'none';
+                        return;
+                    }
+                    
+                    // Check if this file is currently selected
+                    if (matchedFile.serverId === this.selectedImageId) {
+                        // Selected state
+                        imagePreview.style.border = '2px solid #007bff';
+                        imagePreview.style.boxShadow = '0 0 0 2px rgba(0, 123, 255, 0.25)';
+                        console.log('Visual selection applied to:', matchedFile.serverId);
+                    } else {
+                        // Unselected state
+                        imagePreview.style.border = '2px solid transparent';
+                        imagePreview.style.boxShadow = 'none';
+                    }
+                });
             }
         },
         components: {
@@ -361,3 +722,103 @@
         },
     };
 </script>
+
+<style scoped>
+/* FilePond Vertical Layout with 400px Height */
+:deep(.filepond--root) {
+    font-family: inherit;
+    max-height: 400px; /* Increased height to 400px */
+    overflow: hidden;
+}
+
+:deep(.filepond--list) {
+    max-height: 400px !important;
+    overflow-x: hidden !important;   /* No horizontal scroll */
+    overflow-y: auto !important;     /* Vertical scroll for overflow */
+    padding: 5px !important;
+    scrollbar-width: thin !important;
+    scrollbar-color: #007bff #f1f1f1 !important;
+}
+
+/* Custom vertical scrollbar styling */
+:deep(.filepond--list::-webkit-scrollbar) {
+    width: 6px !important;
+}
+
+:deep(.filepond--list::-webkit-scrollbar-track) {
+    background: #f1f1f1 !important;
+    border-radius: 3px !important;
+}
+
+:deep(.filepond--list::-webkit-scrollbar-thumb) {
+    background: #007bff !important;
+    border-radius: 3px !important;
+}
+
+:deep(.filepond--list::-webkit-scrollbar-thumb:hover) {
+    background: #0056b3 !important;
+}
+
+/* Caption section animations and spacing */
+.caption-interface {
+    animation: slideInUp 0.3s ease-out;
+    transition: all 0.2s ease;
+    margin-top: 1rem;
+    clear: both;
+    position: relative;
+    z-index: 1;
+}
+
+.caption-interface:hover {
+    border-color: #007bff !important;
+    box-shadow: 0 2px 8px rgba(0, 123, 255, 0.15);
+}
+
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Badge hover effects */
+.badge {
+    transition: all 0.2s ease;
+}
+
+.badge:hover {
+    transform: scale(1.05);
+}
+
+/* Input group styling */
+.input-group {
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.input-group .form-control:focus {
+    box-shadow: none;
+    border-color: #007bff;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    .col-md-8 {
+        padding: 0 10px;
+    }
+    
+    .card-body {
+        padding: 1rem 0.75rem;
+    }
+    
+    .badge {
+        font-size: 0.7rem;
+        margin: 2px;
+    }
+}
+</style>
