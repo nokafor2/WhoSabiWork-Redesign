@@ -18,8 +18,8 @@
             <div class="tab-pane fade show active" id="businessDetails" role="tabpanel" aria-labelledby="businessDetails-tab" tabindex="0">
                 <div class="accordion" id="accordionExample">
                     <!-- User Details section -->
-                    <!-- Profile Photo Section -->
-                    <ProfilePhotoSection2></ProfilePhotoSection2>
+                    <!-- Profile Photo Section - Modern -->
+                    <ProfilePhotoModern :user="user" @photoUpdated="handlePhotoUpdated"></ProfilePhotoModern>
                     
                     <!-- {{-- First name accordion --}} -->
                     <FirstNameSection :firstName="user.first_name" :userId="user.id"></FirstNameSection>
@@ -211,8 +211,7 @@
 
 <script>
     import FieldAccordion from './Components/FieldAccordion.vue';
-    import ProfilePhotoSection from './Components/ProfilePhotoSection.vue';
-    import ProfilePhotoSection2 from './Components/ProfilePhotoSection2.vue';
+    import ProfilePhotoModern from './Components/ProfilePhotoModern.vue';
     import FirstNameSection from './Components/FirstNameSection.vue';
     import LastNameSection from './Components/LastNameSection.vue';
     import GenderSection from './Components/GenderSection.vue';
@@ -253,7 +252,7 @@
 
     export default {
         components: {
-            FieldAccordion, ProfilePhotoSection, ProfilePhotoSection2, FirstNameSection, 
+            FieldAccordion, ProfilePhotoModern, FirstNameSection, 
             LastNameSection, GenderSection, UsernameSection, EmailSection, PhoneNumberSection, 
             PasswordSection, CommentCard, AppointmentDetails, AppointmentDetails1, 
             BusinessNameSection, AddressLine1Section, AddressLine2Section, AddressLine3Section, 
@@ -290,6 +289,12 @@
                 const imageUrl = new URL(`../../../Images/${imageName}.jpg`, import.meta.url).href;
 
                 return imageUrl;
+            },
+            handlePhotoUpdated() {
+                // Handle profile photo update event
+                console.log('Profile photo updated');
+                // You can add additional logic here if needed
+                // For example, refresh user data or show success message
             },
             updateSchedule(schedules) {
                 this.schedules2 = schedules;

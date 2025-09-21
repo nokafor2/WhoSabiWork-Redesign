@@ -4,6 +4,7 @@ use App\Http\Controllers\AddressController;
 use App\Http\Controllers\ArtisanController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\AvatarController;
 use App\Http\Controllers\BusBrandController;
 use App\Http\Controllers\BusinessCategoryController;
 use App\Http\Controllers\HomeController;
@@ -91,7 +92,8 @@ Route::resource('truckbrand', TruckBrandController::class)->only('update');
 
 Route::resource('vehiclecategory', VehicleCategoryController::class)->only('update');
 
-Route::resource('photograph', PhotographController::class)->only('index', 'store', 'create', 'update');
+Route::resource('photograph', PhotographController::class)->only('index', 'store', 'create', 'update', 'destroy');
+Route::get('/photograph/user/{user}', [PhotographController::class, 'getUserPhotographs'])->name('photograph.user');
 Route::post('/cleanup-temp-files', [PhotographController::class, 'cleanupOldTempFiles'])->name('cleanup.temp.files');
 
 Route::resource('usersavailability', UsersAvailabilityController::class)->only('show', 'store', 'create', 'update', 'destroy');
@@ -108,6 +110,13 @@ Route::delete('userlogout', [AuthController::class, 'destroy'])->name('logout');
 Route::post('/upload', UploadTemporaryImageController::class);
 // Route::post('/revert/{folder}', DeleteTemporaryImageController::class)->name('deleteImage');
 Route::post('/revert', DeleteTemporaryImageController::class)->name('deleteimage');
+
+// Avatar routes (require authentication)
+Route::middleware('auth')->group(function () {
+    Route::post('/avatar/upload', [AvatarController::class, 'upload'])->name('avatar.upload');
+    Route::get('/avatar/current', [AvatarController::class, 'getCurrent'])->name('avatar.current');
+    Route::delete('/avatar/delete', [AvatarController::class, 'delete'])->name('avatar.delete');
+});
 
 Route::post('/datesavailable', [UsersAvailabilityFxns::class, 'availabilityDates'])->name('availabilitydates');
 

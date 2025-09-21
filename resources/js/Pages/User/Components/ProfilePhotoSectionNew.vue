@@ -63,11 +63,12 @@
                             v-on:processfile="handleFileProcess"
                             v-on:error="handleFilePondError"
                             
-                            :image-preview-height="300"
+                            :image-preview-height="200"
                             :image-crop-aspect-ratio="1"
-                            :image-edit-allow-edit="true"
-                            :image-edit-instant-edit="false"
-                            
+                            :image-resize-target-width="400"
+                            :image-resize-target-height="400"
+                            :image-resize-mode="'cover'"
+                            :image-resize-upscale="true"
                             :image-transform-output-quality="85"
                             :image-transform-output-format="'jpeg'"
                             :image-transform-output-mime-type="'image/jpeg'"
@@ -86,18 +87,6 @@
                             :label-file-processing-revert-error="'Error during revert'"
                             :label-file-processing-error="'Error during upload'"
                         />
-                        
-                        <!-- FilePond Edit Info -->
-                        <div v-if="tempImageId" class="mt-3">
-                            <div class="alert alert-info py-2">
-                                <small>
-                                    <i class="fas fa-edit"></i>
-                                    <strong>Edit Your Photo:</strong> 
-                                    Click the image above to open the editor with crop, zoom, and rotation tools.
-                                    Square crop will be applied for profile photo.
-                                </small>
-                            </div>
-                        </div>
                         
                         <!-- Upload Progress -->
                         <div v-if="uploadProgress.show" class="mt-2">
@@ -147,7 +136,7 @@
                                 • Formats: JPEG, PNG, GIF, WebP<br>
                                 • Size: 100x100 to 2000x2000 pixels<br>
                                 • Max file size: 5MB<br>
-                                • Image will be cropped to circle, original size preserved
+                                • Image will be cropped to square and resized to 400x400px
                             </small>
                         </div>
                         
@@ -160,7 +149,7 @@
                                     {{ compressionStats.originalSize }} → {{ compressionStats.compressedSize }}
                                     ({{ compressionStats.compressionRatio }}% reduction)
                                 </small>
-                    </div>   
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -177,10 +166,6 @@ import axios from 'axios';
 import vueFilePond from 'vue-filepond';
 import 'filepond/dist/filepond.min.css';
 import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.min.css';
-import 'filepond-plugin-image-edit/dist/filepond-plugin-image-edit.css';
-
-// Note: Using custom image editing controls instead of Doka
-// to avoid additional dependencies
 
 // FilePond plugins
 import FilePondPluginFileValidateType from 'filepond-plugin-file-validate-type';
@@ -206,7 +191,7 @@ const FilePond = vueFilePond(
     FilePondPluginImageEdit
 );
 
-    export default {
+export default {
     components: {
         FilePond,
     },
@@ -217,7 +202,7 @@ const FilePond = vueFilePond(
         }
     },
     emits: ['photoUpdated'],
-        data() {
+    data() {
         return {
             // Form for final upload
             form: useForm({
@@ -229,9 +214,6 @@ const FilePond = vueFilePond(
             tempImageId: null,
             isUploading: false,
             currentProfilePhoto: null,
-            
-            // Image editing state
-            showEditControls: false,
             
             // UI state
             uploadProgress: {
@@ -264,7 +246,7 @@ const FilePond = vueFilePond(
             }
             // Fallback to default placeholder
             return this.imagePath(0);
-        },
+        }
     },
     methods: {
         // FilePond event handlers
@@ -304,13 +286,6 @@ const FilePond = vueFilePond(
             this.tempImageId = file.serverId;
             this.form.tempImageId = file.serverId;
             
-            // Show edit controls when image is processed
-            this.showEditControls = true;
-            this.resetImageEdit();
-            
-            // Show edit info
-            console.log('Image processed successfully, edit controls available');
-            
             // Show compression stats
             if (file.file && this.compressionStats.originalSize) {
                 const compressedSize = file.file.size ? this.formatFileSize(file.file.size) : 'Unknown';
@@ -328,8 +303,6 @@ const FilePond = vueFilePond(
         },
         
         handleFilePondProcess(fieldName, file, metadata, load, error, progress, abort) {
-            console.log('FilePond process started:', { fieldName, fileName: file.name, fileSize: file.size });
-            
             // Upload to temporary storage
             const formData = new FormData();
             formData.append('image', file, file.name);
@@ -338,35 +311,28 @@ const FilePond = vueFilePond(
             
             request.upload.addEventListener('progress', (e) => {
                 if (e.lengthComputable) {
-                    const percent = Math.round((e.loaded / e.total) * 100);
-                    console.log('Upload progress:', percent + '%');
                     progress(e.loaded, e.total);
                 }
             });
             
             request.addEventListener('load', () => {
-                console.log('Upload completed:', { status: request.status, response: request.responseText });
                 if (request.status >= 200 && request.status < 300) {
                     load(request.responseText);
                 } else {
-                    console.error('Upload failed with status:', request.status);
                     error('Upload failed');
                 }
             });
             
-            request.addEventListener('error', (e) => {
-                console.error('Upload error:', e);
+            request.addEventListener('error', () => {
                 error('Upload failed');
             });
             
-            console.log('Starting upload to /upload with CSRF token:', this.csrfToken?.substring(0, 10) + '...');
-            request.open('POST', '/upload');
+            request.open('POST', route('upload.temporary'));
             request.setRequestHeader('X-CSRF-TOKEN', this.csrfToken);
             request.send(formData);
             
             return {
                 abort: () => {
-                    console.log('Upload aborted');
                     request.abort();
                     abort();
                 }
@@ -384,7 +350,7 @@ const FilePond = vueFilePond(
                     return;
                 }
                 
-                await axios.post(route('deleteimage'), {
+                await axios.post(route('delete.temporary'), {
                     uniqueId: uniqueId
                 }, {
                     headers: {
@@ -398,7 +364,6 @@ const FilePond = vueFilePond(
                 this.tempImageId = null;
                 this.form.tempImageId = null;
                 this.compressionStats.show = false;
-                this.showEditControls = false;
                 
                 console.log('Temporary file deleted successfully');
                 load();
@@ -466,8 +431,6 @@ const FilePond = vueFilePond(
                         this.tempImageId = null;
                         this.form.tempImageId = null;
                         this.compressionStats.show = false;
-                        this.showEditControls = false;
-                        this.resetImageEdit();
                         
                         // Update current profile photo
                         this.loadCurrentProfilePhoto();
@@ -506,8 +469,6 @@ const FilePond = vueFilePond(
                 this.tempImageId = null;
                 this.form.tempImageId = null;
                 this.compressionStats.show = false;
-                this.showEditControls = false;
-                this.resetImageEdit();
             }
         },
         
@@ -560,9 +521,9 @@ const FilePond = vueFilePond(
         },
         
         // Utility methods
-            imagePath(index) {
-                const imageName = this.adImages[index];
-                const imageUrl = new URL(`../../../../Images/${imageName}.jpg`, import.meta.url).href;
+        imagePath(index) {
+            const imageName = this.adImages[index];
+            const imageUrl = new URL(`../../../../Images/${imageName}.jpg`, import.meta.url).href;
             return imageUrl;
         },
         
@@ -583,12 +544,6 @@ const FilePond = vueFilePond(
             const multipliers = { 'BYTES': 1, 'KB': 1024, 'MB': 1024 * 1024, 'GB': 1024 * 1024 * 1024 };
             
             return value * (multipliers[unit] || 1);
-        },
-        
-        // Keep only the reset method for cleanup
-        resetImageEdit() {
-            // Reset any edit state if needed
-            console.log('Resetting image edit state');
         }
     },
     mounted() {
@@ -598,14 +553,8 @@ const FilePond = vueFilePond(
         // Initialize CSRF token validation
         if (!this.csrfToken) {
             console.error('CSRF token not found. Please refresh the page.');
-            }
         }
     }
+}
 </script>
 
-<style scoped>
-/* Minimal styling - let FilePond handle image editing */
-:deep(.filepond--image-preview img) {
-    user-select: none;
-}
-</style>

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Photograph;
 use App\Models\TemporaryImage;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -52,6 +53,7 @@ class PhotographController extends Controller
             // Get raw temporary images data and captions
             $rawTempImages = $request->input('tempImages', []);
             $rawCaptions = $request->input('captions', []);
+            $photoType = $request->input('photoType', 'gallery'); // Get photo type, default to 'gallery'
             
             // Clean caption keys the same way we clean temp image IDs
             $captions = [];
@@ -200,7 +202,7 @@ class PhotographController extends Controller
                         'path' => $permanentPath,
                         'size' => $temporaryImage->size,
                         'caption' => $imageCaption,
-                        'photo_type' => 'gallery',
+                        'photo_type' => $photoType, // Use dynamic photo type
                         'visible' => true,
                     ]);
                     
@@ -320,10 +322,86 @@ class PhotographController extends Controller
     }
 
     /**
+     * Get user photographs by photo type
+     */
+    public function getUserPhotographs(User $user, Request $request)
+    {
+        try {
+            $photoType = $request->get('photo_type', 'gallery');
+            
+            $photographs = Photograph::where('user_id', $user->id)
+                ->where('photo_type', $photoType)
+                ->where('visible', true)
+                ->orderBy('created_at', 'desc')
+                ->get();
+            
+            Log::info('Retrieved user photographs', [
+                'user_id' => $user->id,
+                'photo_type' => $photoType,
+                'count' => $photographs->count()
+            ]);
+            
+            return response()->json($photographs);
+            
+        } catch (\Exception $e) {
+            Log::error('Error retrieving user photographs', [
+                'user_id' => $user->id,
+                'photo_type' => $request->get('photo_type'),
+                'error' => $e->getMessage()
+            ]);
+            
+            return response()->json([
+                'error' => 'Failed to retrieve photographs'
+            ], 500);
+        }
+    }
+
+    /**
      * Remove the specified resource from storage.
      */
     public function destroy(string $id)
     {
-        //
+        try {
+            $photograph = Photograph::findOrFail($id);
+            
+            // Check if user owns this photograph
+            if ($photograph->user_id !== Auth::id()) {
+                return response()->json([
+                    'error' => 'Unauthorized to delete this photograph'
+                ], 403);
+            }
+            
+            // Delete the file from storage
+            if (Storage::exists($photograph->path)) {
+                Storage::delete($photograph->path);
+                Log::info('Photograph file deleted from storage', [
+                    'path' => $photograph->path
+                ]);
+            }
+            
+            // Delete the database record
+            $photograph->delete();
+            
+            Log::info('Photograph deleted successfully', [
+                'id' => $id,
+                'user_id' => $photograph->user_id,
+                'photo_type' => $photograph->photo_type
+            ]);
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Photograph deleted successfully'
+            ]);
+            
+        } catch (\Exception $e) {
+            Log::error('Error deleting photograph', [
+                'id' => $id,
+                'error' => $e->getMessage()
+            ]);
+            
+            return response()->json([
+                'error' => 'Failed to delete photograph'
+            ], 500);
+        }
     }
 }
