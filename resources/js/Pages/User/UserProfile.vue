@@ -120,7 +120,7 @@
                         <div class="row justify-content-center">
                             <div class="col-md 10">
                                 <div class="row justify-content-evenly">
-                                    <ImageCard v-for="index in 6" :key="index" :index="index" :userId="index"></ImageCard>
+                                    <ImageCard v-for="image in images" :key="image.id" :imgSrc="image.src" :userId="image.user_id" :imageId="image.id" :caption="image.caption" :photoType="image.photo_type" :isCoverPhoto="image.is_cover_photo" @photoDeleted="handlePhotoDeleted" @photoUpdated="handlePhotoUpdated"></ImageCard>
                                 </div>
                             </div>
                         </div>
@@ -267,7 +267,7 @@
             'allArtisans', 'allProducts', 'allTechnicalServices', 'allSpareParts', 'allVehicleCategories', 
             'allCarBrands', 'allBusBrands', 'allTruckBrands', 'schedules', 'neutralAppointments', 
             'acceptedAppointments', 'declinedAppointments', 'cancelledAppointments', 'neutralAppointmentsSchdlr', 
-            'acceptedAppointmentsSchdlr', 'declinedAppointmentsSchdlr', 'cancelledAppointmentsSchdlr'
+            'acceptedAppointmentsSchdlr', 'declinedAppointmentsSchdlr', 'cancelledAppointmentsSchdlr', 'images'
         ],
         emits: [],
         data() {
@@ -295,6 +295,25 @@
                 console.log('Profile photo updated');
                 // You can add additional logic here if needed
                 // For example, refresh user data or show success message
+            },
+            handlePhotoDeleted(imageId) {
+                // Handle photo deletion from gallery
+                console.log('Photo deleted:', imageId);
+                // Remove the deleted image from the images array
+                this.images = this.images.filter(image => image.id !== imageId);
+            },
+            handlePhotoUpdated(updatedImage) {
+                // Handle photo update (caption change, etc.)
+                console.log('Photo updated:', updatedImage);
+                // Find and update the image in the images array
+                const imageIndex = this.images.findIndex(image => image.id === updatedImage.id);
+                if (imageIndex !== -1) {
+                    // Update the existing image object with the updated data
+                    this.images[imageIndex] = { ...this.images[imageIndex], ...updatedImage };
+                    console.log('Image updated in array:', this.images[imageIndex]);
+                } else {
+                    console.log('Image not found in array for update:', updatedImage.id);
+                }
             },
             updateSchedule(schedules) {
                 this.schedules2 = schedules;

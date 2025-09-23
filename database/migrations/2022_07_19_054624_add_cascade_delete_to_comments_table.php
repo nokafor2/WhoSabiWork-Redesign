@@ -19,12 +19,6 @@ class AddCascadeDeleteToCommentsTable extends Migration
                 ->references('id')
                 ->on('users')
                 ->onDelete('cascade');
-
-            $table->dropForeign(['business_id']);
-            $table->foreign('business_id')
-                ->references('id')
-                ->on('users')
-                ->onDelete('cascade');
         });
     }
 
@@ -38,11 +32,6 @@ class AddCascadeDeleteToCommentsTable extends Migration
         Schema::table('comments', function (Blueprint $table) {
             $table->dropForeign(['user_id']);
             $table->foreign('user_id')
-                ->references('id')
-                ->on('users');
-
-            $table->dropForeign(['business_id']);
-            $table->foreign('business_id')
                 ->references('id')
                 ->on('users');
         });

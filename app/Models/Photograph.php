@@ -12,6 +12,7 @@ class Photograph extends Model
     use SoftDeletes, HasFactory;
 
     protected $fillable = ['user_id', 'filename', 'path', 'size', 'caption', 'photo_type', 'visible'];
+    protected $appends = ['src'];
 
     public function User() {
         return $this->belongsTo('App\Models\User');
@@ -19,5 +20,9 @@ class Photograph extends Model
 
     public function url() {
         return Storage::url($this->path);
+    }
+
+    public function getSrcAttribute() {
+        return asset("storage/{$this->path}");
     }
 }

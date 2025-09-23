@@ -32,8 +32,6 @@ class CommentFactory extends Factory
         $businessUsers = User::where('account_type', '=', 'business')->get();
          
         return [
-            // 'user_id' => 4,
-            'business_id' => $businessUsers->random()->id,
             'body' => $this->faker->text,
             'created_at' => $this->faker->dateTimeBetween('-3 months')
         ];
@@ -46,8 +44,6 @@ class CommentFactory extends Factory
         $businessUsers = User::where('account_type', '=', 'business')->get();
          
         return $this->state([
-            // 'user_id' => 4,
-            'business_id' => $businessUsers->random()->id,
             'body' => 'Adding new comment.',
             'created_at' => $this->faker->dateTimeBetween('-3 months')
         ]);

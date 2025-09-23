@@ -318,7 +318,35 @@ class PhotographController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        if ($request->has('setAsCoverPhoto')) {
+            try {
+                $photograph = Photograph::findOrFail($id);
+                if ($request->input('setAsCoverPhoto') === true) {
+                    // Check if the user has a cover photo already in the photograps table using the user_id
+                    $coverPhoto = Photograph::where('user_id', $request->input('user_id'))->where('photo_type', 'cover photo')->first();
+                    if ($coverPhoto) {
+                        $coverPhoto->photo_type = 'gallery';
+                        $coverPhoto->save();
+                    }
+                    $photograph->photo_type = 'cover photo';
+                } else {
+                    $photograph->photo_type = 'gallery';
+                }
+                $photograph->save();
+                return redirect()->back()->with('success', 'Cover photo updated successfully');
+            } catch (\Exception $e) {
+                return response()->json(['error' => $e->getMessage()], 500);
+            }
+        } elseif ($request->has('caption')) {
+            try {
+                $photograph = Photograph::findOrFail($id);
+                $photograph->caption = $request->input('caption');
+                $photograph->save();
+                return redirect()->back()->with('success', 'Caption updated successfully');
+            } catch (\Exception $e) {
+                return response()->json(['error' => $e->getMessage()], 500);
+            }
+        }
     }
 
     /**
@@ -388,7 +416,7 @@ class PhotographController extends Controller
                 'photo_type' => $photograph->photo_type
             ]);
             
-            return response()->json([
+            return redirect()->back()->with([
                 'success' => true,
                 'message' => 'Photograph deleted successfully'
             ]);

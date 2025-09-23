@@ -4,7 +4,7 @@
             :userId=entrepreneur.id
             :businessName=entrepreneur.business_category.business_name
             :index=index
-            :imagePath=imagePath(index)
+            :imagePath=imagePath()
         ></ad-card>
     </div>
 </template>
@@ -16,7 +16,9 @@
 
     const adImages = ['photoSample', 'photoSample1', 'photoSample2', 'photoSample3', 'photoSample4', 'photoSample5', 'photoSample6', 'photoSample7', 'photoSample8', 'photoSample9', 'photoSample10', 'photoSample11', 'photoSample12', 'photoSample13', 'photoSample14', 'photoSample15', 'photoSample16', 'photoSample17', 'photoSample18', 'photoSample19', 'photoSample20'];
 
-    function imagePath(index) {
+    function imagePath() {
+        // Generate a random index between 0 and 20
+        const index = Math.floor(Math.random() * 20);
         const imageName = adImages[index];
         const imageUrl = new URL(`../../../Images/${imageName}.jpg`, import.meta.url).href;
 

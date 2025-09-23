@@ -727,11 +727,13 @@
 /* FilePond Vertical Layout with 400px Height */
 :deep(.filepond--root) {
     font-family: inherit;
+    min-height: 200px; /* Ensure minimum height for visibility */
     max-height: 400px; /* Increased height to 400px */
     overflow: hidden;
 }
 
 :deep(.filepond--list) {
+    min-height: 200px !important; /* Ensure minimum height for single image visibility */
     max-height: 400px !important;
     overflow-x: hidden !important;   /* No horizontal scroll */
     overflow-y: auto !important;     /* Vertical scroll for overflow */
@@ -757,6 +759,25 @@
 
 :deep(.filepond--list::-webkit-scrollbar-thumb:hover) {
     background: #0056b3 !important;
+}
+
+/* Ensure image items are properly sized and visible */
+:deep(.filepond--item) {
+    min-height: 180px !important; /* Minimum height for single image visibility */
+    margin-bottom: 0.5rem !important;
+}
+
+/* Ensure image preview is properly sized */
+:deep(.filepond--image-preview-wrapper) {
+    min-height: 150px !important;
+}
+
+/* When no files are present, show the drop area properly */
+:deep(.filepond--drop-label) {
+    min-height: 180px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
 }
 
 /* Caption section animations and spacing */
