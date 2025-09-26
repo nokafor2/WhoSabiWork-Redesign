@@ -1,57 +1,60 @@
 <template>
-    <div class="modal fade" :id="`imageModal-${uniqueId}`" tabindex="-1" :aria-labelledby="`imageModalLabel-${uniqueId}`" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <!-- <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1> -->
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" ref="closeButton"></button>
-                </div>
-                <div class="modal-body">
-                    <img :src="imgSrc" class="img-fluid" alt="">
-                    <p class="card-text my-2 px-2 bg-dark text-light rounded">{{ caption }}</p>
-                    <a href="#" class="text-decoration-none me-3 text-body"><i class="fa-solid fa-thumbs-up pe-2"></i>20</a>
-                    <a href="#" class="text-decoration-none me-3 text-body"><i class="fa-solid fa-thumbs-down pe-2"></i>5</a>
-                    <div class="d-flex my-3">
-                        <button @click="toggleCaptionInput" class="btn btm-sm col-auto bg-danger text-light me-3">
-                            {{ showCaptionInput ? 'Cancel Edit' : 'Edit Caption' }}
-                        </button>
-                        <button class="btn btm-sm col-auto bg-danger text-light me-3" @click="setAsCoverPhoto">{{ coverPhotoText }}</button>
-                        <button class="btn btm-sm col-auto bg-danger text-light" @click="deletePhoto">Delete Photo</button>
+    <teleport to="body">
+        <div class="modal fade" :id="`imageModal-${uniqueId}`" tabindex="-1" :aria-labelledby="`imageModalLabel-${uniqueId}`" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <!-- <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1> -->
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" ref="closeButton"></button>
                     </div>
+                    <div class="modal-body">
+                        <img :src="imgSrc" class="img-fluid" alt="">
+                        <p class="card-text my-2 px-2 bg-dark text-light rounded">{{ caption }}</p>
+                        <a href="#" class="text-decoration-none me-3 text-body"><i class="fa-solid fa-thumbs-up pe-2"></i>20</a>
+                        <a href="#" class="text-decoration-none me-3 text-body"><i class="fa-solid fa-thumbs-down pe-2"></i>5</a>
+                        <div class="d-flex my-3">
+                            <button @click="toggleCaptionInput" class="btn btm-sm col-auto bg-danger text-light me-3">
+                                {{ showCaptionInput ? 'Cancel Edit' : 'Edit Caption' }}
+                            </button>
+                            <button class="btn btm-sm col-auto bg-danger text-light me-3" @click="setAsCoverPhoto">{{ coverPhotoText }}</button>
+                            <button class="btn btm-sm col-auto bg-danger text-light" @click="deletePhoto">Delete Photo</button>
+                        </div>
 
-                    <div v-if="showCaptionInput" id="captionInput" class="col-12 rounded bg-dark text-light p-2 mb-3">
-                        <form action="" @submit.prevent="submitCaption">
-                            <!-- <textarea class="rounded col-12 mt-3" name="" id="" placeholder="Enter your comment" rows="3"></textarea> -->
-                            <textarea class="rounded form-control my-3" name="" id="" placeholder="Edit Caption" rows="3" v-model="captionInput.val"></textarea>
-                            <div class="d-flex justify-content-between">
-                                <button class="btn btn-sm btn-danger">Submit</button>
-                            </div>
-                        </form>
-                    </div>
+                        <div v-if="showCaptionInput" id="captionInput" class="col-12 rounded bg-dark text-light p-2 mb-3">
+                            <form action="" @submit.prevent="submitCaption">
+                                <!-- <textarea class="rounded col-12 mt-3" name="" id="" placeholder="Enter your comment" rows="3"></textarea> -->
+                                <textarea class="rounded form-control my-3" name="" id="" placeholder="Edit Caption" rows="3" v-model="captionInput.val"></textarea>
+                                <div class="d-flex justify-content-between">
+                                    <button class="btn btn-sm btn-danger">Submit</button>
+                                </div>
+                            </form>
+                        </div>
 
-                    <div class="col-12 rounded bg-dark text-light p-2">
-                        <p class="pt-2">5 comment(s)</p>
-                        <CommentCard v-for="index in 5" :key="index" :index="index"></CommentCard>
+                        <div class="col-12 rounded bg-dark text-light p-2">
+                            <p class="pt-2">5 comment(s)</p>
+                            <CommentCard v-for="index in 5" :key="index" :index="index"></CommentCard>
+                        </div>
                     </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Save changes</button>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary">Save changes</button>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+    </teleport>
 </template>
 
 
 <script>
     import MethodsMixin from '../Mixins/MethodsMixin.js';
     import CommentCard from './CommentCard.vue';
+    import ErrorAlert from '@/components/UI/ErrorAlert.vue';
     import { useForm } from '@inertiajs/vue3';
 
     export default {
         mixins: [MethodsMixin],
-        components: {CommentCard},
+        components: {CommentCard, ErrorAlert},
         props: ['userId', 'imageId', 'imgSrc', 'uniqueId', 'caption', 'photoType', 'isCoverPhoto'],
         emits: ['photoDeleted', 'photoUpdated'],
         data() {
@@ -62,8 +65,6 @@
                     val: '',
                     isValid: true
                 },
-                coverPhotoText: '',
-                isCoverPhotoStatus: false,
             }
         },
         methods: {
@@ -81,38 +82,8 @@
                         console.log('success', page.props.flash.success);
                         console.log('Updated page data:', page.props);
                         
-                        // Update local caption
-                        this.caption = this.captionInput.val;
-                        this.showCaptionInput = false;
-                        this.captionInput.val = '';
-                        
-                        // Emit event with updated image object from server response
-                        // The updated image should be in page.props somewhere
-                        let updatedImage = null;
-                        
-                        // Check if the updated image is in page.props.images
-                        if (page.props.images && Array.isArray(page.props.images)) {
-                            updatedImage = page.props.images.find(img => img.id === this.imageId);
-                        }
-                        
-                        // If not found in images array, check for a single updated image
-                        if (!updatedImage && page.props.updatedImage) {
-                            updatedImage = page.props.updatedImage;
-                        }
-                        
-                        // If still not found, create the updated image object manually
-                        if (!updatedImage) {
-                            updatedImage = {
-                                id: this.imageId,
-                                caption: this.caption,
-                                src: this.imgSrc,
-                                user_id: this.userId,
-                                photo_type: this.photoType
-                            };
-                        }
-                        
-                        console.log('Emitting photoUpdated with:', updatedImage);
-                        this.$emit('photoUpdated', updatedImage);
+                        // Update the image state
+                        this.$store.dispatch('updateImages', { value: page.props.images });
                     },
                     onError: (errors) => {
                         console.log('Error: ', errors);
@@ -121,13 +92,11 @@
                 });
             },
             setAsCoverPhoto() {
-                this.isCoverPhotoStatus = !this.isCoverPhotoStatus;
-                
                 // Get CSRF token for explicit handling
                 const csrfToken = this.$page.props.csrf_token || document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
                 
                 const formData = useForm({
-                    setAsCoverPhoto: this.isCoverPhotoStatus,
+                    setAsCoverPhoto: !this.isCoverPhotoStatus,
                     user_id: this.userId  // Backend expects this for cover photo logic
                 })
                 
@@ -149,43 +118,8 @@
                         console.log('success', page.props.flash.success);
                         console.log('Cover photo update page data:', page.props);
                         
-                        // Update button text
-                        if (this.isCoverPhotoStatus) {
-                            this.coverPhotoText = 'Remove Cover Photo';
-                        } else {
-                            this.coverPhotoText = 'Set Image as Cover Photo';
-                        }
-                        
-                        // Emit event with updated image object from server response
-                        let updatedImage = null;
-                        
-                        // Check if the updated image is in page.props.images
-                        if (page.props.images && Array.isArray(page.props.images)) {
-                            updatedImage = page.props.images.find(img => img.id === this.imageId);
-                        }
-                        
-                        // If not found in images array, check for a single updated image
-                        if (!updatedImage && page.props.updatedImage) {
-                            updatedImage = page.props.updatedImage;
-                        }
-                        
-                        // If still not found, create the updated image object manually
-                        if (!updatedImage) {
-                            updatedImage = {
-                                id: this.imageId,
-                                caption: this.caption,
-                                src: this.imgSrc,
-                                user_id: this.userId,
-                                photo_type: this.photoType,
-                                is_cover_photo: this.isCoverPhotoStatus // Add the cover photo status
-                            };
-                        } else {
-                            // Ensure the cover photo status is updated
-                            updatedImage.is_cover_photo = this.isCoverPhotoStatus;
-                        }
-                        
-                        console.log('Emitting photoUpdated for cover photo with:', updatedImage);
-                        this.$emit('photoUpdated', updatedImage);
+                        // Update the image state
+                        this.$store.dispatch('updateImages', { value: page.props.images });
                     },
                     onError: (errors) => {
                         console.error('Cover photo update error:', errors);
@@ -224,6 +158,8 @@
                     preserveScroll: true,
                     onSuccess: (page) => {
                         console.log('success', page.props.flash.success);
+                        // Update the image state
+                        this.$store.dispatch('updateImages', { value: page.props.images });
                         // Small delay to ensure DOM operations complete
                         this.$nextTick(() => {
                             setTimeout(() => {
@@ -392,12 +328,12 @@
             }
         },
         computed: {
-            
-        },
-        mounted() {
-            // Initialize cover photo status from props
-            this.isCoverPhotoStatus = this.isCoverPhoto || this.photoType === 'cover photo';
-            this.coverPhotoText = this.isCoverPhotoStatus ? 'Remove Cover Photo' : 'Set Image as Cover Photo';
+            isCoverPhotoStatus() {
+                return this.isCoverPhoto || this.photoType === 'cover photo';
+            },
+            coverPhotoText() {
+                return this.isCoverPhotoStatus ? 'Remove Cover Photo' : 'Set Image as Cover Photo';
+            }
         },
     }
 </script>

@@ -13,6 +13,8 @@ const store = createStore({
             artisanTypes: [],
             technicalServices: [],
             spareParts: [],
+            images: [],
+            user: [],
         };
     },
     mutations: {
@@ -28,6 +30,12 @@ const store = createStore({
         updateSpareParts(state, payload) {
             state.spareParts = payload.value;
         },
+        updateImages(state, payload) {
+            state.images = payload.value;
+        },
+        updateUser(state, payload) {
+            state.user = payload.value;
+        },
     },
     actions: {
         updateProducts(context, payload) {
@@ -42,6 +50,12 @@ const store = createStore({
         updateSpareParts(context, payload) {
             context.commit('updateSpareParts', payload);
         },
+        updateImages(context, payload) {
+            context.commit('updateImages', payload);
+        },
+        updateUser(context, payload) {
+            context.commit('updateUser', payload);
+        },
     },
     getters: {
         getProducts(state) {
@@ -55,6 +69,12 @@ const store = createStore({
         },
         getSpareParts(state) {
             return state.spareParts;
+        },
+        getImages(state) {
+            return state.images;
+        },
+        getUser(state) {
+            return state.user;
         },
     }
 });

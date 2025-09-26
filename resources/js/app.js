@@ -49,21 +49,3 @@ createInertiaApp({
         .mount(el)
     },
 });
-
-
-// import { createApp } from 'vue';
-
-// import App from './App.vue';
-// import MainBody from './components/layout/MainBody.vue';
-// import Navigation from './components/layout/Navigation.vue';
-// import Container from './components/layout/Container.vue';
-// import Footer from './components/layout/FooterLayout.vue';
-
-// const app = createApp(App);
-
-// app.component('main-body', MainBody);
-// app.component('navigation', Navigation);
-// app.component('container', Container);
-// app.component('footer', Footer);
-
-// app.mount('#app');

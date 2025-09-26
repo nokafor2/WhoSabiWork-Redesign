@@ -142,7 +142,6 @@
                 <span v-else-if="form.tempImages.length > 0">Upload {{ form.tempImages.length }} Image{{ form.tempImages.length > 1 ? 's' : '' }}</span>
                 <span v-else>Upload</span>
             </button>
-            <!-- <button @click="console.log('Test button clicked!')" type="button" class="btn btn-secondary w-25 ms-2">Test</button> -->
         </div>
         
         <!-- Upload Instructions -->
@@ -344,6 +343,9 @@
                             // Complete progress
                             this.uploadProgress.percent = 100;
                             this.uploadProgress.message = 'Upload completed successfully!';
+
+                            // Update the image state
+                            this.$store.dispatch('updateImages', { value: page.props.images });
                             
                             // Clear the FilePond preview after successful upload
                             this.$refs.pond.removeFiles();

@@ -120,7 +120,7 @@
                         <div class="row justify-content-center">
                             <div class="col-md 10">
                                 <div class="row justify-content-evenly">
-                                    <ImageCard v-for="image in images" :key="image.id" :imgSrc="image.src" :userId="image.user_id" :imageId="image.id" :caption="image.caption" :photoType="image.photo_type" :isCoverPhoto="image.is_cover_photo" @photoDeleted="handlePhotoDeleted" @photoUpdated="handlePhotoUpdated"></ImageCard>
+                                    <ImageCard v-for="image in imagesData" :key="image.id" :imgSrc="image.src" :userId="image.user_id" :imageId="image.id" :caption="image.caption" :photoType="image.photo_type" :isCoverPhoto="image.is_cover_photo" @photoDeleted="handlePhotoDeleted" @photoUpdated="handlePhotoUpdated"></ImageCard>
                                 </div>
                             </div>
                         </div>
@@ -325,6 +325,10 @@
         computed: {
             user() {
                 return this.page.props.user;
+                // return this.$store.getters.getUser;
+            },
+            imagesData() {
+                return this.$store.getters.getImages;
             },
             flashSuccess() {
                 return this.page.props.flash.success;
@@ -463,6 +467,10 @@
                     return false;
                 }
             }
+        },
+        mounted() {
+            this.$store.dispatch('updateImages', { value: this.images });
+            this.$store.dispatch('updateUser', { value: this.user });
         }
     }
 </script>
