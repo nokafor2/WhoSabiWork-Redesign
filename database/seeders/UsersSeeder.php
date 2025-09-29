@@ -19,7 +19,7 @@ class UsersSeeder extends Seeder
         // type returned from the command is a string, so it has to be cast to an integer.
         // The max is used as a default for the maximum number that will be created in a situation
         // where the user puts zero
-        $userCount = max((int)$this->command->ask('How many users would you like?', 1000), 1);
+        $userCount = max((int)$this->command->ask('How many users would you like?', 100), 1);
         
         // Using a state factory to create a default known user for the database
         User::factory()->defaultUser()->create();
