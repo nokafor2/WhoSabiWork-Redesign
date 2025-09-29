@@ -15,17 +15,28 @@ class CommentsSeeder extends Seeder
      */
     public function run()
     {
-        $users = User::all();
-        // if ($users->count() === 0) {
-        //     $this->command->info('There are no users, so no comments will be added');
-        //     return;
-        // }
+        // Get users with business profiles (users who have business categories)
+        $businessUsers = User::all()->where('account_type', '=', 'business');
         
-        $commentCount = (int)$this->command->ask('How many comments would you like?', 1000);        
-
-        Comment::factory($commentCount)->make()->each(function($comment) use($users) {
-            $comment->user_id = $users->random()->id;
-            $comment->save();
+        if ($businessUsers->count() === 0) {
+            $this->command->info('There are no users with business profiles, so no comments will be added');
+            return;
+        }
+        
+        $this->command->info("Found {$businessUsers->count()} users with business profiles");
+        
+        // Create 5-10 comments for each business user
+        $businessUsers->each(function($businessUser) {
+            $commentCount = rand(5, 10);
+            $this->command->info("Creating {$commentCount} comments for business user: {$businessUser->userFullName()}");
+            
+            Comment::factory($commentCount)->create([
+                'user_id_comment' => $businessUser->id, // Comments about this business user
+                'user_id' => User::inRandomOrder()->first()->id, // Random users making comments
+            ]);
         });
+        
+        $totalComments = Comment::count();
+        $this->command->info("Total comments created: {$totalComments}");
     }
 }

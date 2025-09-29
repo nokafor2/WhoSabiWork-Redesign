@@ -901,6 +901,29 @@ trait GlobalFunctions {
             return false;
         }
     }
+
+    public function getPhotoghaphsCommentsReplies($user) {
+        // // Option 1
+        // return \App\Models\User::whereIn('id', [2,3])->with([
+        //     'photographs.photographComments',
+        //     'photographs.photographComments.photographReplies'
+        // ])->get();
+
+        // // Option 2
+        // return \App\Models\User::find([2,3])->load([
+        //     'photographs.photographComments',
+        //     'photographs.photographComments.photographReplies'
+        // ]);
+
+        // Option 3
+        // return \App\Models\Photograph::whereIn('user_id', [2,3])->with([
+        //     'photographComments',
+        //     'photographComments.photographReplies'
+        // ])->get();
+
+        // Option 4
+        return $user->photographs()->whereIn('photo_type', ['cover photo', 'gallery'])->latest()->with(['photographComments', 'photographComments.photographReplies'])->get();
+    }
 }
 
 ?>

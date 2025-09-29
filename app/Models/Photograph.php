@@ -25,4 +25,39 @@ class Photograph extends Model
     public function getSrcAttribute() {
         return asset("storage/{$this->path}");
     }
+
+    /**
+     * Relationship with PhotographComment model - one photograph can have many comments
+     */
+    public function photographComments() {
+        return $this->hasMany(PhotographComment::class);
+    }
+
+    /**
+     * Relationship with PhotographReply model - one photograph can have many replies
+     */
+    public function photographReplies() {
+        return $this->hasMany(PhotographReply::class);
+    }
+
+    /**
+     * Relationship with PhotographLikeDislike model - one photograph can have many likes/dislikes
+     */
+    public function photographLikesDislikes() {
+        return $this->hasMany(PhotographLikeDislike::class);
+    }
+
+    /**
+     * Get only likes for this photograph
+     */
+    public function photographLikes() {
+        return $this->hasMany(PhotographLikeDislike::class)->whereNotNull('user_id_like');
+    }
+
+    /**
+     * Get only dislikes for this photograph
+     */
+    public function photographDislikes() {
+        return $this->hasMany(PhotographLikeDislike::class)->whereNotNull('user_id_dislike');
+    }
 }

@@ -117,6 +117,42 @@ class User extends Authenticatable
         return $this->belongsToMany('App\Models\Tag', 'user_tag')->withTimestamps()->as('tagged');
     }
 
+    public function photographComments() {
+        return $this->hasMany('App\Models\PhotographComment');
+    }
+
+    public function photographCommentsReceived() {
+        return $this->hasMany('App\Models\PhotographComment', 'user_id_comment');
+    }
+
+    public function photographReplies() {
+        return $this->hasMany('App\Models\PhotographReply');
+    }
+
+    public function photographRepliesReceived() {
+        return $this->hasMany('App\Models\PhotographReply', 'user_id_reply');
+    }
+
+    public function photographLikesDislikes() {
+        return $this->hasMany('App\Models\PhotographLikeDislike');
+    }
+
+    public function photographLikes() {
+        return $this->hasMany('App\Models\PhotographLikeDislike', 'user_id_like');
+    }
+
+    public function photographDislikes() {
+        return $this->hasMany('App\Models\PhotographLikeDislike', 'user_id_dislike');
+    }
+
+    public function replies() {
+        return $this->hasMany('App\Models\Reply', 'user_id_comment');
+    }
+
+    public function repliesReceived() {
+        return $this->hasMany('App\Models\Reply', 'user_id_reply');
+    }
+
     public function fullName($id) {
         $user = self::find($id);
 

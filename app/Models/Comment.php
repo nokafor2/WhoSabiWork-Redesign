@@ -13,10 +13,21 @@ use Illuminate\Support\Facades\Cache;
 class Comment extends Model
 {
     use HasFactory, SoftDeletes;
-    protected $fillable = ['user_id', 'body'];
+    protected $fillable = ['user_id', 'user_id_comment', 'body'];
 
     public function user() {
         return $this->belongsTo('App\Models\User');
+    }
+
+    public function commentUser() {
+        return $this->belongsTo('App\Models\User', 'user_id_comment');
+    }
+
+    /**
+     * Relationship with Reply model - one comment can have many replies
+     */
+    public function replies() {
+        return $this->hasMany(Reply::class);
     }
 
     // Add a local query scope to sort the addresses according the newest

@@ -67,9 +67,8 @@ class DatabaseSeeder extends Seeder
 
         // Using the individual seeder classes created
         $this->call([
-            UsersSeeder::class, 
-            CommentsSeeder::class,
-            BusinessCategoriesSeeder::class, 
+            UsersSeeder::class,
+            BusinessCategoriesSeeder::class,
             AddressesSeeder::class,
             ArtisansSeeder::class,
             ProductsSeeder::class,
@@ -85,6 +84,12 @@ class DatabaseSeeder extends Seeder
             UsersRatingSeeder::class,
             UsersAvailabilitySeeder::class,
             UsersAppointmentSeeder::class,
+            CommentsSeeder::class, 
+            RepliesSeeder::class,
+            PhotographSeeder::class,
+            PhotographCommentsSeeder::class,
+            PhotographRepliesSeeder::class,
+            PhotographLikesDislikesSeeder::class,
         ]);
         
         // $this->call(UsersTableSeeder::class);
