@@ -176,7 +176,7 @@ ssh_deploy:
     
     - ssh $SSH_HOST "cp /var/www/html/WhoSabiWork-Redesign/.env.production /var/www/html/WhoSabiWork-Redesign/.env; cd /var/www/html/WhoSabiWork-Redesign"
     - ssh $SSH_HOST "cp /var/www/html/WhoSabiWork-Redesign/.env.production /var/www/html/WhoSabiWork-Redesign/.env"
-    - ssh $SSH_HOST "cd /var/www/html/WhoSabiWork-Redesign; php artisan vendor:publish --provider='Laravel\Sanctum\SanctumServiceProvider' --tag='sanctum-migrations' --force || true; php artisan session:table || true; php artisan migrate:fresh --seed --force; php artisan config:clear; php artisan cache:clear; php artisan route:clear; php artisan view:clear; php artisan config:cache; php artisan route:cache;"
+    - ssh $SSH_HOST "cd /var/www/html/WhoSabiWork-Redesign; php artisan vendor:publish --provider='Laravel\Sanctum\SanctumServiceProvider' --tag='sanctum-migrations' --force || true; php artisan session:table || true; php artisan storage:link || true; php artisan migrate:fresh --seed --force; php artisan config:clear; php artisan cache:clear; php artisan route:clear; php artisan view:clear; php artisan config:cache; php artisan route:cache;"
     - ssh $SSH_HOST "sudo chown -R nginx:nginx /var/www/html/WhoSabiWork-Redesign/storage"
     - ssh $SSH_HOST "sudo chown -R nginx:nginx /var/www/html/WhoSabiWork-Redesign/bootstrap"
     - ssh $SSH_HOST "sudo chmod -R 775 /var/www/html/WhoSabiWork-Redesign/storage"
