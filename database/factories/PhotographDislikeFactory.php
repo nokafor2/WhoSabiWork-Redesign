@@ -5,9 +5,9 @@ namespace Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\PhotographComment>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\PhotographDislike>
  */
-class PhotographCommentFactory extends Factory
+class PhotographDislikeFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -17,7 +17,7 @@ class PhotographCommentFactory extends Factory
     public function definition(): array
     {
         $photograph = \App\Models\Photograph::factory();
-        $commentUser = \App\Models\User::factory();
+        $dislikerUser = \App\Models\User::factory();
         
         return [
             'photograph_id' => $photograph,
@@ -25,8 +25,8 @@ class PhotographCommentFactory extends Factory
                 // Get the photograph owner's user_id
                 return \App\Models\Photograph::find($attributes['photograph_id'])->user_id;
             },
-            'user_id_comment' => $commentUser, // User who commented on the photograph
-            'comment' => $this->faker->paragraph(2),
+            'user_id' => $dislikerUser, // User who disliked the photograph
+            'dislike' => $this->faker->boolean(80) ? 1 : 0, // 80% chance of active dislike, 20% cancelled
         ];
     }
 }

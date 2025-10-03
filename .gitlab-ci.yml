@@ -156,23 +156,6 @@ ssh_deploy:
     - ssh $SSH_HOST "sudo chown -R ec2-user:ec2-user /var/www/html/WhoSabiWork-Redesign/"
     # - rsync -avz --exclude node_modules --exclude vendor --delete-after ./ $REMOTE_DEPLOY_USER@$REMOTE_DEPLOY_HOST:/var/www/html/WhoSabiWork-Redesign/
     - rsync -avz --exclude node_modules --delete-after ./ $SSH_HOST:/var/www/html/WhoSabiWork-Redesign/
-    # - ssh $SSH_HOST << EOF
-    #   cp /var/www/html/WhoSabiWork-Redesign/.env.production /var/www/html/WhoSabiWork-Redesign/.env
-    #   cd /var/www/html/WhoSabiWork-Redesign
-    #   php artisan migrate:fresh --seed
-    #   php artisan config:clear
-    #   php artisan cache:clear
-    #   php artisan route:clear
-    #   php artisan view:clear
-    #   php artisan config:cache
-    #   php artisan route:cache
-    #   sudo chown -R nginx:nginx /var/www/html/WhoSabiWork-Redesign/storage
-    #   sudo chown -R nginx:nginx /var/www/html/WhoSabiWork-Redesign/bootstrap
-    #   sudo chmod -R 775 /var/www/html/WhoSabiWork-Redesign/storage
-    #   sudo chmod -R 775 /var/www/html/WhoSabiWork-Redesign/bootstrap
-    #   sudo systemctl restart php-fpm
-    #   sudo systemctl restart nginx
-    #   EOF
     
     - ssh $SSH_HOST "cp /var/www/html/WhoSabiWork-Redesign/.env.production /var/www/html/WhoSabiWork-Redesign/.env; cd /var/www/html/WhoSabiWork-Redesign"
     - ssh $SSH_HOST "cp /var/www/html/WhoSabiWork-Redesign/.env.production /var/www/html/WhoSabiWork-Redesign/.env"

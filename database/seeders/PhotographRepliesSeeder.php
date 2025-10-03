@@ -20,7 +20,15 @@ class PhotographRepliesSeeder extends Seeder
             return;
         }
         
-        $this->command->info("Found {$photographComments->count()} photograph comments");
+        // Get all users
+        $users = \App\Models\User::all();
+        
+        if ($users->count() === 0) {
+            $this->command->info('There are no users, so no photograph replies will be added');
+            return;
+        }
+        
+        $this->command->info("Found {$photographComments->count()} photograph comments and {$users->count()} users");
         
         $totalRepliesCreated = 0;
         
@@ -30,16 +38,20 @@ class PhotographRepliesSeeder extends Seeder
         
         $this->command->info("Creating replies for {$commentsToReply} out of {$photographComments->count()} photograph comments");
         
-        $selectedComments->each(function($comment) use (&$totalRepliesCreated) {
-            // Create 1-2 replies per selected comment
-            $replyCount = rand(1, 2);
+        $selectedComments->each(function($comment) use (&$totalRepliesCreated, $users) {
+            // Create 1-3 replies per selected comment (allowing multiple replies)
+            $replyCount = rand(1, 3);
             
             for ($i = 0; $i < $replyCount; $i++) {
-                \App\Models\PhotographReply::factory()->create([
+                // Get a random user to reply (can be different users replying multiple times)
+                $randomUser = $users->random();
+                
+                \App\Models\PhotographReply::create([
                     'photograph_id' => $comment->photograph_id,
                     'comment_id' => $comment->id,
-                    'user_id' => \App\Models\User::inRandomOrder()->first()->id, // Random user making reply
-                    'user_id_reply' => $comment->user_id, // Replying to the comment author
+                    'user_id_comment' => $comment->user_id_comment, // Owner of the photograph comment
+                    'user_id_reply' => $randomUser->id, // User replying to the comment
+                    'reply' => fake()->sentence(8),
                 ]);
                 $totalRepliesCreated++;
             }

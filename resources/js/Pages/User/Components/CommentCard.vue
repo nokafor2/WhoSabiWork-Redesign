@@ -21,11 +21,12 @@
 
     export default {
         mixins: [MethodsMixin],
-        props: ['index'],
+        props: ['index', 'photoComment'],
         emits: [],
         data() {
             return {
-                
+                comment: this.photoComment,
+                // photoReplies: this.photoComment.photograph_replies,
             }
         },
         methods: {

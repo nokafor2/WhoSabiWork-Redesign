@@ -15,7 +15,7 @@ class PhotographReply extends Model
     protected $fillable = [
         'photograph_id',
         'comment_id',
-        'user_id',
+        'user_id_comment',
         'user_id_reply',
         'reply'
     ];
@@ -33,19 +33,19 @@ class PhotographReply extends Model
      */
     public function photographComment()
     {
-        return $this->belongsTo(PhotographComment::class, 'comment_id');
+        return $this->belongsTo(PhotographComment::class);
     }
 
     /**
-     * Relationship with User model for the user making the reply
+     * Relationship with User model (owner of the photograph comment)
      */
-    public function user()
+    public function commentOwner()
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(User::class, 'user_id_comment');
     }
 
     /**
-     * Relationship with User model for the user being replied to
+     * Relationship with User model (user replying to the comment)
      */
     public function replyUser()
     {

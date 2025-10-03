@@ -12,29 +12,41 @@ class PhotographCommentsSeeder extends Seeder
      */
     public function run(): void
     {
-        // Get all photographs
-        $photographs = \App\Models\Photograph::all();
+        // Get only gallery and cover photo photographs (exclude avatars)
+        $photographs = \App\Models\Photograph::whereIn('photo_type', ['gallery', 'cover photo'])->get();
         
         if ($photographs->count() === 0) {
-            $this->command->info('There are no photographs, so no photograph comments will be added');
+            $this->command->info('There are no gallery/cover photographs, so no photograph comments will be added');
             return;
         }
         
-        $this->command->info("Found {$photographs->count()} photographs");
+        // Get all users
+        $users = \App\Models\User::all();
+        
+        if ($users->count() === 0) {
+            $this->command->info('There are no users, so no photograph comments will be added');
+            return;
+        }
+        
+        $this->command->info("Found {$photographs->count()} gallery/cover photographs and {$users->count()} users");
         
         $totalCommentsCreated = 0;
         
         // Create 3-8 comments for each photograph
-        $photographs->each(function($photograph) use (&$totalCommentsCreated) {
+        $photographs->each(function($photograph) use (&$totalCommentsCreated, $users) {
             $commentCount = rand(3, 8);
             
             $this->command->info("Creating {$commentCount} comments for photograph ID: {$photograph->id}");
             
             for ($i = 0; $i < $commentCount; $i++) {
-                \App\Models\PhotographComment::factory()->create([
+                // Get a random user to comment (can be different users commenting multiple times)
+                $randomUser = $users->random();
+                
+                \App\Models\PhotographComment::create([
                     'photograph_id' => $photograph->id,
-                    'user_id' => \App\Models\User::inRandomOrder()->first()->id, // Random user making comment
-                    'user_id_comment' => $photograph->user_id, // Comment about the photo owner
+                    'photograph_user_id' => $photograph->user_id, // Owner of the photograph
+                    'user_id_comment' => $randomUser->id, // User who commented on the photograph
+                    'comment' => fake()->paragraph(2),
                 ]);
                 $totalCommentsCreated++;
             }

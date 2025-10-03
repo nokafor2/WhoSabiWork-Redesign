@@ -11,22 +11,21 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('photograph_likes_dislikes', function (Blueprint $table) {
+        Schema::create('photographs_likes', function (Blueprint $table) {
             $table->increments('id')->unsigned();
             $table->unsignedInteger('photograph_id')->index();
-            $table->unsignedInteger('user_id')->index();
-            $table->unsignedInteger('user_id_like')->nullable()->index();
-            $table->unsignedInteger('user_id_dislike')->nullable()->index();
+            $table->unsignedInteger('photograph_user_id')->index(); // Owner of the photograph
+            $table->unsignedInteger('user_id')->index(); // User who liked the photograph
+            $table->smallInteger('like')->default(1); // 1 = liked, 0 = cancelled like
             $table->timestamps(); // This creates created_at and updated_at
             $table->softDeletes(); // This creates deleted_at timestamp
             
             // Foreign key relationships
             $table->foreign('photograph_id')->references('id')->on('photographs')->onDelete('cascade');
+            $table->foreign('photograph_user_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('user_id_like')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('user_id_dislike')->references('id')->on('users')->onDelete('cascade');
             
-            // Ensure a user can only have one like/dislike entry per photograph
+            // Unique constraint to prevent duplicate likes from same user on same photograph
             $table->unique(['photograph_id', 'user_id']);
         });
     }
@@ -36,6 +35,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('photograph_likes_dislikes');
+        Schema::dropIfExists('photographs_likes');
     }
 };

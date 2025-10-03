@@ -14,7 +14,7 @@ class PhotographComment extends Model
 
     protected $fillable = [
         'photograph_id',
-        'user_id',
+        'photograph_user_id',
         'user_id_comment',
         'comment'
     ];
@@ -28,15 +28,15 @@ class PhotographComment extends Model
     }
 
     /**
-     * Relationship with User model for the user making the comment
+     * Relationship with User model (owner of the photograph)
      */
-    public function user()
+    public function photographOwner()
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(User::class, 'photograph_user_id');
     }
 
     /**
-     * Relationship with User model for the user being commented about
+     * Relationship with User model (user who commented on the photograph)
      */
     public function commentUser()
     {

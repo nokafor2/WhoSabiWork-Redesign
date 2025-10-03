@@ -121,28 +121,48 @@ class User extends Authenticatable
         return $this->hasMany('App\Models\PhotographComment');
     }
 
-    public function photographCommentsReceived() {
+    public function photographCommentsGiven() {
         return $this->hasMany('App\Models\PhotographComment', 'user_id_comment');
+    }
+
+    public function photographCommentsReceived() {
+        return $this->hasMany('App\Models\PhotographComment', 'photograph_user_id');
     }
 
     public function photographReplies() {
         return $this->hasMany('App\Models\PhotographReply');
     }
 
-    public function photographRepliesReceived() {
+    public function photographRepliesGiven() {
         return $this->hasMany('App\Models\PhotographReply', 'user_id_reply');
     }
 
-    public function photographLikesDislikes() {
-        return $this->hasMany('App\Models\PhotographLikeDislike');
+    public function photographRepliesReceived() {
+        return $this->hasMany('App\Models\PhotographReply', 'user_id_comment');
     }
 
     public function photographLikes() {
-        return $this->hasMany('App\Models\PhotographLikeDislike', 'user_id_like');
+        return $this->hasMany('App\Models\PhotographLike');
+    }
+
+    public function photographLikesGiven() {
+        return $this->hasMany('App\Models\PhotographLike', 'user_id');
+    }
+
+    public function photographLikesReceived() {
+        return $this->hasMany('App\Models\PhotographLike', 'photograph_user_id');
     }
 
     public function photographDislikes() {
-        return $this->hasMany('App\Models\PhotographLikeDislike', 'user_id_dislike');
+        return $this->hasMany('App\Models\PhotographDislike');
+    }
+
+    public function photographDislikesGiven() {
+        return $this->hasMany('App\Models\PhotographDislike', 'user_id');
+    }
+
+    public function photographDislikesReceived() {
+        return $this->hasMany('App\Models\PhotographDislike', 'photograph_user_id');
     }
 
     public function replies() {

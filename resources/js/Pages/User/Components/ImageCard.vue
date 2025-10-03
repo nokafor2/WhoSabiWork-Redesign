@@ -1,9 +1,9 @@
 <template>
     <div class="card m-3 shadow" style="width: 200px;">
         <div class="image-container" @click="openModal">
-            <img :src="imgSrc" class="card-image" alt="">
+            <img :src="imageObj.src" class="card-image" alt="">
         </div>
-        <p class="card-text mb-1 px-2">{{ caption }}</p>
+        <p class="card-text mb-1 px-2">{{ imageObj.caption }}</p>
         
         <!-- Custom Modal -->
         <teleport to="body">
@@ -23,7 +23,7 @@
                     <div class="modal-body bg-dark text-light">
                         <!-- Image Display -->
                         <div class="text-center mb-4">
-                            <img :src="imgSrc" class="img-fluid custom-modal-image" alt="">
+                            <img :src="imageObj.src" class="img-fluid custom-modal-image" alt="">
                         </div>
                         
                         <!-- Caption Display -->
@@ -106,8 +106,8 @@
                             </div>
                             <div class="card-body custom-comments-section">
                                 <!-- Comment Cards -->
-                                <CommentCard v-for="index in commentCount" :key="index" :index="index"></CommentCard>
-                                
+                                <!-- <CommentCard v-for="photoComment in imageObj.photograph_comments" :key="photoComment.id" :index="photoComment.id" :photoComment="photoComment"></CommentCard> -->
+                                <CommentAndReplyCard v-for="commentReply in imageObj.photograph_comments" :key="commentReply.id" :commentReplies="commentReply"></CommentAndReplyCard>
                                 <!-- No Comments Message -->
                                 <div v-if="commentCount === 0" class="text-center text-muted py-4">
                                     <i class="fas fa-comment-slash fa-2x mb-2"></i>
@@ -136,16 +136,18 @@
 <script>
     import MethodsMixin from '../Mixins/MethodsMixin.js';
     import CommentCard from './CommentCard.vue';
+    import CommentAndReplyCard from './CommentAndReplyCard.vue';
     import ErrorAlert from '@/components/UI/ErrorAlert.vue';
     import { useForm } from '@inertiajs/vue3';
 
     export default {
         mixins: [MethodsMixin],
-        components: {CommentCard, ErrorAlert},
-        props: ['userId', 'imageId', 'imgSrc', 'caption', 'photoType', 'isCoverPhoto'],
+        components: {CommentCard, ErrorAlert, CommentAndReplyCard},
+        props: ['imageData'],
         emits: ['photoDeleted', 'photoUpdated'],
         data() {
             return {
+                userId: this.imageData.user_id,
                 categoryInput: [],
                 uniqueId: null,
                 isModalOpen: false,
@@ -154,21 +156,23 @@
                     val: '',
                     isValid: true
                 },
-                likes: 20, // Default values - could be props later
-                dislikes: 5,
-                commentCount: 5,
                 userLiked: false,
-                userDisliked: false
+                userDisliked: false,
+                imageObj: this.imageData,
+                likes: this.imageData?.active_likes_count || 0,
+                dislikes: this.imageData?.active_dislikes_count || 0,
+                commentCount: this.imageData?.photograph_comments?.length || 0,
             }
         },
         created() {
             // Generate a unique ID for this component instance
             this.uniqueId = `${this.userId}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
             // Initialize caption input with current caption
-            this.captionInput.val = this.caption;
+            this.captionInput.val = this.imageObj?.caption || '';
         },
         methods: {
             openModal() {
+                console.log('Image data', this.imageObj);
                 this.isModalOpen = true;
                 // Prevent body scrolling when modal is open
                 document.body.style.overflow = 'hidden';
@@ -179,18 +183,18 @@
                 document.body.style.overflow = '';
                 // Reset form states
                 this.showCaptionInput = false;
-                this.captionInput.val = this.caption;
+                this.captionInput.val = this.imageObj?.caption || '';
                 this.captionInput.isValid = true;
             },
             toggleCaptionInput() {
                 this.showCaptionInput = !this.showCaptionInput;
                 if (this.showCaptionInput) {
-                    this.captionInput.val = this.caption;
+                    this.captionInput.val = this.imageObj?.caption || '';
                 }
             },
             cancelCaptionEdit() {
                 this.showCaptionInput = false;
-                this.captionInput.val = this.caption;
+                this.captionInput.val = this.imageObj?.caption || '';
                 this.captionInput.isValid = true;
             },
             submitCaption() {
@@ -203,7 +207,7 @@
                     caption: this.captionInput.val
                 })
                 
-                formData.put(route('photograph.update', this.imageId), {
+                formData.put(route('photograph.update', this.imageObj.id), {
                     preserveState: true,
                     preserveScroll: true,
                     onSuccess: (page) => {
@@ -215,7 +219,7 @@
                         
                         // Hide the caption input and emit update event
                         this.showCaptionInput = false;
-                        this.$emit('photoUpdated', page.props.images.find(img => img.id === this.imageId));
+                        this.$emit('photoUpdated', page.props.images.find(img => img.id === this.imageObj.id));
                     },
                     onError: (errors) => {
                         console.log('Error: ', errors);
@@ -233,13 +237,13 @@
                 })
                 
                 console.log('Submitting cover photo update:', {
-                    imageId: this.imageId,
+                    imageId: this.imageObj.id,
                     setAsCoverPhoto: this.isCoverPhotoStatus,
-                    route: route('photograph.update', this.imageId),
+                    route: route('photograph.update', this.imageObj.id),
                     csrf: csrfToken ? 'present' : 'missing'
                 });
                 
-                formData.put(route('photograph.update', this.imageId), {
+                formData.put(route('photograph.update', this.imageObj.id), {
                     preserveState: true,
                     preserveScroll: true,
                     headers: {
@@ -252,12 +256,12 @@
                         
                         // Update the image state
                         this.$store.dispatch('updateImages', { value: page.props.images });
-                        this.$emit('photoUpdated', page.props.images.find(img => img.id === this.imageId));
+                        this.$emit('photoUpdated', page.props.images.find(img => img.id === this.imageObj.id));
                     },
                     onError: (errors) => {
                         console.error('Cover photo update error:', errors);
                         console.error('Error details:', {
-                            imageId: this.imageId,
+                            imageId: this.imageObj.id,
                             attempted_status: this.isCoverPhotoStatus,
                             csrf_token: csrfToken ? 'present' : 'missing',
                             errors: errors
@@ -278,7 +282,7 @@
                 const formData = useForm({
                     user_id: this.userId
                 });
-                formData.delete(route('photograph.destroy', this.imageId), {
+                formData.delete(route('photograph.destroy', this.imageObj.id), {
                     preserveState: true,
                     preserveScroll: true,
                     onSuccess: (page) => {
@@ -290,7 +294,7 @@
                         this.closeModal();
                         
                         // Emit event to parent component to handle any cleanup
-                        this.$emit('photoDeleted', this.imageId);
+                        this.$emit('photoDeleted', this.imageObj.id);
                     },
                     onError: (errors) => {
                         console.log('Error: ', errors);
@@ -328,12 +332,12 @@
                 if (navigator.share) {
                     navigator.share({
                         title: 'Check out this photo!',
-                        text: this.caption,
-                        url: this.imgSrc
+                        text: this.imageObj?.caption || '',
+                        url: this.imageObj?.src
                     });
                 } else {
                     // Fallback: copy to clipboard
-                    navigator.clipboard.writeText(this.imgSrc).then(() => {
+                    navigator.clipboard.writeText(this.imageObj?.src).then(() => {
                         alert('Photo URL copied to clipboard!');
                     });
                 }
@@ -348,13 +352,13 @@
         },
         computed: {
             isCoverPhotoStatus() {
-                return this.isCoverPhoto || this.photoType === 'cover photo';
+                return this.imageObj?.photo_type === 'cover photo';
             },
             coverPhotoText() {
                 return this.isCoverPhotoStatus ? 'Remove Cover Photo' : 'Set Image as Cover Photo';
             },
             displayCaption() {
-                return this.caption || 'No caption provided';
+                return this.imageObj?.caption || 'No caption provided';
             }
         }
     }

@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-class PhotographLikeDislikeController extends Controller
+class PhotographLikeController extends Controller
 {
     /**
      * Display a listing of the resource.

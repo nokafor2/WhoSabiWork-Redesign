@@ -46,7 +46,8 @@ class DatabaseSeeder extends Seeder
             PhotographSeeder::class,
             PhotographCommentsSeeder::class,
             PhotographRepliesSeeder::class,
-            PhotographLikesDislikesSeeder::class,
+            PhotographLikesSeeder::class,
+            PhotographDislikesSeeder::class,
         ]);       
     }
 }

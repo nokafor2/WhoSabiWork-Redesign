@@ -903,26 +903,60 @@ trait GlobalFunctions {
     }
 
     public function getPhotoghaphsCommentsReplies($user) {
-        // // Option 1
-        // return \App\Models\User::whereIn('id', [2,3])->with([
-        //     'photographs.photographComments',
-        //     'photographs.photographComments.photographReplies'
-        // ])->get();
+        // old code:
+        // return $user->photographs()->withCount(['activeLikes', 'activeDislikes'])->whereIn('photo_type', ['cover photo', 'gallery'])->latest()->with(['photographComments', 'photographComments.photographReplies'])->get();
+        
+        // Get photographs with comments, replies, and commenter details
+        $photographs = $user->photographs()
+            ->withCount(['activeLikes', 'activeDislikes'])
+            ->whereIn('photo_type', ['cover photo', 'gallery'])
+            ->latest()
+            ->with([
+                'photographComments.commentUser', // Load the commenter user details
+                'photographComments.photographReplies.replyUser', // Load the reply user details
+                'photographComments.photographReplies.commentOwner' // Load the comment owner details
+            ])
+            ->get();
 
-        // // Option 2
-        // return \App\Models\User::find([2,3])->load([
-        //     'photographs.photographComments',
-        //     'photographs.photographComments.photographReplies'
-        // ]);
+        // Process each photograph to append commenter details
+        $photographs->each(function ($photograph) {
+            $photograph->photographComments->each(function ($comment) {
+                if ($comment->commentUser) {
+                    // Add commenter full name
+                    $comment->commenter_full_name = $comment->commentUser->first_name . ' ' . $comment->commentUser->last_name;
+                    
+                    // Add commenter avatar image
+                    $commenterAvatar = $comment->commentUser->photographs()
+                        ->where('photo_type', 'avatar')
+                        ->latest()
+                        ->first();
+                    $comment->commenter_avatar = $commenterAvatar ? asset('storage/' . $commenterAvatar->path) : null;
+                    
+                    // Add human readable date
+                    $comment->created_at_human = $comment->created_at->format('F j, Y \a\t g:i A');
+                }
 
-        // Option 3
-        // return \App\Models\Photograph::whereIn('user_id', [2,3])->with([
-        //     'photographComments',
-        //     'photographComments.photographReplies'
-        // ])->get();
+                // Process replies as well
+                $comment->photographReplies->each(function ($reply) {
+                    if ($reply->replyUser) {
+                        // Add replier full name
+                        $reply->replier_full_name = $reply->replyUser->first_name . ' ' . $reply->replyUser->last_name;
+                        
+                        // Add replier avatar image
+                        $replierAvatar = $reply->replyUser->photographs()
+                            ->where('photo_type', 'avatar')
+                            ->latest()
+                            ->first();
+                        $reply->replier_avatar = $replierAvatar ? asset('storage/' . $replierAvatar->path) : null;
+                        
+                        // Add human readable date
+                        $reply->created_at_human = $reply->created_at->format('F j, Y \a\t g:i A');
+                    }
+                });
+            });
+        });
 
-        // Option 4
-        return $user->photographs()->whereIn('photo_type', ['cover photo', 'gallery'])->latest()->with(['photographComments', 'photographComments.photographReplies'])->get();
+        return $photographs;
     }
 }
 
