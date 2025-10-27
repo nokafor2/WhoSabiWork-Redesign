@@ -107,7 +107,12 @@
                             <div class="card-body custom-comments-section">
                                 <!-- Comment Cards -->
                                 <!-- <CommentCard v-for="photoComment in imageObj.photograph_comments" :key="photoComment.id" :index="photoComment.id" :photoComment="photoComment"></CommentCard> -->
-                                <CommentAndReplyCard v-for="commentReply in imageObj.photograph_comments" :key="commentReply.id" :commentReplies="commentReply"></CommentAndReplyCard>
+                                <CommentAndReplyCard 
+                                    v-for="commentReply in imageObj.photograph_comments" 
+                                    :key="`comment-${commentReply.id}-${commentReply.photograph_replies?.length || 0}`"
+                                    :commentReplies="commentReply"
+                                    @reply-added="handleReplyAdded">
+                                </CommentAndReplyCard>
                                 <!-- No Comments Message -->
                                 <div v-if="commentCount === 0" class="text-center text-muted py-4">
                                     <i class="fas fa-comment-slash fa-2x mb-2"></i>
@@ -172,7 +177,7 @@
         },
         methods: {
             openModal() {
-                console.log('Image data', this.imageObj);
+                // console.log('Image data', this.imageObj);
                 this.isModalOpen = true;
                 // Prevent body scrolling when modal is open
                 document.body.style.overflow = 'hidden';
@@ -208,18 +213,34 @@
                 })
                 
                 formData.put(route('photograph.update', this.imageObj.id), {
-                    preserveState: true,
                     preserveScroll: true,
                     onSuccess: (page) => {
-                        console.log('success', page.props.flash.success);
-                        console.log('Updated page data:', page.props);
+                        console.log('Caption update success', page.props.flash.success);
                         
-                        // Update the image state
-                        this.$store.dispatch('updateImages', { value: page.props.images });
+                        // Find the updated image from the response
+                        const updatedImage = page.props.images?.find(img => img.id === this.imageObj.id);
                         
-                        // Hide the caption input and emit update event
+                        if (updatedImage) {
+                            console.log('Found updated image:', updatedImage);
+                            console.log('Old caption:', this.imageObj.caption);
+                            console.log('New caption:', updatedImage.caption);
+                            
+                            // Update local imageObj caption directly for immediate reactivity
+                            this.imageObj.caption = updatedImage.caption;
+                            
+                            // Force Vue to detect the change
+                            this.$forceUpdate();
+                            
+                            // Update the image state in Vuex store
+                            this.$store.dispatch('updateImages', { value: page.props.images });
+                            
+                            console.log('Caption updated successfully. Current caption:', this.imageObj.caption);
+                        } else {
+                            console.error('Updated image not found in response');
+                        }
+                        
+                        // Hide the caption input
                         this.showCaptionInput = false;
-                        this.$emit('photoUpdated', page.props.images.find(img => img.id === this.imageObj.id));
                     },
                     onError: (errors) => {
                         console.log('Error: ', errors);
@@ -342,6 +363,33 @@
                     });
                 }
             },
+            // Handle reply added event from CommentAndReplyCard
+            handleReplyAdded({ photographId, commentId, replyData }) {
+                // Find the comment in imageObj.photograph_comments and add the reply
+                if (this.imageObj.photograph_comments) {
+                    const commentIndex = this.imageObj.photograph_comments.findIndex(c => c.id === commentId);
+                    
+                    if (commentIndex !== -1) {
+                        const comment = this.imageObj.photograph_comments[commentIndex];
+                        
+                        // Initialize photograph_replies if it doesn't exist
+                        if (!comment.photograph_replies) {
+                            comment.photograph_replies = [];
+                        }
+                        
+                        // Add the new reply at the beginning (latest first)
+                        comment.photograph_replies = [replyData, ...comment.photograph_replies];
+                        
+                        // Force Vue to recognize the change by creating a new array reference
+                        this.imageObj.photograph_comments = [...this.imageObj.photograph_comments];
+                        
+                        // Force update to ensure reactivity
+                        this.$forceUpdate();
+                    } else {
+                        console.warn('Comment not found in imageObj for commentId:', commentId);
+                    }
+                }
+            },
             // Legacy methods for parent component compatibility
             handlePhotoDeleted(imageId) {
                 this.$emit('photoDeleted', imageId);
@@ -359,6 +407,19 @@
             },
             displayCaption() {
                 return this.imageObj?.caption || 'No caption provided';
+            }
+        },
+        watch: {
+            // Watch for changes in imageData prop and sync with local imageObj
+            imageData: {
+                handler(newImageData) {
+                    if (newImageData) {
+                        // Update imageObj when prop changes
+                        this.imageObj = { ...newImageData };
+                        console.log('ImageData prop changed, updated imageObj:', this.imageObj.caption);
+                    }
+                },
+                deep: true
             }
         }
     }

@@ -326,6 +326,7 @@ class UserController extends Controller
                 'acceptedAppointmentsSchdlr' => $this->getAppointments('accepted', null, $user->id),
                 'declinedAppointmentsSchdlr' => $this->getAppointments('declined', null, $user->id),
                 'cancelledAppointmentsSchdlr' => $this->getAppointments('cancelled', null, $user->id),
+                'images' => $images,
             ]);
         } elseif ($userType === 'business') {
             $userDetails = $this->getUserDetails($user->id);

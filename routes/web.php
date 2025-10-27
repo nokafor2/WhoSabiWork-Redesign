@@ -13,7 +13,11 @@ use App\Http\Controllers\ContactUsController;
 use App\Http\Controllers\DeleteTemporaryImageController;
 use App\Http\Controllers\EntrepreneurController;
 use App\Http\Controllers\MobileMarketController;
+use App\Http\Controllers\PhotographCommentController;
 use App\Http\Controllers\PhotographController;
+use App\Http\Controllers\PhotographDislikeController;
+use App\Http\Controllers\PhotographLikeController;
+use App\Http\Controllers\PhotographReplyController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\SparePartController;
 use App\Http\Controllers\TechnicalServiceController;
@@ -95,6 +99,14 @@ Route::resource('vehiclecategory', VehicleCategoryController::class)->only('upda
 Route::resource('photograph', PhotographController::class)->only('index', 'store', 'create', 'update', 'destroy');
 Route::get('/photograph/user/{user}', [PhotographController::class, 'getUserPhotographs'])->name('photograph.user');
 Route::post('/cleanup-temp-files', [PhotographController::class, 'cleanupOldTempFiles'])->name('cleanup.temp.files');
+
+Route::resource('photographcomment', PhotographCommentController::class)->only('index', 'store', 'create', 'update', 'destroy');
+
+Route::resource('photographreply', PhotographReplyController::class)->only('index', 'store', 'create', 'update', 'destroy');
+
+Route::resource('photographlike', PhotographLikeController::class)->only('index', 'store', 'create', 'update', 'destroy');
+
+Route::resource('photographdislike', PhotographDislikeController::class)->only('index', 'store', 'create', 'update', 'destroy');
 
 Route::resource('usersavailability', UsersAvailabilityController::class)->only('show', 'store', 'create', 'update', 'destroy');
 

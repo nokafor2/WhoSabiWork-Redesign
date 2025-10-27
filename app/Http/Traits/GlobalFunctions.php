@@ -913,6 +913,9 @@ trait GlobalFunctions {
             ->latest()
             ->with([
                 'photographComments.commentUser', // Load the commenter user details
+                'photographComments.photographReplies' => function ($query) {
+                    $query->latest(); // Order replies by latest first
+                },
                 'photographComments.photographReplies.replyUser', // Load the reply user details
                 'photographComments.photographReplies.commentOwner' // Load the comment owner details
             ])
@@ -932,8 +935,8 @@ trait GlobalFunctions {
                         ->first();
                     $comment->commenter_avatar = $commenterAvatar ? asset('storage/' . $commenterAvatar->path) : null;
                     
-                    // Add human readable date
-                    $comment->created_at_human = $comment->created_at->format('F j, Y \a\t g:i A');
+                    // Add human readable date using Carbon
+                    $comment->created_at_human = $comment->created_at->diffForHumans();
                 }
 
                 // Process replies as well
@@ -949,8 +952,8 @@ trait GlobalFunctions {
                             ->first();
                         $reply->replier_avatar = $replierAvatar ? asset('storage/' . $replierAvatar->path) : null;
                         
-                        // Add human readable date
-                        $reply->created_at_human = $reply->created_at->format('F j, Y \a\t g:i A');
+                        // Add human readable date using Carbon
+                        $reply->created_at_human = $reply->created_at->diffForHumans();
                     }
                 });
             });

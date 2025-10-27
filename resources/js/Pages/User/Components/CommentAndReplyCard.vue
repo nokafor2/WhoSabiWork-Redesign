@@ -14,44 +14,43 @@
             <!-- Lorem ipsum dolor sit amet consectetur adipisicing elit. Illo modi vero laboriosam suscipit! Enim reiciendis sunt debitis, ipsa sit ipsam amet obcaecati! Assumenda harum ipsam natus iste explicabo eos nemo? -->
         </p>
         <div class="d-flex justify-content-end">
-            <button class="btn btm-sm border border-light text-light" style="background-color: #040D14">Reply</button>
+            <button class="btn btm-sm border border-light text-light" style="background-color: #040D14" @click="toggleReplyForm">Reply</button>
+        </div>
+
+        <!-- reply form -->
+        <div v-if="showReplyForm" class="col-12 mt-3 p-3 border rounded bg-light">
+            <textarea 
+                v-model="replyMessage.val"
+                @input="validateReply"
+                @blur="validateReply"
+                :class="['form-control mb-1', { 'is-invalid': !replyMessage.isValid }]"
+                rows="3" 
+                placeholder="Write your reply..."
+                maxlength="255">
+            </textarea>
+            <div class="d-flex justify-content-between align-items-start mb-2">
+                <small v-if="!replyMessage.isValid" class="text-danger">
+                    {{ replyMessage.errorMessage }}
+                </small>
+                <small v-else class="text-muted invisible">No errors</small>
+                <small class="text-muted">
+                    {{ replyMessage.val.length }}/255
+                </small>
+            </div>
+            <div class="d-flex justify-content-end gap-2">
+                <button class="btn btn-sm btn-secondary" @click="cancelReply">Cancel</button>
+                <button 
+                    class="btn btn-sm text-light" 
+                    style="background-color: #040D14" 
+                    @click="submitReply"
+                    :disabled="!replyMessage.isValid || replyMessage.val.trim().length === 0">
+                    Reply
+                </button>
+            </div>
         </div>
 
         <!-- reply -->
         <ReplyCard v-for="(reply, index) in replies" :key="index" :index="index" :replyData="reply"></ReplyCard>
-        <!-- <div class="row justify-content-end">
-            <div class="col-10">
-                <div class="row justify-content-between align-content-middle">
-                    <div class="col-auto">
-                        <div class="d-flex mt-2 mb-1 align-middle">
-                            <img class="col-auto rounded-circle me-2" style="height: 25px; width: 25px;" :src=imagePath(0)>
-                            <p class="col-auto mb-1">You replied</p>
-                        </div>
-                    </div>
-                    <p class="col-auto pt-2">December 18, 2024 at 5:18 PM</p>
-                </div>
-                <p class="col-12 bg-white text-body rounded">
-                    Lorem, ipsum dolor sit amet consectetur adipisicing elit. Ea quia magni illo ipsam est ducimus accusantium quisquam libero ut soluta similique, natus molestiae voluptas architecto? Inventore excepturi aliquid soluta placeat!
-                </p>
-            </div>
-        </div>
-
-        <div class="row justify-content-end">
-            <div class="col-10">
-                <div class="row justify-content-between align-content-middle">
-                    <div class="col-auto">
-                        <div class="d-flex mt-2 mb-1 align-middle">
-                            <img class="col-auto rounded-circle me-2" style="height: 25px; width: 25px;" :src=imagePath(0)>
-                            <p class="col-auto mb-1">You replied</p>
-                        </div>
-                    </div>
-                    <p class="col-auto pt-2">December 18, 2024 at 5:18 PM</p>
-                </div>
-                <p class="col-12 bg-white text-body rounded">
-                    Lorem, ipsum dolor sit amet consectetur adipisicing elit. Ea quia magni illo ipsam est ducimus accusantium quisquam libero ut soluta similique, natus molestiae voluptas architecto? Inventore excepturi aliquid soluta placeat!
-                </p>
-            </div>
-        </div> -->
     </div>
 </template>
 
@@ -74,19 +73,125 @@
                 default: 0
             }
         },
-        emits: [],
+        emits: ['reply-added'],
         data() {
             return {
                 replies: this.commentReplies?.photograph_replies || [],
+                commentId: this.commentReplies?.id || '',
                 comment: this.commentReplies?.comment || '',
+                photographId: this.commentReplies?.photograph_id || '',
+                commentUserId: this.commentReplies?.user_id_comment || '',
                 commentUser: this.commentReplies?.comment_user || [],
                 commenterFullName: this.commentReplies?.commenter_full_name || '',
                 commenterAvatar: this.commentReplies?.commenter_avatar || '',
                 commentDate: this.commentReplies?.created_at_human || '',
+                showReplyForm: false,
+                replyMessage: {
+                    val: '',
+                    isValid: true,
+                    errorMessage: ''
+                },
             }
         },
         methods: {
-            
-        },
+            validateReply() {
+                const reply = this.replyMessage.val.trim();
+                
+                // Reset validation
+                this.replyMessage.isValid = true;
+                this.replyMessage.errorMessage = '';
+                
+                // Check if empty
+                if (reply.length === 0) {
+                    this.replyMessage.isValid = false;
+                    this.replyMessage.errorMessage = 'Reply cannot be empty';
+                    return false;
+                }
+                
+                // Check minimum length
+                if (reply.length < 2) {
+                    this.replyMessage.isValid = false;
+                    this.replyMessage.errorMessage = 'Reply must be at least 2 characters';
+                    return false;
+                }
+                
+                // Check maximum length
+                if (reply.length > 255) {
+                    this.replyMessage.isValid = false;
+                    this.replyMessage.errorMessage = 'Reply cannot exceed 255 characters';
+                    return false;
+                }
+                
+                // Check for only whitespace
+                if (reply.replace(/\s/g, '').length === 0) {
+                    this.replyMessage.isValid = false;
+                    this.replyMessage.errorMessage = 'Reply cannot contain only spaces';
+                    return false;
+                }
+                
+                return true;
+            },
+            toggleReplyForm() {
+                this.showReplyForm = !this.showReplyForm;
+            },
+            cancelReply() {
+                this.showReplyForm = false;
+                this.replyMessage.val = '';
+                this.replyMessage.isValid = true;
+                this.replyMessage.errorMessage = '';
+            },
+            submitReply() {
+                // Validate before submitting
+                if (!this.validateReply()) {
+                    return;
+                }
+                
+                // Handle reply submission logic here
+                const formData = useForm({
+                    comment_id: this.commentId,
+                    photograph_id: this.photographId,
+                    user_id_comment: this.commentUserId,
+                    reply: this.replyMessage.val.trim()
+                });
+
+                formData.post(route('photographreply.store'), {
+                    preserveScroll: true,
+                    onSuccess: (page) => {
+                        // Update the image state
+                        if (page.props.images) {
+                            this.$store.dispatch('updateImages', { value: page.props.images });
+                        }
+
+                        // Hide the reply form
+                        this.showReplyForm = false;
+                        // Reset the reply message
+                        this.replyMessage.val = '';
+                        // Reset the reply message validation
+                        this.replyMessage.isValid = true;
+                        this.replyMessage.errorMessage = '';
+                        
+                        // Add the reply to the replies array via parent component
+                        if (page.props.flash?.success) {
+                            const replyData = page.props.flash.success;
+                            
+                            // Emit event to parent component (ImageCard) to update imageObj
+                            // The watcher will automatically update this.replies when the parent updates
+                            this.$emit('reply-added', {
+                                photographId: replyData.photograph_id,
+                                commentId: replyData.comment_id,
+                                replyData: replyData
+                            });
+                        }
+                    },
+                    onError: (errors) => {
+                        // Show validation error from server
+                        if (errors.reply) {
+                            this.replyMessage.isValid = false;
+                            this.replyMessage.errorMessage = errors.reply;
+                        }
+                    }
+                });
+            }
+        }
     }
 </script>

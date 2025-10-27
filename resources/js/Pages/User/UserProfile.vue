@@ -299,20 +299,35 @@
             handlePhotoDeleted(imageId) {
                 // Handle photo deletion from gallery
                 console.log('Photo deleted:', imageId);
-                // Remove the deleted image from the images array
-                this.images = this.images.filter(image => image.id !== imageId);
+                // Note: The store is already updated in ImageCard component
+                // This method is kept for any additional cleanup if needed
             },
             handlePhotoUpdated(updatedImage) {
                 // Handle photo update (caption change, etc.)
                 console.log('Photo updated:', updatedImage);
-                // Find and update the image in the images array
-                const imageIndex = this.images.findIndex(image => image.id === updatedImage.id);
+                
+                if (!updatedImage) {
+                    console.warn('No updated image data received');
+                    return;
+                }
+                
+                // Get current images from store
+                const currentImages = this.$store.getters.getImages;
+                
+                // Find and update the image in the store
+                const imageIndex = currentImages.findIndex(image => image.id === updatedImage.id);
+                
                 if (imageIndex !== -1) {
-                    // Update the existing image object with the updated data
-                    this.images[imageIndex] = { ...this.images[imageIndex], ...updatedImage };
-                    console.log('Image updated in array:', this.images[imageIndex]);
+                    // Create a new array with the updated image
+                    const updatedImages = [...currentImages];
+                    updatedImages[imageIndex] = { ...updatedImages[imageIndex], ...updatedImage };
+                    
+                    // Update the store with the new images array
+                    this.$store.dispatch('updateImages', { value: updatedImages });
+                    
+                    console.log('Image updated successfully:', updatedImages[imageIndex]);
                 } else {
-                    console.log('Image not found in array for update:', updatedImage.id);
+                    console.warn('Image not found in store for update:', updatedImage.id);
                 }
             },
             updateSchedule(schedules) {
