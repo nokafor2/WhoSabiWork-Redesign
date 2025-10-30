@@ -148,8 +148,12 @@
             <div class="tab-pane fade" id="yourComments" role="tabpanel" aria-labelledby="yourComments-tab" tabindex="0">
                 <div class="row justify-content-center">
                     <div class="col-md-10 col-xl-8 rounded pb-3" >  <!-- style="background-color: #040D14" -->
-                        <p class="pt-2 text-body">5 comment(s)</p>
-                        <CommentCard v-for="index in 5" :key="index" :index="index"></CommentCard>
+                        <p class="pt-2 text-body">{{ entrepreneurCommentsAndRepliesData.commentsCount }} comment(s)</p>
+                        <CommentAndReplyCard 
+                            v-for="comment in entrepreneurCommentsAndRepliesData.commentsAndReplies" 
+                            :key="comment.id" 
+                            :commentReplies="comment">
+                        </CommentAndReplyCard>
                     </div>
                 </div>
             </div>
@@ -269,7 +273,7 @@
             'allCarBrands', 'allBusBrands', 'allTruckBrands', 'schedules', 'neutralAppointments', 
             'acceptedAppointments', 'declinedAppointments', 'cancelledAppointments', 'neutralAppointmentsSchdlr', 
             'acceptedAppointmentsSchdlr', 'declinedAppointmentsSchdlr', 'cancelledAppointmentsSchdlr', 'images', 
-            'customerCommentsAndReplies'
+            'customerCommentsAndReplies', 'entrepreneurCommentsAndReplies'
         ],
         emits: [],
         data() {
@@ -345,6 +349,9 @@
             },
             customerCommentsAndRepliesData() {
                 return this.$store.getters.getCustomerCommentsAndReplies;
+            },
+            entrepreneurCommentsAndRepliesData() {
+                return this.$store.getters.getEntrepreneurCommentsAndReplies;
             },
             flashSuccess() {
                 return this.page.props.flash.success;
@@ -488,6 +495,7 @@
             this.$store.dispatch('updateImages', { value: this.images });
             this.$store.dispatch('updateUser', { value: this.user });
             this.$store.dispatch('updateCustomerCommentsAndReplies', { value: this.customerCommentsAndReplies });
+            this.$store.dispatch('updateEntrepreneurCommentsAndReplies', { value: this.entrepreneurCommentsAndReplies });
         }
     }
 </script>

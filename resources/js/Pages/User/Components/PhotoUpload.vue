@@ -273,7 +273,7 @@
         },
         methods: {
             handleFilePondInit: function () {
-                console.log('FilePond has initialized');
+                // console.log('FilePond has initialized');
 
                 // example of instance method call on pond reference
                 // this.$refs.pond.getFiles();

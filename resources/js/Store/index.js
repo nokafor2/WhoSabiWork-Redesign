@@ -16,6 +16,7 @@ const store = createStore({
             images: [],
             user: [],
             customerCommentsAndReplies: [],
+            entrepreneurCommentsAndReplies: [],
         };
     },
     mutations: {
@@ -40,6 +41,9 @@ const store = createStore({
         updateCustomerCommentsAndReplies(state, payload) {
             state.customerCommentsAndReplies = payload.value;
         },
+        updateEntrepreneurCommentsAndReplies(state, payload) {
+            state.entrepreneurCommentsAndReplies = payload.value;
+        },
     },
     actions: {
         updateProducts(context, payload) {
@@ -63,6 +67,9 @@ const store = createStore({
         updateCustomerCommentsAndReplies(context, payload) {
             context.commit('updateCustomerCommentsAndReplies', payload);
         },
+        updateEntrepreneurCommentsAndReplies(context, payload) {
+            context.commit('updateEntrepreneurCommentsAndReplies', payload);
+        },
     },
     getters: {
         getProducts(state) {
@@ -85,6 +92,9 @@ const store = createStore({
         },
         getCustomerCommentsAndReplies(state) {
             return state.customerCommentsAndReplies;
+        },
+        getEntrepreneurCommentsAndReplies(state) {
+            return state.entrepreneurCommentsAndReplies;
         },
     }
 });
