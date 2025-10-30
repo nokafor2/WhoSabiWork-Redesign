@@ -107,12 +107,12 @@
                             <div class="card-body custom-comments-section">
                                 <!-- Comment Cards -->
                                 <!-- <CommentCard v-for="photoComment in imageObj.photograph_comments" :key="photoComment.id" :index="photoComment.id" :photoComment="photoComment"></CommentCard> -->
-                                <CommentAndReplyCard 
+                                <PhotoCommentAndReplyCard 
                                     v-for="commentReply in imageObj.photograph_comments" 
                                     :key="`comment-${commentReply.id}-${commentReply.photograph_replies?.length || 0}`"
                                     :commentReplies="commentReply"
                                     @reply-added="handleReplyAdded">
-                                </CommentAndReplyCard>
+                                </PhotoCommentAndReplyCard>
                                 <!-- No Comments Message -->
                                 <div v-if="commentCount === 0" class="text-center text-muted py-4">
                                     <i class="fas fa-comment-slash fa-2x mb-2"></i>
@@ -141,13 +141,13 @@
 <script>
     import MethodsMixin from '../Mixins/MethodsMixin.js';
     import CommentCard from './CommentCard.vue';
-    import CommentAndReplyCard from './CommentAndReplyCard.vue';
+    import PhotoCommentAndReplyCard from './PhotoCommentAndReplyCard.vue';
     import ErrorAlert from '@/components/UI/ErrorAlert.vue';
     import { useForm } from '@inertiajs/vue3';
 
     export default {
         mixins: [MethodsMixin],
-        components: {CommentCard, ErrorAlert, CommentAndReplyCard},
+        components: {CommentCard, ErrorAlert, PhotoCommentAndReplyCard},
         props: ['imageData'],
         emits: ['photoDeleted', 'photoUpdated'],
         data() {
@@ -177,7 +177,6 @@
         },
         methods: {
             openModal() {
-                // console.log('Image data', this.imageObj);
                 this.isModalOpen = true;
                 // Prevent body scrolling when modal is open
                 document.body.style.overflow = 'hidden';
@@ -215,26 +214,18 @@
                 formData.put(route('photograph.update', this.imageObj.id), {
                     preserveScroll: true,
                     onSuccess: (page) => {
-                        console.log('Caption update success', page.props.flash.success);
-                        
                         // Find the updated image from the response
                         const updatedImage = page.props.images?.find(img => img.id === this.imageObj.id);
                         
                         if (updatedImage) {
-                            console.log('Found updated image:', updatedImage);
-                            console.log('Old caption:', this.imageObj.caption);
-                            console.log('New caption:', updatedImage.caption);
-                            
-                            // Update local imageObj caption directly for immediate reactivity
+                           // Update local imageObj caption directly for immediate reactivity
                             this.imageObj.caption = updatedImage.caption;
                             
                             // Force Vue to detect the change
                             this.$forceUpdate();
                             
                             // Update the image state in Vuex store
-                            this.$store.dispatch('updateImages', { value: page.props.images });
-                            
-                            console.log('Caption updated successfully. Current caption:', this.imageObj.caption);
+                            this.$store.dispatch('updateImages', { value: page.props.images });                            
                         } else {
                             console.error('Updated image not found in response');
                         }
@@ -243,7 +234,6 @@
                         this.showCaptionInput = false;
                     },
                     onError: (errors) => {
-                        console.log('Error: ', errors);
                         this.captionInput.isValid = false;
                     }
                 });
@@ -257,13 +247,6 @@
                     user_id: this.userId  // Backend expects this for cover photo logic
                 })
                 
-                console.log('Submitting cover photo update:', {
-                    imageId: this.imageObj.id,
-                    setAsCoverPhoto: this.isCoverPhotoStatus,
-                    route: route('photograph.update', this.imageObj.id),
-                    csrf: csrfToken ? 'present' : 'missing'
-                });
-                
                 formData.put(route('photograph.update', this.imageObj.id), {
                     preserveState: true,
                     preserveScroll: true,
@@ -272,22 +255,11 @@
                         'X-Requested-With': 'XMLHttpRequest'
                     },
                     onSuccess: (page) => {
-                        console.log('success', page.props.flash.success);
-                        console.log('Cover photo update page data:', page.props);
-                        
                         // Update the image state
                         this.$store.dispatch('updateImages', { value: page.props.images });
                         this.$emit('photoUpdated', page.props.images.find(img => img.id === this.imageObj.id));
                     },
                     onError: (errors) => {
-                        console.error('Cover photo update error:', errors);
-                        console.error('Error details:', {
-                            imageId: this.imageObj.id,
-                            attempted_status: this.isCoverPhotoStatus,
-                            csrf_token: csrfToken ? 'present' : 'missing',
-                            errors: errors
-                        });
-                        
                         // Check for CSRF error specifically
                         if (errors && (errors.message?.includes('419') || errors.status === 419)) {
                             console.error('CSRF Token Error detected. Token may be expired or invalid.');
@@ -307,7 +279,6 @@
                     preserveState: true,
                     preserveScroll: true,
                     onSuccess: (page) => {
-                        console.log('success', page.props.flash.success);
                         // Update the image state
                         this.$store.dispatch('updateImages', { value: page.props.images });
                         
@@ -318,7 +289,7 @@
                         this.$emit('photoDeleted', this.imageObj.id);
                     },
                     onError: (errors) => {
-                        console.log('Error: ', errors);
+                        // console.log('Error: ', errors);
                         alert('Failed to delete photo. Please try again.');
                     }
                 });
@@ -416,7 +387,6 @@
                     if (newImageData) {
                         // Update imageObj when prop changes
                         this.imageObj = { ...newImageData };
-                        console.log('ImageData prop changed, updated imageObj:', this.imageObj.caption);
                     }
                 },
                 deep: true

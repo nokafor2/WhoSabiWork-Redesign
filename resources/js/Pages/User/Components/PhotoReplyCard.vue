@@ -5,6 +5,7 @@
                 <div class="col-auto">
                     <div class="d-flex mt-2 mb-1 align-middle">
                         <img class="col-auto rounded-circle me-2" style="height: 25px; width: 25px;" :src="replierAvatar">
+                        <!-- <p class="col-auto mb-1">You replied</p> -->
                         <p class="col-auto mb-1">{{ replierFullName }}</p>
                     </div>
                 </div>
@@ -34,27 +35,15 @@
             return {
                 replyObj: this.replyData,
                 reply: this.replyData?.reply || '',
-                replierFullName: this.replyData?.replierFullName || '',
-                replierAvatar: this.replyData?.replierAvatar || '',
-                replyDate: this.replyData?.replyDate || '',
+                commentOwner: this.replyData?.comment_owner || [],
+                replyUser: this.replyData?.reply_user || [],
+                replierFullName: this.replyData?.replier_full_name || '',
+                replierAvatar: this.replyData?.replier_avatar || '',
+                replyDate: this.replyData?.created_at_human || '',
             }
         },
         methods: {
             
-        },
-        watch: {
-            replyData: {
-                handler(newData) {
-                    if (newData) {
-                        this.replyObj = newData;
-                        this.reply = newData.reply || '';
-                        this.replierFullName = newData.replierFullName || '';
-                        this.replierAvatar = newData.replierAvatar || '';
-                        this.replyDate = newData.replyDate || '';
-                    }
-                },
-                deep: true
-            }
         }
     }
 </script>

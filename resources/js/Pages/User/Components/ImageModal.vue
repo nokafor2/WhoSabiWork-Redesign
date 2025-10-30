@@ -32,8 +32,8 @@
 
                         <div class="col-12 rounded bg-dark text-light p-2">
                             <p class="pt-2">5 comment(s)</p>
-                            <!-- <CommentAndReplyCard v-for="index in 5" :key="index" :index="index" :replies="{}"></CommentAndReplyCard> -->
-                            <CommentAndReplyCard v-for="index in 5" :key="index" :index="index"></CommentAndReplyCard>
+                            <!-- <PhotoCommentAndReplyCard v-for="index in 5" :key="index" :index="index" :replies="{}"></PhotoCommentAndReplyCard> -->
+                            <PhotoCommentAndReplyCard v-for="index in 5" :key="index" :index="index"></PhotoCommentAndReplyCard>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -50,13 +50,13 @@
 <script>
     import MethodsMixin from '../Mixins/MethodsMixin.js';
     import CommentCard from './CommentCard.vue';
-    import CommentAndReplyCard from './CommentAndReplyCard.vue';
+    import PhotoCommentAndReplyCard from './PhotoCommentAndReplyCard.vue';
     import ErrorAlert from '@/components/UI/ErrorAlert.vue';
     import { useForm } from '@inertiajs/vue3';
 
     export default {
         mixins: [MethodsMixin],
-        components: {CommentCard, ErrorAlert, CommentAndReplyCard},
+        components: {CommentCard, ErrorAlert, PhotoCommentAndReplyCard},
         props: ['userId', 'imageId', 'imgSrc', 'uniqueId', 'caption', 'photoType', 'isCoverPhoto'],
         emits: ['photoDeleted', 'photoUpdated'],
         data() {

@@ -30,7 +30,7 @@ class Comment extends Model
         return $this->hasMany(Reply::class);
     }
 
-    // Add a local query scope to sort the addresses according the newest
+    // Add a local query scope to sort by newest
     public function scopeNewest(Builder $query) {
         return $query->orderBy(static::CREATED_AT, 'desc');
     }

@@ -132,13 +132,13 @@
             <!-- Contents for Customers Comments -->
             <div v-if="businessAccount" class="tab-pane fade" id="customersComments" role="tabpanel" aria-labelledby="customersComments-tab" tabindex="0">
                 <div class="row justify-content-center">
-                    <div class="col-md-10 col-xl-8 rounded text-light pb-3" style="background-color: #040D14">
-                        <p class="pt-2">5 comment(s)</p>
-                        <CommentAndReplyCard :index="3" :replies="{}"></CommentAndReplyCard>
-                        
-                        <CommentAndReplyCard :index="5" :replies="replies"></CommentAndReplyCard>
-                        
-                        <CommentAndReplyCard :index="10" :replies="{}"></CommentAndReplyCard>
+                    <div class="col-md-10 col-xl-8 rounded pb-3">  <!-- style="background-color: #040D14" -->
+                        <p class="pt-2">{{ customerCommentsAndRepliesData.commentsCount }} comment(s)</p>
+                        <CommentAndReplyCard 
+                            v-for="comment in customerCommentsAndRepliesData.commentsAndReplies" 
+                            :key="comment.id" 
+                            :commentReplies="comment">
+                        </CommentAndReplyCard>
                     </div>
                 </div>
             </div>
@@ -147,7 +147,7 @@
             <!-- Contents for My Comments -->
             <div class="tab-pane fade" id="yourComments" role="tabpanel" aria-labelledby="yourComments-tab" tabindex="0">
                 <div class="row justify-content-center">
-                    <div class="col-md-10 col-xl-8 rounded text-light pb-3" >  <!-- style="background-color: #040D14" -->
+                    <div class="col-md-10 col-xl-8 rounded pb-3" >  <!-- style="background-color: #040D14" -->
                         <p class="pt-2 text-body">5 comment(s)</p>
                         <CommentCard v-for="index in 5" :key="index" :index="index"></CommentCard>
                     </div>
@@ -241,6 +241,7 @@
     import VehicleCategorySection from './Components/VehicleCategorySection.vue';
     import BusinessPageSection from './Components/BusinessPageSection.vue';
     import ImageCard from './Components/ImageCard.vue';
+    import PhotoCommentAndReplyCard from './Components/PhotoCommentAndReplyCard.vue';
     import CommentAndReplyCard from './Components/CommentAndReplyCard.vue';
     import PhotoUpload from './Components/PhotoUpload.vue';
     import DateAndTimeSelect from './Components/DateAndTimeSelect.vue';
@@ -259,28 +260,25 @@
             StateSection, TownSection, BusinessCategorySection, BusinessDescriptionSection, 
             ArtisansSection, MobileMarketSection, TechnicalServiceSection, SparePartSection,
             CarBrandsSection, BusBrandsSection, TruckBrandsSection, VehicleCategorySection,
-            BusinessPageSection, ImageCard, CommentAndReplyCard, PhotoUpload, DateAndTimeSelect,
-            UserAvailability, AppointmentDetails2
+            BusinessPageSection, ImageCard, PhotoCommentAndReplyCard, PhotoUpload, DateAndTimeSelect,
+            UserAvailability, AppointmentDetails2, CommentAndReplyCard
         },
         mixins: [MethodsMixin],
         props: ['user', 'userCategories', 'techVehCategories', 'sPartVehCategories', 'vehicleBrands', 
             'allArtisans', 'allProducts', 'allTechnicalServices', 'allSpareParts', 'allVehicleCategories', 
             'allCarBrands', 'allBusBrands', 'allTruckBrands', 'schedules', 'neutralAppointments', 
             'acceptedAppointments', 'declinedAppointments', 'cancelledAppointments', 'neutralAppointmentsSchdlr', 
-            'acceptedAppointmentsSchdlr', 'declinedAppointmentsSchdlr', 'cancelledAppointmentsSchdlr', 'images'
+            'acceptedAppointmentsSchdlr', 'declinedAppointmentsSchdlr', 'cancelledAppointmentsSchdlr', 'images', 
+            'customerCommentsAndReplies'
         ],
         emits: [],
         data() {
             return {
                 adImages: ['photoSample', 'photoSample1', 'photoSample2', 'photoSample3', 'photoSample4', 'photoSample5', 'photoSample6', 'photoSample7', 'photoSample8', 'photoSample9', 'photoSample10', 'photoSample11', 'photoSample12', 'photoSample13', 'photoSample14', 'photoSample15', 'photoSample16', 'photoSample17', 'photoSample18', 'photoSample19', 'photoSample20'],
-                replies: {
-                    0: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Illo modi vero laboriosam suscipit! Enim reiciendis sunt debitis, ipsa sit ipsam amet obcaecati! Assumenda harum ipsam natus iste explicabo eos nemo?',
-                    1: 'Lorem, ipsum dolor sit amet consectetur adipisicing elit. Ea quia magni illo ipsam est ducimus accusantium quisquam libero ut soluta similique, natus molestiae voluptas architecto? Inventore excepturi aliquid soluta placeat!',
-                    2: 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ad cumque adipisci possimus voluptatum? Asperiores labore, adipisci id nostrum ab ut voluptatum accusantium? Nulla similique ut aspernatur laudantium. Debitis, vitae nostrum.'
-                },
                 page: usePage(),
                 schedules2: this.schedules,
                 neutralAppointments2: this.neutralAppointments,
+                customerCommentsAndReplies2: this.customerCommentsAndReplies,
             }
         },
         methods: {
@@ -344,6 +342,9 @@
             },
             imagesData() {
                 return this.$store.getters.getImages;
+            },
+            customerCommentsAndRepliesData() {
+                return this.$store.getters.getCustomerCommentsAndReplies;
             },
             flashSuccess() {
                 return this.page.props.flash.success;
@@ -486,6 +487,7 @@
         mounted() {
             this.$store.dispatch('updateImages', { value: this.images });
             this.$store.dispatch('updateUser', { value: this.user });
+            this.$store.dispatch('updateCustomerCommentsAndReplies', { value: this.customerCommentsAndReplies });
         }
     }
 </script>

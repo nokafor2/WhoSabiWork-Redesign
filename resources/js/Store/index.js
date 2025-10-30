@@ -15,6 +15,7 @@ const store = createStore({
             spareParts: [],
             images: [],
             user: [],
+            customerCommentsAndReplies: [],
         };
     },
     mutations: {
@@ -36,6 +37,9 @@ const store = createStore({
         updateUser(state, payload) {
             state.user = payload.value;
         },
+        updateCustomerCommentsAndReplies(state, payload) {
+            state.customerCommentsAndReplies = payload.value;
+        },
     },
     actions: {
         updateProducts(context, payload) {
@@ -56,6 +60,9 @@ const store = createStore({
         updateUser(context, payload) {
             context.commit('updateUser', payload);
         },
+        updateCustomerCommentsAndReplies(context, payload) {
+            context.commit('updateCustomerCommentsAndReplies', payload);
+        },
     },
     getters: {
         getProducts(state) {
@@ -75,6 +82,9 @@ const store = createStore({
         },
         getUser(state) {
             return state.user;
+        },
+        getCustomerCommentsAndReplies(state) {
+            return state.customerCommentsAndReplies;
         },
     }
 });

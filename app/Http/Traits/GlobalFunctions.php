@@ -961,6 +961,90 @@ trait GlobalFunctions {
 
         return $photographs;
     }
+
+    public function getCustomerCommentsAndReplies($user) {
+        // Get customer comments with replies and related users included
+        $comments = $user->comments()
+            ->latest()
+            ->with([
+                'replies' => function ($query) {
+                    $query->latest(); // Order replies by latest first
+                },
+                'replies.replyUser', // Load reply user details
+                'user', // Load comment owner
+                'commentUser' // Load the user being commented about
+            ])
+            ->get();
+        
+        $commentsArray = array();
+        $commentsCount = $comments->count();
+        
+        // Process each comment with its replies
+        $comments->each(function ($comment) use(&$commentsArray) {
+            // Get commenter details
+            $commenterFullName = $comment->commentUser ? 
+                $comment->commentUser->first_name . ' ' . $comment->commentUser->last_name : 'Unknown';
+            
+            $commenterAvatar = null;
+            if ($comment->commentUser) {
+                $avatar = $comment->commentUser->photographs()
+                    ->where('photo_type', 'avatar')
+                    ->latest()
+                    ->first();
+                $commenterAvatar = $avatar ? asset('storage/' . $avatar->path) : null;
+            }
+            
+            $commentDate = $comment->created_at->diffForHumans();
+            
+            // Process replies for this comment
+            $repliesArray = array();
+            if ($comment->replies) {
+                $comment->replies->each(function ($reply) use(&$repliesArray) {
+                    if ($reply->replyUser) {
+                        // Get replier details
+                        $replierFullName = $reply->replyUser->first_name . ' ' . $reply->replyUser->last_name;
+                        
+                        // Get replier avatar
+                        $replierAvatar = null;
+                        $avatar = $reply->replyUser->photographs()
+                            ->where('photo_type', 'avatar')
+                            ->latest()
+                            ->first();
+                        $replierAvatar = $avatar ? asset('storage/' . $avatar->path) : null;
+                        
+                        // Get reply date
+                        $replyDate = $reply->created_at->diffForHumans();
+                        
+                        $repliesArray[] = [
+                            'id' => $reply->id,
+                            'replierFullName' => $replierFullName,
+                            'replierAvatar' => $replierAvatar,
+                            'replyDate' => $replyDate,
+                            'reply' => $reply->body,
+                            'commentId' => $reply->comment_id,
+                        ];
+                    }
+                });
+            }
+            
+            $commentsArray[] = [
+                'id' => $comment->id,
+                'commenterFullName' => $commenterFullName,
+                'commenterAvatar' => $commenterAvatar,
+                'entrepreneurId' => $comment->user_id,
+                'commenterId' => $comment->user_id_comment,
+                'commentDate' => $commentDate,
+                'comment' => $comment->body,
+                'replies' => $repliesArray,
+                'repliesCount' => count($repliesArray),
+            ];
+        });
+        
+        return [
+            'commentsAndReplies' => $commentsArray,
+            'commentsCount' => $commentsCount,
+        ];
+    }
 }
 
 ?>

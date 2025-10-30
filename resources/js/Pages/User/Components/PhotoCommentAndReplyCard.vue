@@ -11,6 +11,7 @@
         </div>
         <p class="col-12 bg-white text-body rounded">
             {{ comment }}
+            <!-- Lorem ipsum dolor sit amet consectetur adipisicing elit. Illo modi vero laboriosam suscipit! Enim reiciendis sunt debitis, ipsa sit ipsam amet obcaecati! Assumenda harum ipsam natus iste explicabo eos nemo? -->
         </p>
         <div class="d-flex justify-content-end">
             <button class="btn btm-sm border border-light text-light" style="background-color: #040D14" @click="toggleReplyForm">Reply</button>
@@ -49,35 +50,37 @@
         </div>
 
         <!-- reply -->
-        <ReplyCard v-for="(reply, index) in replies" :key="index" :replyData="reply"></ReplyCard>
+        <PhotoReplyCard v-for="(reply, index) in replies" :key="index" :replyData="reply"></PhotoReplyCard>
     </div>
 </template>
 
 
 <script>
     import MethodsMixin from '../Mixins/MethodsMixin.js';
-    import ReplyCard from './ReplyCard.vue';
+    import PhotoReplyCard from './PhotoReplyCard.vue';
     import { useForm } from '@inertiajs/vue3';
     
     export default {
-        components: {ReplyCard},
+        components: {PhotoReplyCard},
         mixins: [MethodsMixin],
         props: {
             commentReplies: {
                 type: Object,
-                default: () => ({}) 
+                default: () => ({})
             }
         },
+        emits: ['reply-added'],
         data() {
             return {
-                replies: this.commentReplies?.replies || [],
+                replies: this.commentReplies?.photograph_replies || [],
                 commentId: this.commentReplies?.id || '',
                 comment: this.commentReplies?.comment || '',
-                entrepreneurId: this.commentReplies?.entrepreneurId || '',
-                commentUserId: this.commentReplies?.commenterId || '',
-                commenterFullName: this.commentReplies?.commenterFullName || '',
-                commenterAvatar: this.commentReplies?.commenterAvatar || '',
-                commentDate: this.commentReplies?.commentDate || '',
+                photographId: this.commentReplies?.photograph_id || '',
+                commentUserId: this.commentReplies?.user_id_comment || '',
+                commentUser: this.commentReplies?.comment_user || [],
+                commenterFullName: this.commentReplies?.commenter_full_name || '',
+                commenterAvatar: this.commentReplies?.commenter_avatar || '',
+                commentDate: this.commentReplies?.created_at_human || '',
                 showReplyForm: false,
                 replyMessage: {
                     val: '',
@@ -86,8 +89,9 @@
                 },
                 formData: useForm({
                     comment_id: this.commentReplies?.id || '',
+                    photograph_id: this.commentReplies?.photograph_id || '',
                     user_id_comment: this.commentReplies?.user_id_comment || '',
-                    body: ''
+                    reply: ''
                 })
             }
         },
@@ -146,15 +150,16 @@
                 
                 // Update form data with current values
                 this.formData.comment_id = this.commentId;
+                this.formData.photograph_id = this.photographId;
                 this.formData.user_id_comment = this.commentUserId;
-                this.formData.body = this.replyMessage.val.trim();
+                this.formData.reply = this.replyMessage.val.trim();
 
-                this.formData.post(route('reply.store'), {
+                this.formData.post(route('photographreply.store'), {
                     preserveScroll: true,
                     onSuccess: (page) => {
-                        // Update the customer comments and replies state in Vuex
-                        if (page.props.customerCommentsAndReplies) {
-                            this.$store.dispatch('updateCustomerCommentsAndReplies', { value: page.props.customerCommentsAndReplies });
+                        // Update the image state
+                        if (page.props.images) {
+                            this.$store.dispatch('updateImages', { value: page.props.images });
                         }
 
                         // Hide the reply form
@@ -165,32 +170,31 @@
                         this.replyMessage.isValid = true;
                         this.replyMessage.errorMessage = '';
                         // Reset the form reply field
-                        this.formData.body = '';
-
-                        // Add the new reply to the local replies array for immediate UI update
+                        this.formData.reply = '';
+                        
+                        // Add the reply to the replies array via parent component
                         if (page.props.flash?.success) {
                             const replyData = page.props.flash.success;
                             
-                            // Add reply to the beginning of the replies array
-                            this.replies.unshift(replyData);
+                            // Emit event to parent component (ImageCard) to update imageObj
+                            // The watcher will automatically update this.replies when the parent updates
+                            this.$emit('reply-added', {
+                                photographId: replyData.photograph_id,
+                                commentId: replyData.comment_id,
+                                replyData: replyData
+                            });
                         }
                     },
                     onError: (errors) => {
-                        this.replyMessage.isValid = false;
-                        this.replyMessage.errorMessage = errors.body ? errors.body[0] : 'Failed to submit reply';
+                        // Show validation error from server
+                        if (errors.reply) {
+                            this.replyMessage.isValid = false;
+                            this.replyMessage.errorMessage = errors.reply;
+                        }
                     }
                 });
-            }
-        },
-        watch: {
-            'commentReplies.replies': {
-                handler(newReplies) {
-                    if (newReplies) {
-                        this.replies = newReplies;
-                    }
-                },
-                deep: true
             }
         }
     }
 </script>
+

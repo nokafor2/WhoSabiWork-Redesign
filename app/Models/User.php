@@ -59,6 +59,10 @@ class User extends Authenticatable
         return $this->hasMany('App\Models\Comment')->newest();
     }
 
+    public function commentsGiven() {
+        return $this->hasMany('App\Models\Comment', 'user_id_comment');
+    }
+
     public function photographs() {
         // return $this->hasMany('App\Models\Photograph');
         return $this->hasOne('App\Models\Photograph');
@@ -175,9 +179,6 @@ class User extends Authenticatable
 
     public function fullName($id) {
         $user = self::find($id);
-
-        // using query form
-        // $user = User::select('id', 'first_name', 'last_name')->find($id);
 
         return $user->first_name." ".$user->last_name;
     }

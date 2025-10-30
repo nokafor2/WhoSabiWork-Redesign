@@ -9,6 +9,7 @@ use App\Http\Controllers\BusBrandController;
 use App\Http\Controllers\BusinessCategoryController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\CarBrandController;
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\ContactUsController;
 use App\Http\Controllers\DeleteTemporaryImageController;
 use App\Http\Controllers\EntrepreneurController;
@@ -18,6 +19,7 @@ use App\Http\Controllers\PhotographController;
 use App\Http\Controllers\PhotographDislikeController;
 use App\Http\Controllers\PhotographLikeController;
 use App\Http\Controllers\PhotographReplyController;
+use App\Http\Controllers\ReplyController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\SparePartController;
 use App\Http\Controllers\TechnicalServiceController;
@@ -99,6 +101,10 @@ Route::resource('vehiclecategory', VehicleCategoryController::class)->only('upda
 Route::resource('photograph', PhotographController::class)->only('index', 'store', 'create', 'update', 'destroy');
 Route::get('/photograph/user/{user}', [PhotographController::class, 'getUserPhotographs'])->name('photograph.user');
 Route::post('/cleanup-temp-files', [PhotographController::class, 'cleanupOldTempFiles'])->name('cleanup.temp.files');
+
+Route::resource('comment', CommentController::class)->only('index', 'store', 'create', 'update', 'destroy');
+
+Route::resource('reply', ReplyController::class)->only('index', 'store', 'create', 'update', 'destroy');
 
 Route::resource('photographcomment', PhotographCommentController::class)->only('index', 'store', 'create', 'update', 'destroy');
 
