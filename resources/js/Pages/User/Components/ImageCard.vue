@@ -48,7 +48,7 @@
                         </div>
                         
                         <!-- Action Buttons -->
-                        <div class="d-flex flex-wrap gap-2 mb-3">
+                        <div v-if="isProfilePage" class="d-flex flex-wrap gap-2 mb-3">
                             <button @click="toggleCaptionInput" class="btn btn-primary btn-sm">
                                 <i class="fas fa-edit me-1"></i>
                                 {{ showCaptionInput ? 'Cancel Edit' : 'Edit Caption' }}
@@ -148,10 +148,11 @@
     export default {
         mixins: [MethodsMixin],
         components: {CommentCard, ErrorAlert, PhotoCommentAndReplyCard},
-        props: ['imageData'],
+        props: ['imageData', 'pageName'],
         emits: ['photoDeleted', 'photoUpdated'],
         data() {
             return {
+                pageName: this.pageName,
                 userId: this.imageData.user_id,
                 categoryInput: [],
                 uniqueId: null,
@@ -378,6 +379,13 @@
             },
             displayCaption() {
                 return this.imageObj?.caption || 'No caption provided';
+            },
+            isProfilePage() {
+                if (this.pageName === 'profilePage') {
+                    return true;
+                } else {
+                    return false;
+                }
             }
         },
         watch: {

@@ -313,7 +313,7 @@ class UserController extends Controller
         $allCarBrands = $this->getTableColumnsWithSort($carBrand->table, CarBrand::$columnsToExclude);
         $allBusBrands = $this->getTableColumnsWithSort($busBrand->table, BusBrand::$columnsToExclude);
         $allTruckBrands = $this->getTableColumnsWithSort($truckBrand->table, TruckBrand::$columnsToExclude);
-        $images = $this->getPhotoghaphsCommentsReplies($user);
+        $images = $this->getPhotographsCommentsReplies($user);
         $customerCommentsAndReplies = $this->getCommentsAndReplies($user, 'customer');
         $entrepreneurCommentsAndReplies = $this->getCommentsAndReplies($user, 'entrepreneur');
         

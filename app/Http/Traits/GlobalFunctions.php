@@ -573,6 +573,8 @@ trait GlobalFunctions {
             'vehicleBrands' => $refVehBrand,
             'userRating' => $userRating,
             'datesAvailable' => $this->getAvailabilityDates($userId),
+            'galleryPhotos' => $this->getPhotographsCommentsReplies(User::find($foundUser['id'])),
+            'commentsAndReplies' => $this->getCommentsAndReplies(User::find($foundUser['id']), 'customer'),
         ];
     }
 
@@ -902,7 +904,7 @@ trait GlobalFunctions {
         }
     }
 
-    public function getPhotoghaphsCommentsReplies($user) {
+    public function getPhotographsCommentsReplies($user) {
         // old code:
         // return $user->photographs()->withCount(['activeLikes', 'activeDislikes'])->whereIn('photo_type', ['cover photo', 'gallery'])->latest()->with(['photographComments', 'photographComments.photographReplies'])->get();
         
