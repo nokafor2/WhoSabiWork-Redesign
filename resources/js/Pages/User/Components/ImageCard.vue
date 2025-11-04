@@ -1,5 +1,5 @@
 <template>
-    <div class="card m-3 shadow" style="width: 200px;">
+    <div class="card m-3 shadow image-card-container">
         <div class="image-container" @click="openModal">
             <img :src="imageObj.src" class="card-image" alt="">
         </div>
@@ -96,6 +96,39 @@
                             </div>
                         </div>
 
+                        <!-- Comment Form -->
+                        <div v-if="isEntrepreneurPage" class="mb-4">
+                            <div class="card bg-secondary">
+                                <div class="card-header">
+                                    <h6 class="mb-0"><i class="fas fa-edit me-2"></i>Make Comment</h6>
+                                </div>
+                                <div class="card-body">
+                                    <form @submit.prevent="submitPhotoComment">
+                                        <div class="mb-3">
+                                            <textarea 
+                                                class="form-control bg-dark text-light border-secondary" 
+                                                placeholder="Enter your comment" 
+                                                rows="1" 
+                                                v-model="commentInput.val"
+                                                :class="{'is-invalid': !commentInput.isValid}"
+                                            ></textarea>
+                                            <div v-if="!commentInput.isValid" class="invalid-feedback">
+                                                Comment is required
+                                            </div>
+                                        </div>
+                                        <div class="d-flex justify-content-end gap-2">
+                                            <button type="button" class="btn btn-secondary btn-sm" @click="cancelCommentEdit">
+                                                <i class="fas fa-times me-1"></i>Cancel
+                                            </button>
+                                            <button type="submit" class="btn btn-success btn-sm">
+                                                <i class="fas fa-save me-1"></i>Comment
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
                         <!-- Comments Section -->
                         <div class="card bg-secondary">
                             <div class="card-header d-flex justify-content-between align-items-center">
@@ -152,19 +185,26 @@
         emits: ['photoDeleted', 'photoUpdated'],
         data() {
             return {
+                imageObj: this.imageData,
                 pageName: this.pageName,
                 userId: this.imageData.user_id,
                 categoryInput: [],
                 uniqueId: null,
                 isModalOpen: false,
                 showCaptionInput: false,
+                showCommentInput: false,
                 captionInput: {
+                    val: '',
+                    isValid: true
+                },
+                commentInput: {
                     val: '',
                     isValid: true
                 },
                 userLiked: false,
                 userDisliked: false,
-                imageObj: this.imageData,
+                ownerLiked: this.imageData?.ownerLiked || false,
+                ownerDisliked: this.imageData?.ownerDisliked || false,
                 likes: this.imageData?.active_likes_count || 0,
                 dislikes: this.imageData?.active_dislikes_count || 0,
                 commentCount: this.imageData?.photograph_comments?.length || 0,
@@ -188,7 +228,9 @@
                 document.body.style.overflow = '';
                 // Reset form states
                 this.showCaptionInput = false;
+                this.showCommentInput = false;
                 this.captionInput.val = this.imageObj?.caption || '';
+                this.commentInput.val = this.imageObj?.comment || '';
                 this.captionInput.isValid = true;
             },
             toggleCaptionInput() {
@@ -202,6 +244,47 @@
                 this.captionInput.val = this.imageObj?.caption || '';
                 this.captionInput.isValid = true;
             },
+            cancelCommentEdit() {
+                this.showCommentInput = false;
+                this.commentInput.val = this.imageObj?.comment || '';
+                this.commentInput.isValid = true;
+            },
+            submitPhotoComment() {
+                if (!this.commentInput.val.trim()) {
+                    this.commentInput.isValid = false;
+                    return;
+                }
+
+                const formData = useForm({
+                    photograph_id: this.imageObj.id,
+                    photograph_user_id: this.userId,
+                    comment: this.commentInput.val
+                })
+                formData.post(route('photographcomment.store'), {
+                    preserveScroll: true,
+                    onSuccess: (page) => {
+                        console.log('success', page.props.flash.success);
+                        console.log('Updated page data:', page.props);
+
+                        // Update the comment count
+                        this.commentCount = page.props.flash.success.commentCount;
+
+                        // Update the image state in Vuex store
+                        this.$store.dispatch('updateGalleryPhotos', { value: page.props.entrepreneur.galleryPhotos });
+
+                        // Force Vue to detect the change
+                        this.$forceUpdate();
+
+                        // Reset the comment input
+                        this.commentInput.val = '';
+                        this.commentInput.isValid = true;
+                    },
+                    onError: (errors) => {
+                        console.log('Error: ', errors);
+                        this.commentInput.val = '';
+                    }
+                });
+            },
             submitCaption() {
                 if (!this.captionInput.val.trim()) {
                     this.captionInput.isValid = false;
@@ -210,7 +293,7 @@
 
                 const formData = useForm({
                     caption: this.captionInput.val
-                })
+                });
                 
                 formData.put(route('photograph.update', this.imageObj.id), {
                     preserveScroll: true,
@@ -226,7 +309,7 @@
                             this.$forceUpdate();
                             
                             // Update the image state in Vuex store
-                            this.$store.dispatch('updateImages', { value: page.props.images });                            
+                            this.$store.dispatch('updateGalleryPhotos', { value: page.props.galleryPhotos });                            
                         } else {
                             console.error('Updated image not found in response');
                         }
@@ -257,7 +340,7 @@
                     },
                     onSuccess: (page) => {
                         // Update the image state
-                        this.$store.dispatch('updateImages', { value: page.props.images });
+                        this.$store.dispatch('updateGalleryPhotos', { value: page.props.galleryPhotos });
                         this.$emit('photoUpdated', page.props.images.find(img => img.id === this.imageObj.id));
                     },
                     onError: (errors) => {
@@ -281,7 +364,7 @@
                     preserveScroll: true,
                     onSuccess: (page) => {
                         // Update the image state
-                        this.$store.dispatch('updateImages', { value: page.props.images });
+                        this.$store.dispatch('updateGalleryPhotos', { value: page.props.galleryPhotos });
                         
                         // Close the modal immediately after successful deletion
                         this.closeModal();
@@ -296,30 +379,110 @@
                 });
             },
             toggleLike() {
-                this.userLiked = !this.userLiked;
-                if (this.userLiked) {
-                    this.likes++;
-                    if (this.userDisliked) {
-                        this.userDisliked = false;
-                        this.dislikes--;
+                // Check if user is authenticated
+                // if (!this.isAuthenticated) {
+                //     alert('Please login to like this photo.');
+                //     return;
+                // }
+
+                // Check if user has liked the photo before
+                const formData = useForm({
+                    photograph_id: this.imageObj.id,
+                    photograph_user_id: this.userId,
+                    like: !this.userLiked
+                });
+                formData.post(route('photographlike.store'), {
+                    preserveScroll: true,
+                    onSuccess: (page) => {
+                        // console.log('Like success:', page.props.flash.success);
+                        
+                        if (page.props.flash.success) {
+                            const response = page.props.flash.success;
+                            // Update galleryPhoto in Vuex store
+                            if (this.pageName === 'entrepreneur') {
+                                this.$store.dispatch('updateGalleryPhotos', { value: page.props.entrepreneur.galleryPhotos });
+                            } else if (this.pageName === 'profilePage') {
+                                this.$store.dispatch('updateGalleryPhotos', { value: page.props.galleryPhotos });
+                            }
+
+                            // Update like status from server response
+                            this.userLiked = response.like;
+                            
+                            // Update dislike status from server response
+                            this.userDisliked = response.dislike;
+                            
+                            // Update counts based on the new status
+                            if (response.like) {
+                                this.likes++;
+                            } else {
+                                this.likes--;
+                            }
+                            
+                            if (response.dislike) {
+                                this.dislikes++;
+                            } else {
+                                this.dislikes--;
+                            }
+                        }
+                    },
+                    onError: (errors) => {
+                        console.error('Like error:', errors);
                     }
-                } else {
-                    this.likes--;
-                }
-                // Here you would typically send an API request to update the backend
+                });
             },
             toggleDislike() {
-                this.userDisliked = !this.userDisliked;
-                if (this.userDisliked) {
-                    this.dislikes++;
-                    if (this.userLiked) {
-                        this.userLiked = false;
-                        this.likes--;
+                // Check if user is authenticated
+                // if (!this.isAuthenticated) {
+                //     alert('Please login to dislike this photo.');
+                //     return;
+                // }
+                
+                // Check if user has disliked the photo before
+                const formData = useForm({
+                    photograph_id: this.imageObj.id,
+                    photograph_user_id: this.userId,
+                    dislike: !this.userDisliked
+                });
+
+                formData.post(route('photographdislike.store'), {
+                    preserveScroll: true,
+                    onSuccess: (page) => {
+                        // console.log('Dislike success:', page.props.flash.success);
+                        
+                        if (page.props.flash.success) {
+                            const response = page.props.flash.success;
+                            
+                            // Update galleryPhoto in Vuex store
+                            if (this.pageName === 'entrepreneur') {
+                                this.$store.dispatch('updateGalleryPhotos', { value: page.props.entrepreneur.galleryPhotos });
+                            } else if (this.pageName === 'profilePage') {
+                                this.$store.dispatch('updateGalleryPhotos', { value: page.props.galleryPhotos });
+                            }
+                            
+                            // Update dislike status from server response
+                            this.userDisliked = response.dislike;
+                            
+                            // Update like status from server response
+                            this.userLiked = response.like;
+                            
+                            // Update counts based on the new status
+                            if (response.dislike) {
+                                this.dislikes++;
+                            } else {
+                                this.dislikes--;
+                            }
+                            
+                            if (response.like) {
+                                this.likes++;
+                            } else {
+                                this.likes--;
+                            }
+                        }
+                    },
+                    onError: (errors) => {
+                        console.error('Dislike error:', errors);
                     }
-                } else {
-                    this.dislikes--;
-                }
-                // Here you would typically send an API request to update the backend
+                });
             },
             sharePhoto() {
                 if (navigator.share) {
@@ -386,6 +549,16 @@
                 } else {
                     return false;
                 }
+            },
+            isEntrepreneurPage() {
+                if (this.pageName === 'entrepreneur') {
+                    return true;
+                } else {
+                    return false;
+                }
+            },
+            isAuthenticated() {
+                return this.$store.getters.getIsAuthenticated;
             }
         },
         watch: {
@@ -404,6 +577,11 @@
 </script>
 
 <style scoped>
+/* Image card container - responsive width */
+.image-card-container {
+    width: 200px;
+}
+
 /* Image container for centering within card */
 .image-container {
     display: flex;
@@ -618,8 +796,13 @@
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
+    .image-card-container {
+        width: calc(100vw - 2rem); /* Full width minus margins */
+        margin: 0.5rem 1rem;
+    }
+    
     .image-container {
-        height: 150px; /* Slightly smaller on mobile */
+        height: 250px; /* Taller on tablet */
     }
     
     .custom-modal-overlay {
@@ -658,6 +841,15 @@
 }
 
 @media (max-width: 576px) {
+    .image-card-container {
+        width: calc(100vw - 1rem); /* Full width on mobile with minimal margins */
+        margin: 0.5rem 0.5rem;
+    }
+    
+    .image-container {
+        height: 200px; /* Optimized height for mobile */
+    }
+    
     .custom-modal-overlay {
         padding: 0.25rem;
     }

@@ -313,7 +313,7 @@ class UserController extends Controller
         $allCarBrands = $this->getTableColumnsWithSort($carBrand->table, CarBrand::$columnsToExclude);
         $allBusBrands = $this->getTableColumnsWithSort($busBrand->table, BusBrand::$columnsToExclude);
         $allTruckBrands = $this->getTableColumnsWithSort($truckBrand->table, TruckBrand::$columnsToExclude);
-        $images = $this->getPhotographsCommentsReplies($user);
+        $galleryPhotos = $this->getPhotographsCommentsReplies($user);
         $customerCommentsAndReplies = $this->getCommentsAndReplies($user, 'customer');
         $entrepreneurCommentsAndReplies = $this->getCommentsAndReplies($user, 'entrepreneur');
         
@@ -353,7 +353,7 @@ class UserController extends Controller
                 'acceptedAppointmentsSchdlr' => $this->getAppointments('accepted', null, $user->id),
                 'declinedAppointmentsSchdlr' => $this->getAppointments('declined', null, $user->id),
                 'cancelledAppointmentsSchdlr' => $this->getAppointments('cancelled', null, $user->id),
-                'images' => $images,
+                'galleryPhotos' => $galleryPhotos,
                 'customerCommentsAndReplies' => $customerCommentsAndReplies,
                 'entrepreneurCommentsAndReplies' => $entrepreneurCommentsAndReplies,
             ]);

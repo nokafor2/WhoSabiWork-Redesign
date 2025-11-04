@@ -6,7 +6,7 @@
     <div class="row justify-content-center">
         <div class="col-sm-6 col-md-5 py-3">
             <!-- Login Method Toggle -->
-            <div class="mb-3">
+            <!-- <div class="mb-3">
                 <div class="btn-group w-100" role="group">
                     <button 
                         type="button" 
@@ -26,7 +26,7 @@
                 <small class="text-muted d-block mt-1">
                     {{ loginMethod === 'web' ? 'Traditional session-based login' : 'Token-based API authentication' }}
                 </small>
-            </div>
+            </div> -->
 
             <!-- Success/Error Messages -->
             <div v-if="page.props.flash.success" class="alert alert-success">
@@ -185,6 +185,14 @@
                 page: usePage(),
             }
         },
+        mounted() {
+            // Initialize authentication state based on page props
+            if (this.pageUser) {
+                this.$store.dispatch('updateIsAuthenticated', { value: true });
+            } else {
+                this.$store.dispatch('updateIsAuthenticated', { value: false });
+            }
+        },
         methods: {
             async submitForm() {
                 this.loading = true;
@@ -220,6 +228,11 @@
                     console.log('API Login successful:', result);
                     this.apiSuccess = `Welcome back, ${result.user.first_name}! You are now authenticated via API using your ${this.inputTypeDetected.toLowerCase()}.`;
                     
+                    // Update authentication state in Vuex store
+                    this.$store.dispatch('updateIsAuthenticated', { value: true });
+                    
+                    console.log('User authenticated in Vuex store');
+                    
                     // Clear form
                     this.clearForm();
                     
@@ -241,6 +254,11 @@
                     preserveScroll: true,
                     onSuccess: (page) => {
                         console.log('Web login successful:', page);
+                        
+                        // Update authentication state in Vuex store
+                        this.$store.dispatch('updateIsAuthenticated', { value: true });
+                        
+                        console.log('User authenticated in Vuex store');
                     },
                     onError: (errors) => {
                         console.log('Web login error:', errors);
@@ -255,6 +273,12 @@
             async handleApiLogout() {
                 try {
                     await this.apiLogout();
+                    
+                    // Update authentication state in Vuex store
+                    this.$store.dispatch('updateIsAuthenticated', { value: false });
+                    
+                    console.log('User logged out, authentication state updated');
+                    
                     this.apiSuccess = 'Successfully logged out from API.';
                     this.clearForm();
                 } catch (error) {

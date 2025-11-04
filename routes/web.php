@@ -124,9 +124,7 @@ Route::post('userlogin', [AuthController::class, 'store'])->name('login.store');
 
 Route::delete('userlogout', [AuthController::class, 'destroy'])->name('logout');
 
-// Route::post('/posts', StorePostController::class); Use photograph controller
 Route::post('/upload', UploadTemporaryImageController::class);
-// Route::post('/revert/{folder}', DeleteTemporaryImageController::class)->name('deleteImage');
 Route::post('/revert', DeleteTemporaryImageController::class)->name('deleteimage');
 
 // Avatar routes (require authentication)

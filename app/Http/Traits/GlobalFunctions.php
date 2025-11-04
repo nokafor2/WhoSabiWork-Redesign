@@ -15,6 +15,7 @@ use App\Models\User;
 use App\Models\UsersAppointment;
 use App\Models\UsersAvailability;
 use App\Models\VehicleCategory;
+use App\Models\Photograph;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Builder;
@@ -904,9 +905,11 @@ trait GlobalFunctions {
         }
     }
 
+    // Get the photographs with comments, replies, and commenter details for a user
     public function getPhotographsCommentsReplies($user) {
-        // old code:
-        // return $user->photographs()->withCount(['activeLikes', 'activeDislikes'])->whereIn('photo_type', ['cover photo', 'gallery'])->latest()->with(['photographComments', 'photographComments.photographReplies'])->get();
+        // Get the authenticated user ID (if any)
+        $userId = $user->id;
+        $authUserId = \Illuminate\Support\Facades\Auth::id();
         
         // Get photographs with comments, replies, and commenter details
         $photographs = $user->photographs()
@@ -914,17 +917,33 @@ trait GlobalFunctions {
             ->whereIn('photo_type', ['cover photo', 'gallery'])
             ->latest()
             ->with([
+                'photographComments' => function ($query) {
+                    $query->latest(); // Order comments by latest first
+                },
                 'photographComments.commentUser', // Load the commenter user details
                 'photographComments.photographReplies' => function ($query) {
                     $query->latest(); // Order replies by latest first
                 },
                 'photographComments.photographReplies.replyUser', // Load the reply user details
-                'photographComments.photographReplies.commentOwner' // Load the comment owner details
+                'photographComments.photographReplies.commentOwner', // Load the comment owner details
+                'photographLikes', // Load all likes for checking user's like status
+                'photographDislikes' // Load all dislikes for checking user's dislike status
             ])
             ->get();
 
-        // Process each photograph to append commenter details
-        $photographs->each(function ($photograph) {
+        // Process each photograph to append commenter details and like/dislike status
+        $photographs->each(function ($photograph) use ($userId) {
+            // Check if the user has liked or disliked this photograph
+            $userLike = $photograph->photographLikes->where('user_id', $userId)->where('like', 1)->first();
+            $photograph->ownerLiked = $userLike ? true : false;
+            
+            $userDislike = $photograph->photographDislikes->where('user_id', $userId)->where('dislike', 1)->first();
+            $photograph->ownerDisliked = $userDislike ? true : false;
+            
+            // Remove the likes and dislikes collections to keep response clean
+            unset($photograph->photographLikes);
+            unset($photograph->photographDislikes);
+            
             $photograph->photographComments->each(function ($comment) {
                 if ($comment->commentUser) {
                     // Add commenter full name
@@ -962,6 +981,63 @@ trait GlobalFunctions {
         });
 
         return $photographs;
+    }
+
+    // Get the photo data including comments and replies for a single photograph
+    public function getPhotoData($photographId) {
+        $photograph = Photograph::where('id', $photographId)
+            ->withCount(['activeLikes', 'activeDislikes'])
+            ->whereIn('photo_type', ['cover photo', 'gallery'])
+            ->with([
+                'photographComments.commentUser', // Load the commenter user details
+                'photographComments.photographReplies' => function ($query) {
+                    $query->latest(); // Order replies by latest first
+                },
+                'photographComments.photographReplies.replyUser', // Load the reply user details
+                'photographComments.photographReplies.commentOwner' // Load the comment owner details
+            ])
+            ->first();
+        
+        if (!$photograph) {
+            return null;
+        }
+        
+        $photograph->photographComments->each(function ($comment) {
+            if ($comment->commentUser) {
+                // Add commenter full name
+                $comment->commenter_full_name = $comment->commentUser->first_name . ' ' . $comment->commentUser->last_name;
+                
+                // Add commenter avatar image
+                $commenterAvatar = $comment->commentUser->photographs()
+                    ->where('photo_type', 'avatar')
+                    ->latest()
+                    ->first();
+                $comment->commenter_avatar = $commenterAvatar ? asset('storage/' . $commenterAvatar->path) : null;
+                
+                // Add human readable date using Carbon
+                $comment->created_at_human = $comment->created_at->diffForHumans();
+            }
+
+            // Process replies as well
+            $comment->photographReplies->each(function ($reply) {
+                if ($reply->replyUser) {
+                    // Add replier full name
+                    $reply->replier_full_name = $reply->replyUser->first_name . ' ' . $reply->replyUser->last_name;
+                    
+                    // Add replier avatar image
+                    $replierAvatar = $reply->replyUser->photographs()
+                        ->where('photo_type', 'avatar')
+                        ->latest()
+                        ->first();
+                    $reply->replier_avatar = $replierAvatar ? asset('storage/' . $replierAvatar->path) : null;
+                    
+                    // Add human readable date using Carbon
+                    $reply->created_at_human = $reply->created_at->diffForHumans();
+                }
+            });
+        });
+
+        return $photograph->toArray();
     }
 
     public function getCommentsAndReplies($user, $commentType) {

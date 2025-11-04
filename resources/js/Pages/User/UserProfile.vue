@@ -120,7 +120,7 @@
                         <div class="row justify-content-center">
                             <div class="col-md 10">
                                 <div class="row justify-content-evenly">
-                                    <ImageCard v-for="image in imagesData" :key="image.id" :imageData="image" @photoDeleted="handlePhotoDeleted" @photoUpdated="handlePhotoUpdated"></ImageCard>
+                                    <ImageCard v-for="image in imagesData" :key="image.id" :imageData="image" :pageName="pageName" @photoDeleted="handlePhotoDeleted" @photoUpdated="handlePhotoUpdated"></ImageCard>
                                 </div>
                             </div>
                         </div>
@@ -272,7 +272,7 @@
             'allArtisans', 'allProducts', 'allTechnicalServices', 'allSpareParts', 'allVehicleCategories', 
             'allCarBrands', 'allBusBrands', 'allTruckBrands', 'schedules', 'neutralAppointments', 
             'acceptedAppointments', 'declinedAppointments', 'cancelledAppointments', 'neutralAppointmentsSchdlr', 
-            'acceptedAppointmentsSchdlr', 'declinedAppointmentsSchdlr', 'cancelledAppointmentsSchdlr', 'images', 
+            'acceptedAppointmentsSchdlr', 'declinedAppointmentsSchdlr', 'cancelledAppointmentsSchdlr', 'galleryPhotos', 
             'customerCommentsAndReplies', 'entrepreneurCommentsAndReplies'
         ],
         emits: [],
@@ -283,6 +283,7 @@
                 schedules2: this.schedules,
                 neutralAppointments2: this.neutralAppointments,
                 customerCommentsAndReplies2: this.customerCommentsAndReplies,
+                pageName: 'profilePage',
             }
         },
         methods: {
@@ -345,7 +346,7 @@
                 // return this.$store.getters.getUser;
             },
             imagesData() {
-                return this.$store.getters.getImages;
+                return this.$store.getters.getGalleryPhotos;
             },
             customerCommentsAndRepliesData() {
                 return this.$store.getters.getCustomerCommentsAndReplies;
@@ -492,7 +493,7 @@
             }
         },
         mounted() {
-            this.$store.dispatch('updateImages', { value: this.images });
+            this.$store.dispatch('updateGalleryPhotos', { value: this.galleryPhotos });
             this.$store.dispatch('updateUser', { value: this.user });
             this.$store.dispatch('updateCustomerCommentsAndReplies', { value: this.customerCommentsAndReplies });
             this.$store.dispatch('updateEntrepreneurCommentsAndReplies', { value: this.entrepreneurCommentsAndReplies });

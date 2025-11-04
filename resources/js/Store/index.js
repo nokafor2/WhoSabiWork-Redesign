@@ -18,6 +18,8 @@ const store = createStore({
             user: [],
             customerCommentsAndReplies: [],
             entrepreneurCommentsAndReplies: [],
+            isAuthenticated: false,
+            entrepreneur: [],
         };
     },
     mutations: {
@@ -48,6 +50,12 @@ const store = createStore({
         updateEntrepreneurCommentsAndReplies(state, payload) {
             state.entrepreneurCommentsAndReplies = payload.value;
         },
+        updateIsAuthenticated(state, payload) {
+            state.isAuthenticated = payload.value;
+        },
+        updateEntrepreneur(state, payload) {
+            state.entrepreneur = payload.value;
+        },
     },
     actions: {
         updateProducts(context, payload) {
@@ -77,6 +85,12 @@ const store = createStore({
         updateEntrepreneurCommentsAndReplies(context, payload) {
             context.commit('updateEntrepreneurCommentsAndReplies', payload);
         },
+        updateIsAuthenticated(context, payload) {
+            context.commit('updateIsAuthenticated', payload);
+        },
+        updateEntrepreneur(context, payload) {
+            context.commit('updateEntrepreneur', payload);
+        },
     },
     getters: {
         getProducts(state) {
@@ -105,6 +119,12 @@ const store = createStore({
         },
         getEntrepreneurCommentsAndReplies(state) {
             return state.entrepreneurCommentsAndReplies;
+        },
+        getIsAuthenticated(state) {
+            return state.isAuthenticated;
+        },
+        getEntrepreneur(state) {
+            return state.entrepreneur;
         },
     }
 });

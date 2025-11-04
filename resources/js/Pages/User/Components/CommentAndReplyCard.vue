@@ -23,7 +23,7 @@
                 @input="validateReply"
                 @blur="validateReply"
                 :class="['form-control mb-1', { 'is-invalid': !replyMessage.isValid }]"
-                rows="3" 
+                rows="1" 
                 placeholder="Write your reply..."
                 maxlength="255">
             </textarea>
