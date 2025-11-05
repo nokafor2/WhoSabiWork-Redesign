@@ -25,7 +25,7 @@ class Product extends Model
         'fishery', 'skin_care_products', 'hair_products', 'baby_care_accessories', 'created_at', 'updated_at', 'deleted_at'
     ];
 
-    protected $guarded = ['id', 'created_at', 'updated_at', 'deleted_at'];
+    protected $guarded = ['id', 'user_id', 'created_at', 'updated_at', 'deleted_at'];
 
     // protected $fillable;
     // public function __construct() {

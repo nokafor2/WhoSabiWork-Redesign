@@ -16,27 +16,49 @@ class VehicleCategoriesSeeder extends Seeder
      */
     public function run()
     {
-        // The number of vehicleCategories to be created should not be more than the number of aritsans in the technical service and spare_part_seller table        
-        // Get all the vehicleCategories in the technical service table
-        $technicalServiceVehicleCategory = TechnicalService::all();
-        $technicalServiceVehicleCategory->each(function ($item, $key) {
-            $vehicleCategory = VehicleCategory::factory()->make();
-            // Override the user_id set from the factory
-            $vehicleCategory->user_id = $item->user_id;
-            // Override the business_category set from the factory
-            $vehicleCategory->business_category = 'technical_service';
-            $vehicleCategory->save();
+        // The number of vehicleCategories to be created should not be more than the number of technicians in the technical_service table        
+        // Get all the technical services and create vehicle categories for them
+        $technicalServices = TechnicalService::all();
+        $technicalServices->each(function ($item, $key) {
+            // Generate random values for vehicle types (car, bus, truck)
+            $vehicleCategoryData = [
+                'user_id' => $item->user_id,
+                'business_category' => 'technical_service',
+                'car' => rand(0, 1),
+                'bus' => rand(0, 1),
+                'truck' => rand(0, 1),
+            ];
+            
+            // Create or update the vehicle category
+            VehicleCategory::updateOrCreate(
+                [
+                    'user_id' => $item->user_id,
+                    'business_category' => 'technical_service'
+                ],
+                $vehicleCategoryData
+            );
         });
 
-        // Get all the vehicleCategories in the spare part table
-        $sparePartVehicleCategory = SparePart::all();
-        $sparePartVehicleCategory->each(function ($item, $key) {
-            $vehicleCategory = VehicleCategory::factory()->make();
-            // Override the user_id set from the factory
-            $vehicleCategory->user_id = $item->user_id;
-            // Override the business_category set from the factory
-            $vehicleCategory->business_category = 'spare_part';
-            $vehicleCategory->save();
+        // Get all the spare parts and create vehicle categories for them
+        $spareParts = SparePart::all();
+        $spareParts->each(function ($item, $key) {
+            // Generate random values for vehicle types (car, bus, truck)
+            $vehicleCategoryData = [
+                'user_id' => $item->user_id,
+                'business_category' => 'spare_part',
+                'car' => rand(0, 1),
+                'bus' => rand(0, 1),
+                'truck' => rand(0, 1),
+            ];
+            
+            // Create or update the vehicle category
+            VehicleCategory::updateOrCreate(
+                [
+                    'user_id' => $item->user_id,
+                    'business_category' => 'spare_part'
+                ],
+                $vehicleCategoryData
+            );
         });
     }
 }

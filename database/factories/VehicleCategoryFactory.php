@@ -27,20 +27,17 @@ class VehicleCategoryFactory extends Factory
         } else {
             $user_id = 1;
         }
-        // Get the business category
+        // Get the business category (will be overridden by seeder)
         $businessCategory = $this->faker->randomElement($array = array('technical_service', 'spare_part'));
 
-        // Generate the column of the data to be filled
-        $vehicleCategoryObj = new VehicleCategory();
-        // Get all the vehicleCategorys available in an array (NB its in a collection)
-        $vehicleCategoryArray = $vehicleCategoryObj->getTableColumnsWithSort($vehicleCategoryObj->table, VehicleCategory::$columnsToExclude);
-        // Convert to array
-        $newVehicleCategoryArray = $vehicleCategoryArray->toArray();
-        foreach ($newVehicleCategoryArray as $key => $value) {
-            $newVehicleCategoryArray[$key] = $this->faker->numberBetween(0,1);
-        }
-        $newVehicleCategoryArray = array('user_id' => $user_id, 'business_category' => $businessCategory) + $newVehicleCategoryArray;
-
-        return $newVehicleCategoryArray;
+        // Randomly assign vehicle types (car, bus, truck) with 0 or 1
+        // Each vehicle type has a random chance to be assigned
+        return [
+            'user_id' => $user_id,
+            'business_category' => $businessCategory,
+            'car' => $this->faker->numberBetween(0, 1),
+            'bus' => $this->faker->numberBetween(0, 1),
+            'truck' => $this->faker->numberBetween(0, 1),
+        ];
     }
 }

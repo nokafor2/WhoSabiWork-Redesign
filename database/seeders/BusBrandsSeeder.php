@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\BusBrand;
 use App\Models\VehicleCategory;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Schema;
 
 class BusBrandsSeeder extends Seeder
 {
@@ -15,16 +16,44 @@ class BusBrandsSeeder extends Seeder
      */
     public function run()
     {
-        // The number of busBrands to be created, it should not be more than the number of buses in the vehicle categories table        
-        // Get all the busBrands in the vehicle_categories table
-        $busBrands = VehicleCategory::all()->where('bus', '=', 1);
-        $busBrands->each(function ($item, $key) {
-            $busBrand = BusBrand::factory()->make();
-            // Override the user_id set from the factory
-            $busBrand->user_id = $item->user_id;
-            // Override the business_category set from the factory
-            $busBrand->business_category = $item->business_category;
-            $busBrand->save();
+        // Get all vehicle categories where bus = 1
+        $vehicleCategories = VehicleCategory::where('bus', '=', 1)->get();
+        
+        // Get all bus brand columns from database (excluding common columns)
+        $excludedColumns = ['id', 'user_id', 'business_category', 'created_at', 'updated_at', 'deleted_at'];
+        $allColumns = Schema::getColumnListing('bus_brands');
+        $busBrandTypesArray = array_diff($allColumns, $excludedColumns);
+        
+        $vehicleCategories->each(function ($item) use ($busBrandTypesArray) {
+            // Initialize all brand types to 0
+            $busBrandData = ['user_id' => $item->user_id, 'business_category' => $item->business_category];
+            foreach ($busBrandTypesArray as $brandType) {
+                $busBrandData[$brandType] = 0;
+            }
+            
+            // Randomly select 1-5 bus brand types to set to 1
+            // $numberOfBrands = rand(1, min(5, count($busBrandTypesArray)));
+            $numberOfBrands = rand(1, 5);
+            $selectedBrands = array_rand(array_flip($busBrandTypesArray), $numberOfBrands);
+            
+            // If only one brand is selected, array_rand returns an integer, not an array
+            if (!is_array($selectedBrands)) {
+                $selectedBrands = [$selectedBrands];
+            }
+            
+            // Set the selected brands to 1
+            foreach ($selectedBrands as $selectedBrand) {
+                $busBrandData[$selectedBrand] = 1;
+            }
+            
+            // Create or update the bus brand record
+            BusBrand::updateOrCreate(
+                [
+                    'user_id' => $item->user_id,
+                    'business_category' => $item->business_category
+                ],
+                $busBrandData
+            );
         });
     }
 }

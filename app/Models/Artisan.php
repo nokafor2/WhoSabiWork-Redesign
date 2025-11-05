@@ -30,7 +30,7 @@ class Artisan extends Model
 
     public $table = 'artisans';
 
-    protected $guarded = ['id', 'created_at', 'updated_at', 'deleted_at'];
+    protected $guarded = ['id', 'user_id', 'created_at', 'updated_at', 'deleted_at'];
 
     public static $columnsToExclude = ['id', 'user_id', 'created_at', 'updated_at', 'deleted_at'];
     // protected $fillable;

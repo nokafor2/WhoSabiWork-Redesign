@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\CarBrand;
 use App\Models\VehicleCategory;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Schema;
 
 class CarBrandsSeeder extends Seeder
 {
@@ -15,16 +16,44 @@ class CarBrandsSeeder extends Seeder
      */
     public function run()
     {
-        // The number of carbrands to be created, it should not be more than the number of cars in the vehicle categories table        
-        // Get all the carbrands in the vehicle_categories table
-        $carBrands = VehicleCategory::all()->where('car', '=', 1);
-        $carBrands->each(function ($item, $key) {
-            $carBrand = CarBrand::factory()->make();
-            // Override the user_id set from the factory
-            $carBrand->user_id = $item->user_id;
-            // Override the business_category set from the factory
-            $carBrand->business_category = $item->business_category;
-            $carBrand->save();
+        // Get all vehicle categories where car = 1
+        $vehicleCategories = VehicleCategory::where('car', '=', 1)->get();
+        
+        // Get all car brand columns from database (excluding common columns)
+        $excludedColumns = ['id', 'user_id', 'business_category', 'created_at', 'updated_at', 'deleted_at'];
+        $allColumns = Schema::getColumnListing('car_brands');
+        $carBrandTypesArray = array_diff($allColumns, $excludedColumns);
+        
+        $vehicleCategories->each(function ($item) use ($carBrandTypesArray) {
+            // Initialize all brand types to 0
+            $carBrandData = ['user_id' => $item->user_id, 'business_category' => $item->business_category];
+            foreach ($carBrandTypesArray as $brandType) {
+                $carBrandData[$brandType] = 0;
+            }
+            
+            // Randomly select 1-5 car brand types to set to 1
+            // $numberOfBrands = rand(1, min(5, count($carBrandTypesArray)));
+            $numberOfBrands = rand(1, 5);
+            $selectedBrands = array_rand(array_flip($carBrandTypesArray), $numberOfBrands);
+            
+            // If only one brand is selected, array_rand returns an integer, not an array
+            if (!is_array($selectedBrands)) {
+                $selectedBrands = [$selectedBrands];
+            }
+            
+            // Set the selected brands to 1
+            foreach ($selectedBrands as $selectedBrand) {
+                $carBrandData[$selectedBrand] = 1;
+            }
+            
+            // Create or update the car brand record
+            CarBrand::updateOrCreate(
+                [
+                    'user_id' => $item->user_id,
+                    'business_category' => $item->business_category
+                ],
+                $carBrandData
+            );
         });
     }
 }
