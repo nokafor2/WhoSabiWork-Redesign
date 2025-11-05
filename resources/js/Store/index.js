@@ -15,7 +15,7 @@ const store = createStore({
             spareParts: [],
             images: [],
             galleryPhotos: [],
-            user: [],
+            authenticatedUser: null,
             customerCommentsAndReplies: [],
             entrepreneurCommentsAndReplies: [],
             isAuthenticated: false,
@@ -41,8 +41,8 @@ const store = createStore({
         updateGalleryPhotos(state, payload) {
             state.galleryPhotos = payload.value;
         },
-        updateUser(state, payload) {
-            state.user = payload.value;
+        updateAuthenticatedUser(state, payload) {
+            state.authenticatedUser = payload.value;
         },
         updateCustomerCommentsAndReplies(state, payload) {
             state.customerCommentsAndReplies = payload.value;
@@ -73,8 +73,8 @@ const store = createStore({
         updateImages(context, payload) {
             context.commit('updateImages', payload);
         },
-        updateUser(context, payload) {
-            context.commit('updateUser', payload);
+        updateAuthenticatedUser(context, payload) {
+            context.commit('updateAuthenticatedUser', payload);
         },
         updateGalleryPhotos(context, payload) {
             context.commit('updateGalleryPhotos', payload);
@@ -111,8 +111,8 @@ const store = createStore({
         getGalleryPhotos(state) {
             return state.galleryPhotos;
         },
-        getUser(state) {
-            return state.user;
+        getAuthenticatedUser(state) {
+            return state.authenticatedUser;
         },
         getCustomerCommentsAndReplies(state) {
             return state.customerCommentsAndReplies;

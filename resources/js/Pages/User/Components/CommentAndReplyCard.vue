@@ -12,7 +12,7 @@
         <p class="col-12 bg-white text-body rounded">
             {{ comment }}
         </p>
-        <div class="d-flex justify-content-end">
+        <div v-if="showReplyBtn" class="d-flex justify-content-end">
             <button class="btn btm-sm border border-light text-light" style="background-color: #040D14" @click="toggleReplyForm">Reply</button>
         </div>
 
@@ -66,6 +66,10 @@
             commentReplies: {
                 type: Object,
                 default: () => ({}) 
+            },
+            pageName: {
+                type: String,
+                default: ''
             }
         },
         data() {
@@ -180,6 +184,25 @@
                         this.replyMessage.errorMessage = errors.body ? errors.body[0] : 'Failed to submit reply';
                     }
                 });
+            }
+        },
+        computed: {
+            isAuthenticated() {
+                return this.$store.getters.getIsAuthenticated;
+            },
+            authenticatedUser() {
+                return this.$store.getters.getAuthenticatedUser;
+            },
+            showReplyBtn() {
+                if (this.pageName === 'entrepreneur') {
+                    if (this.isAuthenticated && this.authenticatedUser.id === this.entrepreneurId) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                } else if (this.pageName === 'profilePage') {
+                    return true;
+                } 
             }
         },
         watch: {

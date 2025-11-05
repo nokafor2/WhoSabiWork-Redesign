@@ -13,7 +13,7 @@
             {{ comment }}
             <!-- Lorem ipsum dolor sit amet consectetur adipisicing elit. Illo modi vero laboriosam suscipit! Enim reiciendis sunt debitis, ipsa sit ipsam amet obcaecati! Assumenda harum ipsam natus iste explicabo eos nemo? -->
         </p>
-        <div class="d-flex justify-content-end">
+        <div v-if="showReplyBtn" class="d-flex justify-content-end">
             <button class="btn btm-sm border border-light text-light" style="background-color: #040D14" @click="toggleReplyForm">Reply</button>
         </div>
 
@@ -67,6 +67,10 @@
             commentReplies: {
                 type: Object,
                 default: () => ({})
+            },
+            pageName: {
+                type: String,
+                default: ''
             }
         },
         emits: ['reply-added'],
@@ -193,6 +197,25 @@
                         }
                     }
                 });
+            }
+        },
+        computed: {
+            isAuthenticated() {
+                return this.$store.getters.getIsAuthenticated;
+            },
+            authenticatedUser() {
+                return this.$store.getters.getAuthenticatedUser;
+            },
+            showReplyBtn() {
+                if (this.pageName === 'entrepreneur') {
+                    if (this.isAuthenticated && this.authenticatedUser.id === this.entrepreneurId) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                } else if (this.pageName === 'profilePage') {
+                    return true;
+                } 
             }
         }
     }

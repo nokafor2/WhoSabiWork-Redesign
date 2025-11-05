@@ -45,7 +45,12 @@ class PhotographDislikeController extends Controller
 
         // Check if user is authenticated
         if (!Auth::check()) {
-            return redirect()->back()->with('error', 'You must be logged in to dislike a photograph');
+            return redirect()->back()->with('error', 
+            [
+                'authError' => 'unauthenticated',
+                'message' => 'You must be logged in to dislike a photograph.',
+            ]
+            );
         }
 
         // Check if the user has already disliked the photograph
@@ -84,13 +89,16 @@ class PhotographDislikeController extends Controller
             }
             
             // If user previously liked, remove the like
+            $likeUpdated = false;
             if ($existingLike && $existingLike->like == 1) {
                 $existingLike->update(['like' => 0]);
+                $likeUpdated = true;
             }
             
             return redirect()->back()->with('success', [
                 'like' => false,
                 'dislike' => true,
+                'likeUpdated' => $likeUpdated,
                 'message' => 'You disliked this photograph',
             ]);
         }

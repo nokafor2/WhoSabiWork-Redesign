@@ -932,13 +932,13 @@ trait GlobalFunctions {
             ->get();
 
         // Process each photograph to append commenter details and like/dislike status
-        $photographs->each(function ($photograph) use ($userId) {
-            // Check if the user has liked or disliked this photograph
-            $userLike = $photograph->photographLikes->where('user_id', $userId)->where('like', 1)->first();
-            $photograph->ownerLiked = $userLike ? true : false;
+        $photographs->each(function ($photograph) use ($authUserId) {
+            // Check if the authenticated user has liked or disliked this photograph
+            $userLike = $photograph->photographLikes->where('user_id', $authUserId)->where('like', 1)->first();
+            $photograph->userLiked = $userLike ? true : false;
             
-            $userDislike = $photograph->photographDislikes->where('user_id', $userId)->where('dislike', 1)->first();
-            $photograph->ownerDisliked = $userDislike ? true : false;
+            $userDislike = $photograph->photographDislikes->where('user_id', $authUserId)->where('dislike', 1)->first();
+            $photograph->userDisliked = $userDislike ? true : false;
             
             // Remove the likes and dislikes collections to keep response clean
             unset($photograph->photographLikes);

@@ -137,7 +137,9 @@
                         <CommentAndReplyCard 
                             v-for="comment in customerCommentsAndRepliesData.commentsAndReplies" 
                             :key="comment.id" 
-                            :commentReplies="comment">
+                            :commentReplies="comment"
+                            :pageName="pageName"
+                        >
                         </CommentAndReplyCard>
                     </div>
                 </div>
@@ -152,7 +154,9 @@
                         <CommentAndReplyCard 
                             v-for="comment in entrepreneurCommentsAndRepliesData.commentsAndReplies" 
                             :key="comment.id" 
-                            :commentReplies="comment">
+                            :commentReplies="comment"
+                            :pageName="pageName"
+                        >
                         </CommentAndReplyCard>
                     </div>
                 </div>

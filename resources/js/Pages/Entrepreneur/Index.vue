@@ -73,7 +73,7 @@
                                 </div>
                             </form>
 
-                            <CommentAndReplyCard v-for="comment in commentsAndReplies.commentsAndReplies" :key="comment.id" :commentReplies="comment"></CommentAndReplyCard>
+                            <CommentAndReplyCard v-for="comment in commentsAndReplies.commentsAndReplies" :key="comment.id" :commentReplies="comment" :pageName="pageName"></CommentAndReplyCard>
                         </div>
                     </div>
                 </div>
@@ -152,8 +152,8 @@
                         console.log('Updated page data:', page.props);
 
                         // Check if there's an error in flash (authentication error)
-                        if (page.props.flash.error) {
-                            this.showFeedbackModal('Authentication Required', page.props.flash.error, true);
+                        if (page.props.flash.error.authError) {
+                            this.showFeedbackModal('Authentication Required', page.props.flash.error.message, true);
                             return;
                         }
 
@@ -180,7 +180,7 @@
                         }
                         
                         // Handle authentication errors
-                        if (errors.message && errors.message.includes('unauthenticated')) {
+                        if (errors.authError && errors.authError.includes('unauthenticated')) {
                             this.showFeedbackModal(
                                 'Authentication Required',
                                 'You must be logged in to post a comment. Please log in to continue.',

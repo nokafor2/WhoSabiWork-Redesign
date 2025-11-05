@@ -46,7 +46,12 @@ class PhotographCommentController extends Controller
 
         // Check if user is authenticated
         if (!Auth::check()) {
-            return redirect()->back()->with('error', 'You must be logged in to comment');
+            return redirect()->back()->with('error', 
+                [
+                    'authError' => 'unauthenticated',
+                    'message' => 'You must be logged in to comment',
+                ]
+            );
         }
 
         $photographId = $request->photograph_id;

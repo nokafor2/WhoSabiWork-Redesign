@@ -45,13 +45,19 @@ class PhotographLikeController extends Controller
 
         // Check if user is authenticated
         if (!Auth::check()) {
-            return redirect()->back()->with('error', 'You must be logged in to like a photograph');
+            return redirect()->back()->with('error', 
+                [
+                    'authError' => 'unauthenticated',
+                    'message' => 'You must be logged in to like a photograph.',
+                ]
+            );
         }
 
         // Check if the user has already liked the photograph
         $existingLike = PhotographLike::where('photograph_id', $request->photograph_id)
             ->where('user_id', Auth::user()->id)
             ->first();
+        // dd($existingLike->toArray());
         
         // Check if the user already disliked the photograph
         $existingDislike = PhotographDislike::where('photograph_id', $request->photograph_id)
@@ -59,12 +65,16 @@ class PhotographLikeController extends Controller
             ->first();
 
         // If user is toggling like off (unlike)
-        if ($existingLike && !$request->like) {
-            $existingLike->update(['like' => 0]);
+        if (!$request->like) {
+            // User wants to unlike
+            if ($existingLike) {
+                $existingLike->update(['like' => 0]);
+            }
             
             return redirect()->back()->with('success', [
                 'like' => false,
                 'dislike' => $existingDislike ? ($existingDislike->dislike == 1) : false,
+                'dislikeUpdated' => false,
                 'message' => 'You unliked this photograph',
             ]);
         }
@@ -86,18 +96,23 @@ class PhotographLikeController extends Controller
             // If user previously disliked, remove the dislike
             if ($existingDislike && $existingDislike->dislike == 1) {
                 $existingDislike->update(['dislike' => 0]);
+                $dislikeUpdated = true;
+            } else {
+                $dislikeUpdated = false;
             }
             
             return redirect()->back()->with('success', [
                 'like' => true,
                 'dislike' => false,
+                'dislikeUpdated' => $dislikeUpdated,
                 'message' => 'You liked this photograph',
             ]);
         }
         
         return redirect()->back()->with('success', [
             'like' => false,
-            'dislike' => $existingDislike ? ($existingDislike->dislike == 1) : false,
+            'dislike' => $existingDislike ? $existingDislike->dislike : null,
+            'dislikeUpdated' => false,
             'message' => 'No action taken',
         ]);
     }

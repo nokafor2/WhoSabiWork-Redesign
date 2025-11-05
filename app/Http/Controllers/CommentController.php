@@ -44,7 +44,13 @@ class CommentController extends Controller
 
         // check if user is authenticated
         if (!Auth::check()) {
-            return redirect()->back()->with('error', 'You must be logged in to comment');
+            // return redirect()->back()->with('error', 'You must be logged in to comment');
+            return redirect()->back()->with('error', 
+                [
+                    'authError' => 'unauthenticated',
+                    'message' => 'You must be logged in to comment.',
+                ]
+            );
         }
 
         // store the comment in the database

@@ -5,6 +5,18 @@
         </div>
         <p class="card-text mb-1 px-2">{{ imageObj.caption }}</p>
         
+        <!-- Feedback Modal -->
+        <FeedbackModal
+            :visible="feedbackModal.visible"
+            :title="feedbackModal.title"
+            :message="feedbackModal.message"
+            :show-action-button="feedbackModal.showActionButton"
+            :action-button-text="feedbackModal.actionButtonText"
+            :action-icon="feedbackModal.actionIcon"
+            @close="closeFeedbackModal"
+            @action="handleFeedbackAction">
+        </FeedbackModal>
+        
         <!-- Custom Modal -->
         <teleport to="body">
             <div v-if="isModalOpen" class="custom-modal-overlay" @click="closeModal">
@@ -144,7 +156,9 @@
                                     v-for="commentReply in imageObj.photograph_comments" 
                                     :key="`comment-${commentReply.id}-${commentReply.photograph_replies?.length || 0}`"
                                     :commentReplies="commentReply"
-                                    @reply-added="handleReplyAdded">
+                                    :pageName="pageName"
+                                    @reply-added="handleReplyAdded"
+                                >
                                 </PhotoCommentAndReplyCard>
                                 <!-- No Comments Message -->
                                 <div v-if="commentCount === 0" class="text-center text-muted py-4">
@@ -176,11 +190,12 @@
     import CommentCard from './CommentCard.vue';
     import PhotoCommentAndReplyCard from './PhotoCommentAndReplyCard.vue';
     import ErrorAlert from '@/components/UI/ErrorAlert.vue';
+    import FeedbackModal from '@/components/UI/FeedbackModal.vue';
     import { useForm } from '@inertiajs/vue3';
 
     export default {
         mixins: [MethodsMixin],
-        components: {CommentCard, ErrorAlert, PhotoCommentAndReplyCard},
+        components: {CommentCard, ErrorAlert, PhotoCommentAndReplyCard, FeedbackModal},
         props: ['imageData', 'pageName'],
         emits: ['photoDeleted', 'photoUpdated'],
         data() {
@@ -201,13 +216,22 @@
                     val: '',
                     isValid: true
                 },
-                userLiked: false,
-                userDisliked: false,
+                userLiked: this.imageData?.userLiked || false,
+                userDisliked: this.imageData?.userDisliked || false,
                 ownerLiked: this.imageData?.ownerLiked || false,
                 ownerDisliked: this.imageData?.ownerDisliked || false,
                 likes: this.imageData?.active_likes_count || 0,
                 dislikes: this.imageData?.active_dislikes_count || 0,
                 commentCount: this.imageData?.photograph_comments?.length || 0,
+                feedbackModal: {
+                    visible: false,
+                    title: 'Notification',
+                    message: '',
+                    showActionButton: false,
+                    actionButtonText: 'Login',
+                    actionIcon: 'fas fa-sign-in-alt',
+                    action: null, // Track what action to perform: 'login', 'delete', etc.
+                },
             }
         },
         created() {
@@ -250,6 +274,12 @@
                 this.commentInput.isValid = true;
             },
             submitPhotoComment() {
+                // check if user is authenticated
+                if (!this.isAuthenticated) {
+                    this.showFeedbackModal('Authentication Required', 'You must be logged in to comment on photos. Please log in to continue.', true, 'login', 'Login', 'fas fa-sign-in-alt');
+                    return;
+                }
+
                 if (!this.commentInput.val.trim()) {
                     this.commentInput.isValid = false;
                     return;
@@ -266,6 +296,12 @@
                         console.log('success', page.props.flash.success);
                         console.log('Updated page data:', page.props);
 
+                        // Check if there's an error in flash (authentication error)
+                        if (page.props.flash.error.authError) {
+                            this.showFeedbackModal('Authentication Required', page.props.flash.error.message, true, 'login', 'Login', 'fas fa-sign-in-alt');
+                            return;
+                        }
+
                         // Update the comment count
                         this.commentCount = page.props.flash.success.commentCount;
 
@@ -281,7 +317,27 @@
                     },
                     onError: (errors) => {
                         console.log('Error: ', errors);
-                        this.commentInput.val = '';
+                        
+                        // Handle validation errors
+                        if (errors.comment) {
+                            this.commentInput.isValid = false;
+                        }
+                        
+                        // Handle authentication errors
+                        if (errors.authError && errors.authError.includes('unauthenticated')) {
+                            this.showFeedbackModal(
+                                'Authentication Required',
+                                'You must be logged in to comment on photos. Please log in to continue.',
+                                true,
+                                'login',
+                                'Login',
+                                'fas fa-sign-in-alt'
+                            );
+                        } else if (Object.keys(errors).length > 0) {
+                            // Generic error handling
+                            const errorMessage = errors[Object.keys(errors)[0]];
+                            this.showFeedbackModal('Error', errorMessage, false, null, 'OK', 'fas fa-times');
+                        }
                     }
                 });
             },
@@ -353,9 +409,29 @@
                 });
             },
             deletePhoto() {
-                if (!confirm('Are you sure you want to delete this photo?')) {
+                // check if user is authenticated
+                if (!this.isAuthenticated) {
+                    this.showFeedbackModal(
+                        'Authentication Required', 
+                        'You must be logged in to delete photos. Please log in to continue.', 
+                        true,
+                        'login',
+                        'Login',
+                        'fas fa-sign-in-alt'
+                    );
                     return;
                 }
+                // Show this confirmation with the showFeedbackModal
+                this.showFeedbackModal(
+                    'Confirm Delete', 
+                    'Are you sure you want to delete this photo? This action cannot be undone.', 
+                    true,
+                    'delete',
+                    'Yes, Delete',
+                    'fas fa-trash'
+                );
+            },
+            executeDeletePhoto() {
                 const formData = useForm({
                     user_id: this.userId
                 });
@@ -374,16 +450,16 @@
                     },
                     onError: (errors) => {
                         // console.log('Error: ', errors);
-                        alert('Failed to delete photo. Please try again.');
+                        this.showFeedbackModal('Error', 'Failed to delete photo. Please try again.', false, null, 'OK', 'fas fa-times');
                     }
                 });
             },
             toggleLike() {
                 // Check if user is authenticated
-                // if (!this.isAuthenticated) {
-                //     alert('Please login to like this photo.');
-                //     return;
-                // }
+                if (!this.isAuthenticated) {
+                    this.showFeedbackModal('Authentication Required', 'You must be logged in to like photos. Please log in to continue.', true, 'login', 'Login', 'fas fa-sign-in-alt');
+                    return;
+                }
 
                 // Check if user has liked the photo before
                 const formData = useForm({
@@ -394,48 +470,85 @@
                 formData.post(route('photographlike.store'), {
                     preserveScroll: true,
                     onSuccess: (page) => {
-                        // console.log('Like success:', page.props.flash.success);
+                        console.log('Like success:', page.props.flash.success);
+                        
+                        // Check if there's an authentication error in flash
+                        if (page.props.flash.error && page.props.flash.error.authError) {
+                            this.showFeedbackModal(
+                                'Authentication Required', 
+                                page.props.flash.error.message, 
+                                true, 
+                                'login', 
+                                'Login', 
+                                'fas fa-sign-in-alt'
+                            );
+                            return;
+                        }
                         
                         if (page.props.flash.success) {
                             const response = page.props.flash.success;
+                            
                             // Update galleryPhoto in Vuex store
                             if (this.pageName === 'entrepreneur') {
                                 this.$store.dispatch('updateGalleryPhotos', { value: page.props.entrepreneur.galleryPhotos });
                             } else if (this.pageName === 'profilePage') {
                                 this.$store.dispatch('updateGalleryPhotos', { value: page.props.galleryPhotos });
                             }
-
-                            // Update like status from server response
-                            this.userLiked = response.like;
                             
-                            // Update dislike status from server response
+                            // Track previous states
+                            const previousLiked = this.userLiked;
+                            const previousDisliked = this.userDisliked;
+                            
+                            // Update states from server response
+                            this.userLiked = response.like;
                             this.userDisliked = response.dislike;
                             
-                            // Update counts based on the new status
-                            if (response.like) {
+                            // Update like count based on state change
+                            if (response.like && !previousLiked) {
+                                // Changed from not liked to liked
                                 this.likes++;
-                            } else {
+                            } else if (!response.like && previousLiked) {
+                                // Changed from liked to not liked
                                 this.likes--;
                             }
                             
-                            if (response.dislike) {
+                            // Update dislike count based on state change
+                            if (response.dislike && !previousDisliked) {
+                                // Changed from not disliked to disliked
                                 this.dislikes++;
-                            } else {
+                            } else if (!response.dislike && previousDisliked) {
+                                // Changed from disliked to not disliked
                                 this.dislikes--;
                             }
                         }
                     },
                     onError: (errors) => {
                         console.error('Like error:', errors);
+                        
+                        // Handle authentication errors
+                        if (errors.authError && errors.authError === 'unauthenticated') {
+                            this.showFeedbackModal(
+                                'Authentication Required',
+                                errors.message || 'You must be logged in to like photos. Please log in to continue.',
+                                true,
+                                'login',
+                                'Login',
+                                'fas fa-sign-in-alt'
+                            );
+                        } else if (Object.keys(errors).length > 0) {
+                            // Generic error handling
+                            const errorMessage = errors.message || errors[Object.keys(errors)[0]];
+                            this.showFeedbackModal('Error', errorMessage, false, null, 'OK', 'fas fa-times');
+                        }
                     }
                 });
             },
             toggleDislike() {
                 // Check if user is authenticated
-                // if (!this.isAuthenticated) {
-                //     alert('Please login to dislike this photo.');
-                //     return;
-                // }
+                if (!this.isAuthenticated) {
+                    this.showFeedbackModal('Authentication Required', 'You must be logged in to dislike photos. Please log in to continue.', true, 'login', 'Login', 'fas fa-sign-in-alt');
+                    return;
+                }
                 
                 // Check if user has disliked the photo before
                 const formData = useForm({
@@ -447,7 +560,20 @@
                 formData.post(route('photographdislike.store'), {
                     preserveScroll: true,
                     onSuccess: (page) => {
-                        // console.log('Dislike success:', page.props.flash.success);
+                        console.log('Dislike success:', page.props.flash.success);
+                        
+                        // Check if there's an authentication error in flash
+                        if (page.props.flash.error && page.props.flash.error.authError) {
+                            this.showFeedbackModal(
+                                'Authentication Required', 
+                                page.props.flash.error.message, 
+                                true, 
+                                'login', 
+                                'Login', 
+                                'fas fa-sign-in-alt'
+                            );
+                            return;
+                        }
                         
                         if (page.props.flash.success) {
                             const response = page.props.flash.success;
@@ -459,28 +585,51 @@
                                 this.$store.dispatch('updateGalleryPhotos', { value: page.props.galleryPhotos });
                             }
                             
-                            // Update dislike status from server response
-                            this.userDisliked = response.dislike;
+                            // Track previous states
+                            const previousLiked = this.userLiked;
+                            const previousDisliked = this.userDisliked;
                             
-                            // Update like status from server response
+                            // Update states from server response
+                            this.userDisliked = response.dislike;
                             this.userLiked = response.like;
                             
-                            // Update counts based on the new status
-                            if (response.dislike) {
+                            // Update dislike count based on state change
+                            if (response.dislike && !previousDisliked) {
+                                // Changed from not disliked to disliked
                                 this.dislikes++;
-                            } else {
+                            } else if (!response.dislike && previousDisliked) {
+                                // Changed from disliked to not disliked
                                 this.dislikes--;
                             }
                             
-                            if (response.like) {
+                            // Update like count based on state change
+                            if (response.like && !previousLiked) {
+                                // Changed from not liked to liked
                                 this.likes++;
-                            } else {
+                            } else if (!response.like && previousLiked) {
+                                // Changed from liked to not liked
                                 this.likes--;
                             }
                         }
                     },
                     onError: (errors) => {
                         console.error('Dislike error:', errors);
+                        
+                        // Handle authentication errors
+                        if (errors.authError && errors.authError === 'unauthenticated') {
+                            this.showFeedbackModal(
+                                'Authentication Required',
+                                errors.message || 'You must be logged in to dislike photos. Please log in to continue.',
+                                true,
+                                'login',
+                                'Login',
+                                'fas fa-sign-in-alt'
+                            );
+                        } else if (Object.keys(errors).length > 0) {
+                            // Generic error handling
+                            const errorMessage = errors.message || errors[Object.keys(errors)[0]];
+                            this.showFeedbackModal('Error', errorMessage, false, null, 'OK', 'fas fa-times');
+                        }
                     }
                 });
             },
@@ -531,6 +680,31 @@
             },
             handlePhotoUpdated(updatedImage) {
                 this.$emit('photoUpdated', updatedImage);
+            },
+            // Feedback Modal Methods
+            showFeedbackModal(title, message, showActionButton = false, action = null, actionButtonText = 'OK', actionIcon = 'fas fa-check') {
+                this.feedbackModal.title = title;
+                this.feedbackModal.message = message;
+                this.feedbackModal.showActionButton = showActionButton;
+                this.feedbackModal.action = action;
+                this.feedbackModal.actionButtonText = actionButtonText;
+                this.feedbackModal.actionIcon = actionIcon;
+                this.feedbackModal.visible = true;
+            },
+            closeFeedbackModal() {
+                this.feedbackModal.visible = false;
+                this.feedbackModal.action = null;
+            },
+            handleFeedbackAction() {
+                // Handle different actions based on the action type
+                if (this.feedbackModal.action === 'login') {
+                    // Redirect to login page
+                    window.location.href = route('login');
+                } else if (this.feedbackModal.action === 'delete') {
+                    // Execute the delete photo action
+                    this.closeFeedbackModal();
+                    this.executeDeletePhoto();
+                }
             }
         },
         computed: {
@@ -559,7 +733,10 @@
             },
             isAuthenticated() {
                 return this.$store.getters.getIsAuthenticated;
-            }
+            },
+            authenticatedUser() {
+                return this.$store.getters.getAuthenticatedUser;
+            },
         },
         watch: {
             // Watch for changes in imageData prop and sync with local imageObj
@@ -796,15 +973,6 @@
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
-    .image-card-container {
-        width: calc(100vw - 2rem); /* Full width minus margins */
-        margin: 0.5rem 1rem;
-    }
-    
-    .image-container {
-        height: 250px; /* Taller on tablet */
-    }
-    
     .custom-modal-overlay {
         padding: 0.5rem;
     }
@@ -841,15 +1009,6 @@
 }
 
 @media (max-width: 576px) {
-    .image-card-container {
-        width: calc(100vw - 1rem); /* Full width on mobile with minimal margins */
-        margin: 0.5rem 0.5rem;
-    }
-    
-    .image-container {
-        height: 200px; /* Optimized height for mobile */
-    }
-    
     .custom-modal-overlay {
         padding: 0.25rem;
     }
