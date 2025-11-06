@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Builder;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 
 trait GlobalFunctions {
 
@@ -905,11 +906,119 @@ trait GlobalFunctions {
         }
     }
 
+    public function photoFeedData($perPage = 15) {
+        // Get the authenticated user ID (if any)
+        $authUserId = Auth::id() ? Auth::id() : null;
+        
+        // Get paginated photographs of business users with active accounts
+        $photographs = Photograph::whereHas('user', function ($query) {
+                $query->where('account_type', '=', 'business')
+                      ->where('account_status', '=', 'active');
+            })
+            ->whereIn('photo_type', ['cover photo', 'gallery'])
+            ->withCount(['activeLikes', 'activeDislikes', 'photographComments'])
+            ->with([
+                'user', // Load the photograph owner
+                'user.businessCategory', // Load business details
+                'photographComments' => function ($query) {
+                    $query->latest(); // Order comments by latest first
+                },
+                'photographComments.commentUser', // Load the commenter user details
+                'photographComments.photographReplies' => function ($query) {
+                    $query->latest(); // Order replies by latest first
+                },
+                'photographComments.photographReplies.replyUser', // Load the reply user details
+                'photographComments.photographReplies.commentOwner', // Load the comment owner details
+                'photographLikes', // Load all likes for checking user's like status
+                'photographDislikes' // Load all dislikes for checking user's dislike status
+            ])
+            ->latest() // Sort by latest photograph first
+            ->paginate($perPage); // Paginate results
+
+        // Process each photograph to append all required details
+        $photographs->getCollection()->transform(function ($photograph) use ($authUserId) {
+            // Check if the authenticated user has liked or disliked this photograph
+            $userLike = $photograph->photographLikes->where('user_id', $authUserId)->where('like', 1)->first();
+            $photograph->userLiked = $userLike ? true : false;
+            
+            $userDislike = $photograph->photographDislikes->where('user_id', $authUserId)->where('dislike', 1)->first();
+            $photograph->userDisliked = $userDislike ? true : false;
+            
+            // Remove the likes and dislikes collections to keep response clean
+            unset($photograph->photographLikes);
+            unset($photograph->photographDislikes);
+            
+            // Add user details
+            if ($photograph->user) {
+                $photograph->user_full_name = $photograph->user->first_name . ' ' . $photograph->user->last_name;
+                $photograph->user_username = $photograph->user->username;
+                $photograph->user_id = $photograph->user->id;
+                
+                // Get user's avatar photo
+                $userAvatar = $photograph->user->photographs()
+                    ->where('photo_type', 'avatar')
+                    ->latest()
+                    ->first();
+                $photograph->user_avatar = $userAvatar ? asset('storage/' . $userAvatar->path) : null;
+                
+                // Get business name from business_categories table
+                if ($photograph->user->businessCategory) {
+                    $photograph->business_name = $photograph->user->businessCategory->business_name;
+                } else {
+                    $photograph->business_name = null;
+                }
+            }
+            
+            // Add human readable created date
+            $photograph->created_at_human = $photograph->created_at->diffForHumans();
+            
+            // Process comments
+            $photograph->photographComments->each(function ($comment) {
+                if ($comment->commentUser) {
+                    // Add commenter full name
+                    $comment->commenter_full_name = $comment->commentUser->first_name . ' ' . $comment->commentUser->last_name;
+                    
+                    // Add commenter avatar image
+                    $commenterAvatar = $comment->commentUser->photographs()
+                        ->where('photo_type', 'avatar')
+                        ->latest()
+                        ->first();
+                    $comment->commenter_avatar = $commenterAvatar ? asset('storage/' . $commenterAvatar->path) : null;
+                    
+                    // Add human readable date using Carbon
+                    $comment->created_at_human = $comment->created_at->diffForHumans();
+                }
+
+                // Process replies as well
+                $comment->photographReplies->each(function ($reply) {
+                    if ($reply->replyUser) {
+                        // Add replier full name
+                        $reply->replier_full_name = $reply->replyUser->first_name . ' ' . $reply->replyUser->last_name;
+                        
+                        // Add replier avatar image
+                        $replierAvatar = $reply->replyUser->photographs()
+                            ->where('photo_type', 'avatar')
+                            ->latest()
+                            ->first();
+                        $reply->replier_avatar = $replierAvatar ? asset('storage/' . $replierAvatar->path) : null;
+                        
+                        // Add human readable date using Carbon
+                        $reply->created_at_human = $reply->created_at->diffForHumans();
+                    }
+                });
+            });
+            
+            return $photograph;
+        });
+
+        return $photographs;
+    }
+
     // Get the photographs with comments, replies, and commenter details for a user
     public function getPhotographsCommentsReplies($user) {
         // Get the authenticated user ID (if any)
         $userId = $user->id;
-        $authUserId = \Illuminate\Support\Facades\Auth::id();
+        $authUserId = Auth::id();
         
         // Get photographs with comments, replies, and commenter details
         $photographs = $user->photographs()

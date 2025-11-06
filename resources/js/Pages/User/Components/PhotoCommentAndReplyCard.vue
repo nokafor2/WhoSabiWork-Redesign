@@ -207,7 +207,7 @@
                 return this.$store.getters.getAuthenticatedUser;
             },
             showReplyBtn() {
-                if (this.pageName === 'entrepreneur') {
+                if ((this.pageName === 'entrepreneur') || (this.pageName === 'photoFeed')) {
                     if (this.isAuthenticated && this.authenticatedUser.id === this.entrepreneurId) {
                         return true;
                     } else {

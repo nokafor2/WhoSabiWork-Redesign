@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Make token available globally
         window.csrfToken = token.getAttribute('content');
         
-        console.log('CSRF token initialized for Inertia:', token.getAttribute('content').substring(0, 10) + '...');
+        // console.log('CSRF token initialized for Inertia:', token.getAttribute('content').substring(0, 10) + '...');
     } else {
         console.error('CSRF token meta tag not found');
     }

@@ -20,6 +20,7 @@ const store = createStore({
             userCommentsAndReplies: [],
             isAuthenticated: false,
             entrepreneur: [],
+            photoFeedData: [],
         };
     },
     mutations: {
@@ -56,6 +57,21 @@ const store = createStore({
         updateEntrepreneur(state, payload) {
             state.entrepreneur = payload.value;
         },
+        updatePhotoFeedData(state, payload) {
+            state.photoFeedData = payload.value;
+        },
+        appendPhotoFeedData(state, payload) {
+            // Append new photos to existing data
+            if (state.photoFeedData && state.photoFeedData.data) {
+                state.photoFeedData.data = [...state.photoFeedData.data, ...payload.value.data];
+                // Update pagination metadata
+                state.photoFeedData.current_page = payload.value.current_page;
+                state.photoFeedData.last_page = payload.value.last_page;
+                state.photoFeedData.next_page_url = payload.value.next_page_url;
+            } else {
+                state.photoFeedData = payload.value;
+            }
+        },
     },
     actions: {
         updateProducts(context, payload) {
@@ -91,6 +107,12 @@ const store = createStore({
         updateEntrepreneur(context, payload) {
             context.commit('updateEntrepreneur', payload);
         },
+        updatePhotoFeedData(context, payload) {
+            context.commit('updatePhotoFeedData', payload);
+        },
+        appendPhotoFeedData(context, payload) {
+            context.commit('appendPhotoFeedData', payload);
+        },
     },
     getters: {
         getProducts(state) {
@@ -125,6 +147,9 @@ const store = createStore({
         },
         getEntrepreneur(state) {
             return state.entrepreneur;
+        },
+        getPhotoFeedData(state) {
+            return state.photoFeedData;
         },
     }
 });

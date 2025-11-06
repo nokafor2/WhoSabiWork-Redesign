@@ -6,6 +6,7 @@ use App\Http\Traits\GlobalFunctions;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 
 class HomeController extends Controller
 {
@@ -32,12 +33,23 @@ class HomeController extends Controller
         
     }
 
-    public function photoFeeds() {
-        // return view('home.photoFeeds');
+    public function photoFeeds(Request $request) {
+        // Get current page from request, default to 1
+        $page = $request->get('page', 1);
+        $perPage = 15;
+        
+        // Cache key includes the page number and authenticated user ID for personalized caching
+        $authUserId = Auth::id() ?? 'guest';
+        $cacheKey = "photo_feed_page_{$page}_user_{$authUserId}";
+        
+        // Cache the photo feed data for 10 minutes (600 seconds)
+        $photoFeedData = Cache::remember($cacheKey, 600, function () use ($perPage) {
+            return $this->photoFeedData($perPage);
+        });
 
-        $entrepreneurs = $this->getUserCategoryDetails('artisan');
-
-        return inertia('PhotoFeed/Index', [ 'entrepreneurs' => $entrepreneurs]);
+        return inertia('PhotoFeed/Index', [
+            'photoFeedData' => $photoFeedData
+        ]);
     }
 
     public function mobileMarket() {

@@ -22,17 +22,15 @@
             <div v-if="isModalOpen" class="custom-modal-overlay" @click="closeModal">
                 <div class="custom-modal-container" @click.stop>
                     <!-- Modal Header -->
-                    <div class="modal-header bg-dark text-light border-bottom border-secondary">
+                    <div class="modal-header">
                         <h5 class="modal-title">
                             <i class="fas fa-image me-2"></i>Photo Gallery
                         </h5>
-                        <button type="button" class="btn btn-outline-light btn-sm" @click="closeModal">
-                            <i class="fas fa-times"></i>
-                        </button>
+                        <button type="button" class="btn-close" @click="closeModal" aria-label="Close"></button>
                     </div>
                     
                     <!-- Modal Body -->
-                    <div class="modal-body bg-dark text-light">
+                    <div class="modal-body">
                         <!-- Image Display -->
                         <div class="text-center mb-4">
                             <img :src="imageObj.src" class="img-fluid custom-modal-image" alt="">
@@ -40,20 +38,20 @@
                         
                         <!-- Caption Display -->
                         <div class="mb-3">
-                            <div class="card bg-secondary">
+                            <div class="card bg-light">
                                 <div class="card-body py-2">
-                                    <p class="mb-0 text-light">{{ displayCaption }}</p>
+                                    <p class="mb-0">{{ displayCaption }}</p>
                                 </div>
                             </div>
                         </div>
                         
                         <!-- Like/Dislike Actions -->
-                        <div class="d-flex align-items-center mb-3">
-                            <button class="btn btn-outline-light btn-sm me-3" @click="toggleLike">
+                        <div class="d-flex align-items-center gap-3 mb-4 pb-3 border-bottom">
+                            <button class="btn btn-outline-primary btn-sm" @click="toggleLike">
                                 <i class="fa-solid fa-thumbs-up me-1"></i>
                                 <span class="badge bg-primary ms-1">{{ likes }}</span>
                             </button>
-                            <button class="btn btn-outline-light btn-sm me-3" @click="toggleDislike">
+                            <button class="btn btn-outline-danger btn-sm" @click="toggleDislike">
                                 <i class="fa-solid fa-thumbs-down me-1"></i>
                                 <span class="badge bg-danger ms-1">{{ dislikes }}</span>
                             </button>
@@ -77,7 +75,7 @@
 
                         <!-- Caption Edit Form -->
                         <div v-if="showCaptionInput" class="mb-4">
-                            <div class="card bg-secondary">
+                            <div class="card bg-light">
                                 <div class="card-header">
                                     <h6 class="mb-0"><i class="fas fa-edit me-2"></i>Edit Caption</h6>
                                 </div>
@@ -85,7 +83,7 @@
                                     <form @submit.prevent="submitCaption">
                                         <div class="mb-3">
                                             <textarea 
-                                                class="form-control bg-dark text-light border-secondary" 
+                                                class="form-control" 
                                                 placeholder="Edit Caption" 
                                                 rows="3" 
                                                 v-model="captionInput.val"
@@ -110,7 +108,7 @@
 
                         <!-- Comment Form -->
                         <div v-if="isEntrepreneurPage" class="mb-4">
-                            <div class="card bg-secondary">
+                            <div class="card bg-light">
                                 <div class="card-header">
                                     <h6 class="mb-0"><i class="fas fa-edit me-2"></i>Make Comment</h6>
                                 </div>
@@ -118,7 +116,7 @@
                                     <form @submit.prevent="submitPhotoComment">
                                         <div class="mb-3">
                                             <textarea 
-                                                class="form-control bg-dark text-light border-secondary" 
+                                                class="form-control" 
                                                 placeholder="Enter your comment" 
                                                 rows="1" 
                                                 v-model="commentInput.val"
@@ -142,7 +140,7 @@
                         </div>
 
                         <!-- Comments Section -->
-                        <div class="card bg-secondary">
+                        <div class="card bg-light">
                             <div class="card-header d-flex justify-content-between align-items-center">
                                 <h6 class="mb-0">
                                     <i class="fas fa-comments me-2"></i>Comments
@@ -170,7 +168,7 @@
                     </div>
                     
                     <!-- Modal Footer -->
-                    <div class="modal-footer bg-dark text-light border-top border-secondary">
+                    <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" @click="closeModal">
                             <i class="fas fa-times me-1"></i>Close
                         </button>
@@ -821,9 +819,9 @@
 
 /* Custom Modal Container */
 .custom-modal-container {
-    background-color: #343a40;
+    background-color: #ffffff;
     border-radius: 0.5rem;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
     max-width: 90vw;
     max-height: 95vh;
     width: 800px;
@@ -846,19 +844,20 @@
 
 /* Modal Header */
 .modal-header {
-    padding: 1rem 1.5rem;
+    padding: 1.25rem 1.5rem;
     display: flex;
     justify-content: between;
     align-items: center;
-    border-bottom: 1px solid #495057;
-    background: linear-gradient(45deg, #343a40, #495057);
+    border-bottom: 1px solid #dee2e6;
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
 }
 
 .modal-title {
     margin: 0;
     flex-grow: 1;
     font-size: 1.25rem;
-    font-weight: 500;
+    font-weight: 600;
+    color: #212529;
 }
 
 /* Modal Body */
@@ -866,7 +865,26 @@
     padding: 1.5rem;
     overflow-y: auto;
     flex-grow: 1;
-    background-color: #343a40;
+    background-color: #f8f9fa;
+}
+
+/* Custom scrollbar for modal body */
+.modal-body::-webkit-scrollbar {
+    width: 8px;
+}
+
+.modal-body::-webkit-scrollbar-track {
+    background: #e9ecef;
+    border-radius: 4px;
+}
+
+.modal-body::-webkit-scrollbar-thumb {
+    background: #adb5bd;
+    border-radius: 4px;
+}
+
+.modal-body::-webkit-scrollbar-thumb:hover {
+    background: #6c757d;
 }
 
 /* Custom Modal Image */
@@ -874,13 +892,18 @@
     max-width: 100%;
     max-height: 400px;
     object-fit: contain;
-    border-radius: 0.375rem;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
     transition: transform 0.3s ease;
 }
 
 .custom-modal-image:hover {
     transform: scale(1.02);
+}
+
+/* Card styling for inner sections */
+.modal-body .card {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 /* Modal Footer */
@@ -889,8 +912,8 @@
     display: flex;
     justify-content: flex-end;
     gap: 0.5rem;
-    border-top: 1px solid #495057;
-    background: linear-gradient(45deg, #495057, #343a40);
+    border-top: 1px solid #dee2e6;
+    background: linear-gradient(135deg, #e9ecef, #f8f9fa);
 }
 
 /* Button Animations */
@@ -909,14 +932,17 @@
     transform: translateY(0);
 }
 
-/* Like/Dislike button effects */
-.btn-outline-light:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-    border-color: #fff;
+/* Close button styling */
+.btn-close {
+    transition: transform 0.2s ease;
+}
+
+.btn-close:hover {
+    transform: rotate(90deg);
 }
 
 /* Caption Input Animation */
-.card.bg-secondary {
+.card.bg-light {
     animation: slideInDown 0.3s ease-out;
 }
 
@@ -929,31 +955,6 @@
         opacity: 1;
         transform: translateY(0);
     }
-}
-
-/* Comments section styling */
-.custom-comments-section {
-    max-height: 250px;
-    overflow-y: auto;
-}
-
-/* Custom scrollbar for comments */
-.custom-comments-section::-webkit-scrollbar {
-    width: 8px;
-}
-
-.custom-comments-section::-webkit-scrollbar-track {
-    background: #495057;
-    border-radius: 4px;
-}
-
-.custom-comments-section::-webkit-scrollbar-thumb {
-    background: #6c757d;
-    border-radius: 4px;
-}
-
-.custom-comments-section::-webkit-scrollbar-thumb:hover {
-    background: #adb5bd;
 }
 
 /* Badge animations */
