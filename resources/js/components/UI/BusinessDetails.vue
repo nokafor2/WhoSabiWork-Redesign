@@ -37,6 +37,10 @@
             </div>
             <p class="col mb-1 mb-md-3"><i class="fa-solid fa-globe me-2"></i>{{ businessPage }}</p>
         </div>
+        <!-- <div class="row">
+            <p class="col-auto mb-0">Description</p>
+            <p>{{ businessDescription }}</p>
+        </div> -->
     </div>
 </template>
 
@@ -129,7 +133,10 @@
             },
             userRating() {
                 return this.user.userRating.avgRating;
-            }
+            },
+            businessDescription() {
+                return this.user.userDetails.business_category.business_description;
+            },
         }
     }
 </script>

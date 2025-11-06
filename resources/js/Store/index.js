@@ -17,7 +17,7 @@ const store = createStore({
             galleryPhotos: [],
             authenticatedUser: null,
             customerCommentsAndReplies: [],
-            entrepreneurCommentsAndReplies: [],
+            userCommentsAndReplies: [],
             isAuthenticated: false,
             entrepreneur: [],
         };
@@ -47,8 +47,8 @@ const store = createStore({
         updateCustomerCommentsAndReplies(state, payload) {
             state.customerCommentsAndReplies = payload.value;
         },
-        updateEntrepreneurCommentsAndReplies(state, payload) {
-            state.entrepreneurCommentsAndReplies = payload.value;
+        updateUserCommentsAndReplies(state, payload) {
+            state.userCommentsAndReplies = payload.value;
         },
         updateIsAuthenticated(state, payload) {
             state.isAuthenticated = payload.value;
@@ -82,8 +82,8 @@ const store = createStore({
         updateCustomerCommentsAndReplies(context, payload) {
             context.commit('updateCustomerCommentsAndReplies', payload);
         },
-        updateEntrepreneurCommentsAndReplies(context, payload) {
-            context.commit('updateEntrepreneurCommentsAndReplies', payload);
+        updateUserCommentsAndReplies(context, payload) {
+            context.commit('updateUserCommentsAndReplies', payload);
         },
         updateIsAuthenticated(context, payload) {
             context.commit('updateIsAuthenticated', payload);
@@ -117,8 +117,8 @@ const store = createStore({
         getCustomerCommentsAndReplies(state) {
             return state.customerCommentsAndReplies;
         },
-        getEntrepreneurCommentsAndReplies(state) {
-            return state.entrepreneurCommentsAndReplies;
+        getUserCommentsAndReplies(state) {
+            return state.userCommentsAndReplies;
         },
         getIsAuthenticated(state) {
             return state.isAuthenticated;

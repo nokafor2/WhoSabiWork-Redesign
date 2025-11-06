@@ -315,7 +315,7 @@ class UserController extends Controller
         $allTruckBrands = $this->getTableColumnsWithSort($truckBrand->table, TruckBrand::$columnsToExclude);
         $galleryPhotos = $this->getPhotographsCommentsReplies($user);
         $customerCommentsAndReplies = $this->getCommentsAndReplies($user, 'customer');
-        $entrepreneurCommentsAndReplies = $this->getCommentsAndReplies($user, 'entrepreneur');
+        $userCommentsAndReplies = $this->getCommentsAndReplies($user, 'user');
         
         // Determine if it's a regular user or business user
         $userType = $user->account_type;
@@ -327,6 +327,7 @@ class UserController extends Controller
                 'acceptedAppointmentsSchdlr' => $this->getAppointments('accepted', null, $user->id),
                 'declinedAppointmentsSchdlr' => $this->getAppointments('declined', null, $user->id),
                 'cancelledAppointmentsSchdlr' => $this->getAppointments('cancelled', null, $user->id),
+                'userCommentsAndReplies' => $userCommentsAndReplies,
             ]);
         } elseif ($userType === 'business') {
             $userDetails = $this->getUserDetails($user->id);
@@ -355,7 +356,7 @@ class UserController extends Controller
                 'cancelledAppointmentsSchdlr' => $this->getAppointments('cancelled', null, $user->id),
                 'galleryPhotos' => $galleryPhotos,
                 'customerCommentsAndReplies' => $customerCommentsAndReplies,
-                'entrepreneurCommentsAndReplies' => $entrepreneurCommentsAndReplies,
+                'userCommentsAndReplies' => $userCommentsAndReplies,
             ]);
         }
     }

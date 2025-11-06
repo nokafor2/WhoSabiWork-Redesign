@@ -1089,7 +1089,7 @@ trait GlobalFunctions {
                     'repliesCount' => count($repliesArray),
                 ];
             });
-        } elseif ($commentType === 'entrepreneur') {
+        } elseif ($commentType === 'user') {
             // Get self comments with replies and related users included
             $comments = $user->commentsGiven()
                 ->latest()
