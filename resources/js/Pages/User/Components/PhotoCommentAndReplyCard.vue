@@ -80,6 +80,7 @@
                 commentId: this.commentReplies?.id || '',
                 comment: this.commentReplies?.comment || '',
                 photographId: this.commentReplies?.photograph_id || '',
+                entrepreneurId: this.commentReplies?.photograph_user_id || '',
                 commentUserId: this.commentReplies?.user_id_comment || '',
                 commentUser: this.commentReplies?.comment_user || [],
                 commenterFullName: this.commentReplies?.commenter_full_name || '',
