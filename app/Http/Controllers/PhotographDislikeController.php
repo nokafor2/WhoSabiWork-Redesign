@@ -67,9 +67,17 @@ class PhotographDislikeController extends Controller
         if ($existingDislike && !$request->dislike) {
             $existingDislike->update(['dislike' => 0]);
             
+            // count the number of photograph likes for the existing photograph
+            $photoLikes = PhotographLike::where('photograph_id', $request->photograph_id)->where('like', 1)->count();
+            
+            // count the number of photograph dislikes for the existing photograph
+            $photoDislikes = PhotographDislike::where('photograph_id', $request->photograph_id)->where('dislike', 1)->count();
+            
             return redirect()->back()->with('success', [
                 'like' => $existingLike ? ($existingLike->like == 1) : false,
                 'dislike' => false,
+                'likesCount' => $photoLikes,
+                'dislikesCount' => $photoDislikes,
                 'message' => 'You removed your dislike from this photograph',
             ]);
         }
@@ -89,23 +97,36 @@ class PhotographDislikeController extends Controller
             }
             
             // If user previously liked, remove the like
-            $likeUpdated = false;
             if ($existingLike && $existingLike->like == 1) {
                 $existingLike->update(['like' => 0]);
-                $likeUpdated = true;
             }
+            
+            // count the number of photograph likes for the existing photograph
+            $photoLikes = PhotographLike::where('photograph_id', $request->photograph_id)->where('like', 1)->count();
+            
+            // count the number of photograph dislikes for the existing photograph
+            $photoDislikes = PhotographDislike::where('photograph_id', $request->photograph_id)->where('dislike', 1)->count();
             
             return redirect()->back()->with('success', [
                 'like' => false,
                 'dislike' => true,
-                'likeUpdated' => $likeUpdated,
+                'likesCount' => $photoLikes,
+                'dislikesCount' => $photoDislikes,
                 'message' => 'You disliked this photograph',
             ]);
         }
         
+        // count the number of photograph likes for the existing photograph
+        $photoLikes = PhotographLike::where('photograph_id', $request->photograph_id)->where('like', 1)->count();
+        
+        // count the number of photograph dislikes for the existing photograph
+        $photoDislikes = PhotographDislike::where('photograph_id', $request->photograph_id)->where('dislike', 1)->count();
+        
         return redirect()->back()->with('success', [
             'like' => $existingLike ? ($existingLike->like == 1) : false,
             'dislike' => false,
+            'likesCount' => $photoLikes,
+            'dislikesCount' => $photoDislikes,
             'message' => 'No action taken',
         ]);
     }

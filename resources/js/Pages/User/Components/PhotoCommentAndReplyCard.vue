@@ -162,9 +162,13 @@
                 this.formData.post(route('photographreply.store'), {
                     preserveScroll: true,
                     onSuccess: (page) => {
-                        // Update the image state
-                        if (page.props.images) {
-                            this.$store.dispatch('updateImages', { value: page.props.images });
+                        // Update the respective data in Vuex store
+                        if (this.pageName === 'entrepreneur') {
+                            this.$store.dispatch('updateGalleryPhotos', { value: page.props.entrepreneur.galleryPhotos });
+                        } else if (this.pageName === 'profilePage') {
+                            this.$store.dispatch('updateGalleryPhotos', { value: page.props.galleryPhotos });
+                        } else if (this.pageName === 'photoFeed') {
+                            this.$store.dispatch('updatePhotoFeedData', { value: page.props.photoFeedData });
                         }
 
                         // Hide the reply form

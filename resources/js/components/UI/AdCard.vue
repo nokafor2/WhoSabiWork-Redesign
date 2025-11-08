@@ -2,7 +2,7 @@
     <div class="card m-3 shadow bg-light" style="width: 20rem;">
         <div class="d-flex mt-2 mb-1 align-middle">
             <img class="rounded-circle me-2" style="height: 25px; width: 25px;" :src="userAvatar">
-            <a :href="route('entrepreneur.show', userId)" class="text-decoration-none me-3 text-dark"><h5 class="card-title">{{ businessName }}</h5></a>
+            <a :href="route('entrepreneur.show', userId)" class="me-3 text-dark"><h5 class="card-title">{{ businessName }}</h5></a>
         </div>
         <img :src="imagePath" style="height: 18rem;" class="card-img-top" alt="...">
         <p class="card-text mb-1">{{ photoCaption }}</p>
@@ -53,18 +53,8 @@
                                 </div>
                             </div>
                         </div>
-                        
-                        <!-- Stats -->
-                        <div class="d-flex align-items-center gap-3 mb-4 pb-3 border-bottom">
-                            <a href="#" class="text-decoration-none text-body like-stat" @click.prevent>
-                                <i class="fa-solid fa-thumbs-up me-1" style="color: #007bff;"></i>
-                                <span class="badge bg-primary">{{ photoLikes }}</span>
-                            </a>
-                            <a href="#" class="text-decoration-none text-body dislike-stat" @click.prevent>
-                                <i class="fa-solid fa-thumbs-down me-1" style="color: #dc3545;"></i>
-                                <span class="badge bg-danger">{{ photoDislikes }}</span>
-                            </a>
-                        </div>
+
+                        <LikeAndDislikeCard :likeAndDislikeData="likeAndDislikeData" @updateLikeAndDislike="handleLikeAndDislikeUpdate"></LikeAndDislikeCard>
                         
                         <!-- Comments Section -->
                         <div class="comments-section">
@@ -78,6 +68,7 @@
                                     :key="`comment-${commentAndReply.id}-${commentAndReply.photograph_replies?.length || 0}`" 
                                     :commentReplies="commentAndReply"
                                     :pageName="pageName"
+                                    @reply-added="handleReplyAdded"
                                 >
                                 </PhotoCommentAndReplyCard>
                             </div>
@@ -102,14 +93,16 @@
 
 <script>
     import PhotoCommentAndReplyCard from '@/Pages/User/Components/PhotoCommentAndReplyCard.vue';
+    import LikeAndDislikeCard from '@/Pages/User/Components/LikeAndDislikeCard.vue';
     
     export default {
-        components: { PhotoCommentAndReplyCard },
+        components: { PhotoCommentAndReplyCard, LikeAndDislikeCard },
         props: ['photoData'],
         data() {
             return {
                 photoRecord: this.photoData,
                 pageName: 'photoFeed',
+                photographId: this.photoData.id,
                 userId: this.photoData.user_id,
                 businessName: this.photoData.business_name,
                 userAvatar: this.photoData.user_avatar,
@@ -121,8 +114,15 @@
                 commentCount: this.photoData.photograph_comments_count,
                 photoCaption: this.photoData.caption,
                 showCommentsModal: false,
-                userLiked: this.photoData?.userLiked || false,
-                userDisliked: this.photoData?.userDisliked || false,
+                likeAndDislikeData: {
+                    pageName: 'photoFeed',
+                    userId: this.photoData.user_id,
+                    photographId: this.photoData.id,
+                    likes: this.photoData.active_likes_count || 0,
+                    dislikes: this.photoData.active_dislikes_count || 0,
+                    userLiked: this.photoData.userLiked || false,
+                    userDisliked: this.photoData.userDisliked || false,
+                },
             }
         },
         methods: {
@@ -134,7 +134,55 @@
                 } else {
                     document.body.style.overflow = '';
                 }
-            }
+            },
+            toggleLike() {
+                console.log('toggleLike');
+            },
+            toggleDislike() {
+                console.log('toggleDislike');
+            },
+            // Handle like/dislike updates from LikeAndDislikeCard component
+            handleLikeAndDislikeUpdate(data) {
+                // Update the local state with the new values from the child component
+                this.photoLikes = data.likes;
+                this.photoDislikes = data.dislikes;
+                
+                // Update the likeAndDislikeData object to keep it in sync
+                this.likeAndDislikeData.likes = data.likes;
+                this.likeAndDislikeData.dislikes = data.dislikes;
+                this.likeAndDislikeData.userLiked = data.userLiked;
+                this.likeAndDislikeData.userDisliked = data.userDisliked;
+                
+                // Force Vue to detect the change
+                this.$forceUpdate();
+            },
+            // Handle reply added event from CommentAndReplyCard
+            handleReplyAdded({ photographId, commentId, replyData }) {
+                // Find the comment in imageObj.photograph_comments and add the reply
+                if (this.photoRecord.photograph_comments) {
+                    const commentIndex = this.photoRecord.photograph_comments.findIndex(c => c.id === commentId);
+                    
+                    if (commentIndex !== -1) {
+                        const comment = this.photoRecord.photograph_comments[commentIndex];
+                        
+                        // Initialize photograph_replies if it doesn't exist
+                        if (!comment.photograph_replies) {
+                            comment.photograph_replies = [];
+                        }
+                        
+                        // Add the new reply at the beginning (latest first)
+                        comment.photograph_replies = [replyData, ...comment.photograph_replies];
+                        
+                        // Force Vue to recognize the change by creating a new array reference
+                        this.photoRecord.photograph_comments = [...this.photoRecord.photograph_comments];
+                        
+                        // Force update to ensure reactivity
+                        this.$forceUpdate();
+                    } else {
+                        console.warn('Comment not found in photoRecord for commentId:', commentId);
+                    }
+                }
+            },
         },
         computed: { 
             commentsAvailable() {
@@ -346,30 +394,6 @@
     50% {
         transform: translateY(-3px);
     }
-}
-
-/* Stats clickable styling */
-.like-stat, .dislike-stat {
-    transition: all 0.3s ease;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-}
-
-.like-stat:hover {
-    transform: scale(1.1);
-}
-
-.like-stat:hover .badge {
-    transform: scale(1.1);
-}
-
-.dislike-stat:hover {
-    transform: scale(1.1);
-}
-
-.dislike-stat:hover .badge {
-    transform: scale(1.1);
 }
 
 /* Responsive adjustments */

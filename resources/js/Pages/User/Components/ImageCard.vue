@@ -44,18 +44,11 @@
                                 </div>
                             </div>
                         </div>
-                        
-                        <!-- Like/Dislike Actions -->
-                        <div class="d-flex align-items-center gap-3 mb-4 pb-3 border-bottom">
-                            <button class="btn btn-outline-primary btn-sm" @click="toggleLike">
-                                <i class="fa-solid fa-thumbs-up me-1"></i>
-                                <span class="badge bg-primary ms-1">{{ likes }}</span>
-                            </button>
-                            <button class="btn btn-outline-danger btn-sm" @click="toggleDislike">
-                                <i class="fa-solid fa-thumbs-down me-1"></i>
-                                <span class="badge bg-danger ms-1">{{ dislikes }}</span>
-                            </button>
-                        </div>
+
+                        <LikeAndDislikeCard 
+                            :likeAndDislikeData="likeAndDislikeData"
+                            @updateLikeAndDislike="handleLikeAndDislikeUpdate">
+                        </LikeAndDislikeCard>
                         
                         <!-- Action Buttons -->
                         <div v-if="isProfilePage" class="d-flex flex-wrap gap-2 mb-3">
@@ -187,13 +180,13 @@
     import MethodsMixin from '../Mixins/MethodsMixin.js';
     import CommentCard from './CommentCard.vue';
     import PhotoCommentAndReplyCard from './PhotoCommentAndReplyCard.vue';
-    import ErrorAlert from '@/components/UI/ErrorAlert.vue';
+    import LikeAndDislikeCard from './LikeAndDislikeCard.vue';
     import FeedbackModal from '@/components/UI/FeedbackModal.vue';
     import { useForm } from '@inertiajs/vue3';
 
     export default {
         mixins: [MethodsMixin],
-        components: {CommentCard, ErrorAlert, PhotoCommentAndReplyCard, FeedbackModal},
+        components: {CommentCard, PhotoCommentAndReplyCard, LikeAndDislikeCard, FeedbackModal},
         props: ['imageData', 'pageName'],
         emits: ['photoDeleted', 'photoUpdated'],
         data() {
@@ -229,6 +222,15 @@
                     actionButtonText: 'Login',
                     actionIcon: 'fas fa-sign-in-alt',
                     action: null, // Track what action to perform: 'login', 'delete', etc.
+                },
+                likeAndDislikeData: {
+                    pageName: this.pageName,
+                    userId: this.imageData.user_id,
+                    photographId: this.imageData.id,
+                    likes: this.imageData.active_likes_count || 0,
+                    dislikes: this.imageData.active_dislikes_count || 0,
+                    userLiked: this.imageData.userLiked || false,
+                    userDisliked: this.imageData.userDisliked || false,
                 },
             }
         },
@@ -452,185 +454,6 @@
                     }
                 });
             },
-            toggleLike() {
-                // Check if user is authenticated
-                if (!this.isAuthenticated) {
-                    this.showFeedbackModal('Authentication Required', 'You must be logged in to like photos. Please log in to continue.', true, 'login', 'Login', 'fas fa-sign-in-alt');
-                    return;
-                }
-
-                // Check if user has liked the photo before
-                const formData = useForm({
-                    photograph_id: this.imageObj.id,
-                    photograph_user_id: this.userId,
-                    like: !this.userLiked
-                });
-                formData.post(route('photographlike.store'), {
-                    preserveScroll: true,
-                    onSuccess: (page) => {
-                        console.log('Like success:', page.props.flash.success);
-                        
-                        // Check if there's an authentication error in flash
-                        if (page.props.flash.error && page.props.flash.error.authError) {
-                            this.showFeedbackModal(
-                                'Authentication Required', 
-                                page.props.flash.error.message, 
-                                true, 
-                                'login', 
-                                'Login', 
-                                'fas fa-sign-in-alt'
-                            );
-                            return;
-                        }
-                        
-                        if (page.props.flash.success) {
-                            const response = page.props.flash.success;
-                            
-                            // Update galleryPhoto in Vuex store
-                            if (this.pageName === 'entrepreneur') {
-                                this.$store.dispatch('updateGalleryPhotos', { value: page.props.entrepreneur.galleryPhotos });
-                            } else if (this.pageName === 'profilePage') {
-                                this.$store.dispatch('updateGalleryPhotos', { value: page.props.galleryPhotos });
-                            }
-                            
-                            // Track previous states
-                            const previousLiked = this.userLiked;
-                            const previousDisliked = this.userDisliked;
-                            
-                            // Update states from server response
-                            this.userLiked = response.like;
-                            this.userDisliked = response.dislike;
-                            
-                            // Update like count based on state change
-                            if (response.like && !previousLiked) {
-                                // Changed from not liked to liked
-                                this.likes++;
-                            } else if (!response.like && previousLiked) {
-                                // Changed from liked to not liked
-                                this.likes--;
-                            }
-                            
-                            // Update dislike count based on state change
-                            if (response.dislike && !previousDisliked) {
-                                // Changed from not disliked to disliked
-                                this.dislikes++;
-                            } else if (!response.dislike && previousDisliked) {
-                                // Changed from disliked to not disliked
-                                this.dislikes--;
-                            }
-                        }
-                    },
-                    onError: (errors) => {
-                        console.error('Like error:', errors);
-                        
-                        // Handle authentication errors
-                        if (errors.authError && errors.authError === 'unauthenticated') {
-                            this.showFeedbackModal(
-                                'Authentication Required',
-                                errors.message || 'You must be logged in to like photos. Please log in to continue.',
-                                true,
-                                'login',
-                                'Login',
-                                'fas fa-sign-in-alt'
-                            );
-                        } else if (Object.keys(errors).length > 0) {
-                            // Generic error handling
-                            const errorMessage = errors.message || errors[Object.keys(errors)[0]];
-                            this.showFeedbackModal('Error', errorMessage, false, null, 'OK', 'fas fa-times');
-                        }
-                    }
-                });
-            },
-            toggleDislike() {
-                // Check if user is authenticated
-                if (!this.isAuthenticated) {
-                    this.showFeedbackModal('Authentication Required', 'You must be logged in to dislike photos. Please log in to continue.', true, 'login', 'Login', 'fas fa-sign-in-alt');
-                    return;
-                }
-                
-                // Check if user has disliked the photo before
-                const formData = useForm({
-                    photograph_id: this.imageObj.id,
-                    photograph_user_id: this.userId,
-                    dislike: !this.userDisliked
-                });
-
-                formData.post(route('photographdislike.store'), {
-                    preserveScroll: true,
-                    onSuccess: (page) => {
-                        console.log('Dislike success:', page.props.flash.success);
-                        
-                        // Check if there's an authentication error in flash
-                        if (page.props.flash.error && page.props.flash.error.authError) {
-                            this.showFeedbackModal(
-                                'Authentication Required', 
-                                page.props.flash.error.message, 
-                                true, 
-                                'login', 
-                                'Login', 
-                                'fas fa-sign-in-alt'
-                            );
-                            return;
-                        }
-                        
-                        if (page.props.flash.success) {
-                            const response = page.props.flash.success;
-                            
-                            // Update galleryPhoto in Vuex store
-                            if (this.pageName === 'entrepreneur') {
-                                this.$store.dispatch('updateGalleryPhotos', { value: page.props.entrepreneur.galleryPhotos });
-                            } else if (this.pageName === 'profilePage') {
-                                this.$store.dispatch('updateGalleryPhotos', { value: page.props.galleryPhotos });
-                            }
-                            
-                            // Track previous states
-                            const previousLiked = this.userLiked;
-                            const previousDisliked = this.userDisliked;
-                            
-                            // Update states from server response
-                            this.userDisliked = response.dislike;
-                            this.userLiked = response.like;
-                            
-                            // Update dislike count based on state change
-                            if (response.dislike && !previousDisliked) {
-                                // Changed from not disliked to disliked
-                                this.dislikes++;
-                            } else if (!response.dislike && previousDisliked) {
-                                // Changed from disliked to not disliked
-                                this.dislikes--;
-                            }
-                            
-                            // Update like count based on state change
-                            if (response.like && !previousLiked) {
-                                // Changed from not liked to liked
-                                this.likes++;
-                            } else if (!response.like && previousLiked) {
-                                // Changed from liked to not liked
-                                this.likes--;
-                            }
-                        }
-                    },
-                    onError: (errors) => {
-                        console.error('Dislike error:', errors);
-                        
-                        // Handle authentication errors
-                        if (errors.authError && errors.authError === 'unauthenticated') {
-                            this.showFeedbackModal(
-                                'Authentication Required',
-                                errors.message || 'You must be logged in to dislike photos. Please log in to continue.',
-                                true,
-                                'login',
-                                'Login',
-                                'fas fa-sign-in-alt'
-                            );
-                        } else if (Object.keys(errors).length > 0) {
-                            // Generic error handling
-                            const errorMessage = errors.message || errors[Object.keys(errors)[0]];
-                            this.showFeedbackModal('Error', errorMessage, false, null, 'OK', 'fas fa-times');
-                        }
-                    }
-                });
-            },
             sharePhoto() {
                 if (navigator.share) {
                     navigator.share({
@@ -703,6 +526,23 @@
                     this.closeFeedbackModal();
                     this.executeDeletePhoto();
                 }
+            },
+            // Handle like/dislike updates from LikeAndDislikeCard component
+            handleLikeAndDislikeUpdate(data) {
+                // Update the local state with the new values from the child component
+                this.likes = data.likes;
+                this.dislikes = data.dislikes;
+                this.userLiked = data.userLiked;
+                this.userDisliked = data.userDisliked;
+                
+                // Update the likeAndDislikeData object to keep it in sync
+                this.likeAndDislikeData.likes = data.likes;
+                this.likeAndDislikeData.dislikes = data.dislikes;
+                this.likeAndDislikeData.userLiked = data.userLiked;
+                this.likeAndDislikeData.userDisliked = data.userDisliked;
+                
+                // Force Vue to detect the change
+                this.$forceUpdate();
             }
         },
         computed: {

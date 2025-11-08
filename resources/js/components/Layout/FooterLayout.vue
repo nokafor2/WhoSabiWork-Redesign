@@ -6,7 +6,7 @@
                 <a href="#" class="text-decoration-none text-light">Terms of Use</a> • 
                 <a href="#" class="text-decoration-none text-light">Contact Us</a>
             </p>
-            <p class="text-center lead text-muted">Copyright &copy; 2024, Ayua Global Technologies</p>
+            <p class="text-center lead text-light">Copyright &copy; 2024, Ayua Global Technologies</p>
         </div>        
     </footer>
 </template>
