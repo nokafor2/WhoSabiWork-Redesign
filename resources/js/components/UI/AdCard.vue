@@ -56,6 +56,8 @@
 
                         <LikeAndDislikeCard :likeAndDislikeData="likeAndDislikeData" @updateLikeAndDislike="handleLikeAndDislikeUpdate"></LikeAndDislikeCard>
                         
+                        <CommentForm :commentData="commentData" @updateComment="handleCommentUpdate"></CommentForm>
+                        
                         <!-- Comments Section -->
                         <div class="comments-section">
                             <h6 class="mb-3">
@@ -94,13 +96,14 @@
 <script>
     import PhotoCommentAndReplyCard from '@/Pages/User/Components/PhotoCommentAndReplyCard.vue';
     import LikeAndDislikeCard from '@/Pages/User/Components/LikeAndDislikeCard.vue';
+    import CommentForm from '@/Pages/User/Components/CommentForm.vue';
     
     export default {
-        components: { PhotoCommentAndReplyCard, LikeAndDislikeCard },
+        components: { PhotoCommentAndReplyCard, LikeAndDislikeCard, CommentForm },
         props: ['photoData'],
         data() {
             return {
-                photoRecord: this.photoData,
+                photoRecord: this.photoData,    
                 pageName: 'photoFeed',
                 photographId: this.photoData.id,
                 userId: this.photoData.user_id,
@@ -123,6 +126,12 @@
                     userLiked: this.photoData.userLiked || false,
                     userDisliked: this.photoData.userDisliked || false,
                 },
+                commentData: {
+                    pageName: 'photoFeed',
+                    commentCount: this.photoData.photograph_comments?.length || 0,
+                    photographId: this.photoData.id,
+                    photographUserId: this.photoData.user_id,
+                }
             }
         },
         methods: {
@@ -181,6 +190,37 @@
                     } else {
                         console.warn('Comment not found in photoRecord for commentId:', commentId);
                     }
+                }
+            },
+            handleCommentUpdate(data) {
+                // Update comment count
+                this.commentCount = data.commentCount;
+                this.commentData.commentCount = data.commentCount;
+                
+                // Add the new comment to the comments list for real-time UI update
+                if (data.commentData) {
+                    // Initialize photograph_replies as empty array for the new comment
+                    const newComment = {
+                        ...data.commentData,
+                        photograph_replies: []
+                    };
+                    
+                    // Add the new comment at the beginning (latest first)
+                    if (this.photoCommentsAndReplies) {
+                        this.photoCommentsAndReplies = [newComment, ...this.photoCommentsAndReplies];
+                    } else {
+                        this.photoCommentsAndReplies = [newComment];
+                    }
+                    
+                    // Update the photoRecord as well
+                    if (this.photoRecord.photograph_comments) {
+                        this.photoRecord.photograph_comments = [newComment, ...this.photoRecord.photograph_comments];
+                    } else {
+                        this.photoRecord.photograph_comments = [newComment];
+                    }
+                    
+                    // Force Vue to detect the change
+                    this.$forceUpdate();
                 }
             },
         },

@@ -227,7 +227,6 @@
     import EmailSection from './Components/EmailSection.vue';
     import PhoneNumberSection from './Components/PhoneNumberSection.vue';
     import PasswordSection from './Components/PasswordSection.vue';
-    import CommentCard from './Components/CommentCard.vue';
     import AppointmentDetails from './Components/AppointmentDetails.vue';
     import AppointmentDetails2 from './Components/AppointmentDetails2.vue';
     import AppointmentDetails1 from './Components/AppointmentDetails1.vue';
@@ -263,7 +262,7 @@
         components: {
             FieldAccordion, ProfilePhotoModern, FirstNameSection, 
             LastNameSection, GenderSection, UsernameSection, EmailSection, PhoneNumberSection, 
-            PasswordSection, CommentCard, AppointmentDetails, AppointmentDetails1, 
+            PasswordSection, AppointmentDetails, AppointmentDetails1, 
             BusinessNameSection, AddressLine1Section, AddressLine2Section, AddressLine3Section, 
             StateSection, TownSection, BusinessCategorySection, BusinessDescriptionSection, 
             ArtisansSection, MobileMarketSection, TechnicalServiceSection, SparePartSection,

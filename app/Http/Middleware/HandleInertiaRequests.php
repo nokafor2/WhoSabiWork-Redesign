@@ -35,14 +35,16 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
-        return array_merge(parent::share($request), [
-            'csrf_token' => csrf_token(),
-            'flash' => [
-                'success' => $request->session()->get('success'),
-                'error' => $request->session()->get('error'),
-            ],
-            'entrepreneur' => $request->session()->get('entrepreneur'),
-            'user' => $request->user() ? [
+        $userData = null;
+        
+        if ($request->user()) {
+            // Get user avatar from photographs table
+            $userAvatar = $request->user()->photographs()
+                ->where('photo_type', 'avatar')
+                ->latest()
+                ->first();
+            
+            $userData = [
                 'id' => $request->user()->id,
                 'firstName' => $request->user()->first_name,
                 'lastName' => $request->user()->last_name,
@@ -50,7 +52,18 @@ class HandleInertiaRequests extends Middleware
                 'email' => $request->user()->email,
                 'account_type' => $request->user()->account_type,
                 'account_status' => $request->user()->account_status,
-            ] : null,
+                'avatar' => $userAvatar ? asset('storage/' . $userAvatar->path) : null,
+            ];
+        }
+        
+        return array_merge(parent::share($request), [
+            'csrf_token' => csrf_token(),
+            'flash' => [
+                'success' => $request->session()->get('success'),
+                'error' => $request->session()->get('error'),
+            ],
+            'entrepreneur' => $request->session()->get('entrepreneur'),
+            'user' => $userData,
         ]);
     }
 }

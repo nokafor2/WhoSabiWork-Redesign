@@ -47,18 +47,19 @@
                 <ul v-else class="navbar-nav nav-pills mb-2 mb-xl-0 ms-auto">
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-person" viewBox="0 0 16 16">
-                                <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0m4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4m-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10s-3.516.68-4.168 1.332c-.678.678-.830 1.418-.832 1.664z"/>
-                              </svg> {{ (user.firstName && user.lastName) ? (user.firstName + ' ' + user.lastName) : (user.firstName || user.username || 'User') }}
+                            <img :src="user.avatar" alt="User Avatar" class="rounded-circle me-2" style="height: 20px; width: 20px;">
+                            {{ (user.firstName && user.lastName) ? (user.firstName + ' ' + user.lastName) : (user.firstName || user.username || 'User') }}
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" style="right: 0; left: auto; z-index: 1050;">
                             <li><a class="dropdown-item" href="#">Welcome {{ user.firstName || user.username || 'User' }}</a></li>
                             <li v-if="user && user.id">
                                 <a class="dropdown-item" :href="route('users.show', user.id)">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person" viewBox="0 0 16 16">
-                                        <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0m4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4m-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10s-3.516.68-4.168 1.332c-.678.678-.830 1.418-.832 1.664z"/>
-                                      </svg> Your Profile
+                                    <img :src="user.avatar" alt="User Avatar" class="rounded-circle me-2" style="height: 25px; width: 25px;">
+                                    Your Profile
                                 </a>
+                            </li>
+                            <li v-if="user && user.id">
+                                <a :href="route('entrepreneur.show', user.id)" class="dropdown-item">Entrepreneur Profile</a>
                             </li>
                             <li v-else>
                                 <span class="dropdown-item text-muted">
@@ -70,9 +71,6 @@
                             <li><hr class="dropdown-divider"></li>
                             <li class="nav-item">
                                 <Link :href="route('logout')" method="delete" as="button" class="btn btn-danger btn-sm text-light mx-2 w-75">Sign Out</Link>
-                                <!-- <form @submit.prevent="logout" method="delete">
-                                    <button class="btn btn-danger btn-sm" type="button">Sign Out</button>
-                                </form> -->
                             </li>
                         </ul>
                     </li>

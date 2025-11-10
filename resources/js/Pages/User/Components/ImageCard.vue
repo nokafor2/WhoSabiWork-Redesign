@@ -100,37 +100,7 @@
                         </div>
 
                         <!-- Comment Form -->
-                        <div v-if="isEntrepreneurPage" class="mb-4">
-                            <div class="card bg-light">
-                                <div class="card-header">
-                                    <h6 class="mb-0"><i class="fas fa-edit me-2"></i>Make Comment</h6>
-                                </div>
-                                <div class="card-body">
-                                    <form @submit.prevent="submitPhotoComment">
-                                        <div class="mb-3">
-                                            <textarea 
-                                                class="form-control" 
-                                                placeholder="Enter your comment" 
-                                                rows="1" 
-                                                v-model="commentInput.val"
-                                                :class="{'is-invalid': !commentInput.isValid}"
-                                            ></textarea>
-                                            <div v-if="!commentInput.isValid" class="invalid-feedback">
-                                                Comment is required
-                                            </div>
-                                        </div>
-                                        <div class="d-flex justify-content-end gap-2">
-                                            <button type="button" class="btn btn-secondary btn-sm" @click="cancelCommentEdit">
-                                                <i class="fas fa-times me-1"></i>Cancel
-                                            </button>
-                                            <button type="submit" class="btn btn-success btn-sm">
-                                                <i class="fas fa-save me-1"></i>Comment
-                                            </button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
+                        <CommentForm :commentData="commentData" @updateComment="handleCommentUpdate"></CommentForm>
 
                         <!-- Comments Section -->
                         <div class="card bg-light">
@@ -142,7 +112,6 @@
                             </div>
                             <div class="card-body custom-comments-section">
                                 <!-- Comment Cards -->
-                                <!-- <CommentCard v-for="photoComment in imageObj.photograph_comments" :key="photoComment.id" :index="photoComment.id" :photoComment="photoComment"></CommentCard> -->
                                 <PhotoCommentAndReplyCard 
                                     v-for="commentReply in imageObj.photograph_comments" 
                                     :key="`comment-${commentReply.id}-${commentReply.photograph_replies?.length || 0}`"
@@ -182,11 +151,12 @@
     import PhotoCommentAndReplyCard from './PhotoCommentAndReplyCard.vue';
     import LikeAndDislikeCard from './LikeAndDislikeCard.vue';
     import FeedbackModal from '@/components/UI/FeedbackModal.vue';
+    import CommentForm from './CommentForm.vue';
     import { useForm } from '@inertiajs/vue3';
 
     export default {
         mixins: [MethodsMixin],
-        components: {CommentCard, PhotoCommentAndReplyCard, LikeAndDislikeCard, FeedbackModal},
+        components: {CommentCard, PhotoCommentAndReplyCard, LikeAndDislikeCard, FeedbackModal, CommentForm},
         props: ['imageData', 'pageName'],
         emits: ['photoDeleted', 'photoUpdated'],
         data() {
@@ -232,6 +202,12 @@
                     userLiked: this.imageData.userLiked || false,
                     userDisliked: this.imageData.userDisliked || false,
                 },
+                commentData: {
+                    pageName: this.pageName,
+                    commentCount: this.imageData.photograph_comments?.length || 0,
+                    photographId: this.imageData.id,
+                    photographUserId: this.imageData.user_id,
+                }
             }
         },
         created() {
@@ -273,73 +249,9 @@
                 this.commentInput.val = this.imageObj?.comment || '';
                 this.commentInput.isValid = true;
             },
-            submitPhotoComment() {
-                // check if user is authenticated
-                if (!this.isAuthenticated) {
-                    this.showFeedbackModal('Authentication Required', 'You must be logged in to comment on photos. Please log in to continue.', true, 'login', 'Login', 'fas fa-sign-in-alt');
-                    return;
-                }
-
-                if (!this.commentInput.val.trim()) {
-                    this.commentInput.isValid = false;
-                    return;
-                }
-
-                const formData = useForm({
-                    photograph_id: this.imageObj.id,
-                    photograph_user_id: this.userId,
-                    comment: this.commentInput.val
-                })
-                formData.post(route('photographcomment.store'), {
-                    preserveScroll: true,
-                    onSuccess: (page) => {
-                        console.log('success', page.props.flash.success);
-                        console.log('Updated page data:', page.props);
-
-                        // Check if there's an error in flash (authentication error)
-                        if (page.props.flash.error.authError) {
-                            this.showFeedbackModal('Authentication Required', page.props.flash.error.message, true, 'login', 'Login', 'fas fa-sign-in-alt');
-                            return;
-                        }
-
-                        // Update the comment count
-                        this.commentCount = page.props.flash.success.commentCount;
-
-                        // Update the image state in Vuex store
-                        this.$store.dispatch('updateGalleryPhotos', { value: page.props.entrepreneur.galleryPhotos });
-
-                        // Force Vue to detect the change
-                        this.$forceUpdate();
-
-                        // Reset the comment input
-                        this.commentInput.val = '';
-                        this.commentInput.isValid = true;
-                    },
-                    onError: (errors) => {
-                        console.log('Error: ', errors);
-                        
-                        // Handle validation errors
-                        if (errors.comment) {
-                            this.commentInput.isValid = false;
-                        }
-                        
-                        // Handle authentication errors
-                        if (errors.authError && errors.authError.includes('unauthenticated')) {
-                            this.showFeedbackModal(
-                                'Authentication Required',
-                                'You must be logged in to comment on photos. Please log in to continue.',
-                                true,
-                                'login',
-                                'Login',
-                                'fas fa-sign-in-alt'
-                            );
-                        } else if (Object.keys(errors).length > 0) {
-                            // Generic error handling
-                            const errorMessage = errors[Object.keys(errors)[0]];
-                            this.showFeedbackModal('Error', errorMessage, false, null, 'OK', 'fas fa-times');
-                        }
-                    }
-                });
+            handleCommentUpdate(data) {
+                this.commentCount = data.commentCount;
+                this.commentData.commentCount = data.commentCount;
             },
             submitCaption() {
                 if (!this.captionInput.val.trim()) {
