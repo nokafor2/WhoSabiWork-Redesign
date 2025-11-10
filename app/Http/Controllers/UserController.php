@@ -322,7 +322,7 @@ class UserController extends Controller
         
         if ($userType === 'regular') {
             return Inertia('User/UserProfile', [
-                'user' => $user,
+                'profileUser' => $user,
                 'neutralAppointmentsSchdlr' => $this->getAppointments('neutral', null, $user->id),
                 'acceptedAppointmentsSchdlr' => $this->getAppointments('accepted', null, $user->id),
                 'declinedAppointmentsSchdlr' => $this->getAppointments('declined', null, $user->id),
@@ -332,7 +332,7 @@ class UserController extends Controller
         } elseif ($userType === 'business') {
             $userDetails = $this->getUserDetails($user->id);
             return Inertia('User/UserProfile', [
-                'user' => $userDetails['userDetails'], 
+                'profileUser' => $userDetails['userDetails'], 
                 'userCategories' => $userDetails['userCategories'],
                 'techVehCategories' => $userDetails['techVehCategories'],
                 'sPartVehCategories' => $userDetails['sPartVehCategories'],

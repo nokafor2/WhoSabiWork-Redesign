@@ -64,8 +64,7 @@ class User extends Authenticatable
     }
 
     public function photographs() {
-        // return $this->hasMany('App\Models\Photograph');
-        return $this->hasOne('App\Models\Photograph');
+        return $this->hasMany('App\Models\Photograph');
     }
 
     public function businessCategory() {

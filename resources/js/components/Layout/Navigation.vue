@@ -47,14 +47,18 @@
                 <ul v-else class="navbar-nav nav-pills mb-2 mb-xl-0 ms-auto">
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <img :src="user.avatar" alt="User Avatar" class="rounded-circle me-2" style="height: 20px; width: 20px;">
+                            <img :src="userAvatar" alt="User Avatar" class="rounded-circle me-2" style="height: 20px; width: 20px; object-fit: cover;">
                             {{ (user.firstName && user.lastName) ? (user.firstName + ' ' + user.lastName) : (user.firstName || user.username || 'User') }}
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" style="right: 0; left: auto; z-index: 1050;">
+                            <li class="justify-content-center">
+                                <a class="dropdown-item" href="#">
+                                    <img :src="userAvatar" alt="User Avatar" class="rounded-circle me-2" style="height: 50px; width: 50px; object-fit: cover;">
+                                </a>
+                            </li>
                             <li><a class="dropdown-item" href="#">Welcome {{ user.firstName || user.username || 'User' }}</a></li>
                             <li v-if="user && user.id">
                                 <a class="dropdown-item" :href="route('users.show', user.id)">
-                                    <img :src="user.avatar" alt="User Avatar" class="rounded-circle me-2" style="height: 25px; width: 25px;">
                                     Your Profile
                                 </a>
                             </li>
@@ -75,11 +79,6 @@
                         </ul>
                     </li>
                 </ul>
-
-                <!-- <form class="d-flex mb-2 mb-xl-0" role="search">
-                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                    <button class="btn btn-sm btn-outline-success" type="submit">Search</button>
-                </form>              -->
             </div>
         </div>
     </nav>
@@ -105,10 +104,25 @@
         },
         computed: {
             user() {
-                return this.page.props.user;
+                // Use Vuex store as primary source (persistent across pages)
+                // Fall back to page.props.user if Vuex store hasn't been populated yet
+                const vuexUser = this.$store.getters.getAuthenticatedUser;
+                return vuexUser || this.page.props.user;
             },
             flashSuccess() {
                 return this.page.props.flash.success;
+            },
+            userAvatar() {
+                // Get user from Vuex store (persistent) or page props (initial load)
+                const currentUser = this.user;
+                
+                // Return user avatar if available, otherwise return a default avatar
+                if (currentUser && currentUser.avatar) {
+                    return currentUser.avatar;
+                }
+                
+                // Return a default avatar SVG data URL
+                return 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiB2aWV3Qm94PSIwIDAgMTAwIDEwMCI+PGNpcmNsZSBjeD0iNTAiIGN5PSI1MCIgcj0iNTAiIGZpbGw9IiNkYzM1NDUiLz48Y2lyY2xlIGN4PSI1MCIgY3k9IjM1IiByPSIxNSIgZmlsbD0iI2ZmZiIvPjxwYXRoIGQ9Ik0yNSA3NWMwLTEzLjggMTEuMi0yNSAyNS0yNXMyNSAxMS4yIDI1IDI1IiBmaWxsPSIjZmZmIi8+PC9zdmc+';
             }
         }
     }

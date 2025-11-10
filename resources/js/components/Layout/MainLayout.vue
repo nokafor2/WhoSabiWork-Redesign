@@ -23,7 +23,7 @@
         const isAuthenticated = !!newUser;
         store.dispatch('updateIsAuthenticated', { value: isAuthenticated });
         
-        // Update authenticated user details (null if not authenticated)
+        // Update authenticated user details including avatar (null if not authenticated)
         store.dispatch('updateAuthenticatedUser', { value: newUser || null });
-    }, { immediate: true });
+    }, { immediate: true, deep: true });
 </script>
