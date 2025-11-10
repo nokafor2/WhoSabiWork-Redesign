@@ -1,25 +1,33 @@
 <template>
-    <section>
-        <image-carousel></image-carousel>
-        <about-layout></about-layout>
-    </section>
+    <div>
+        <!-- Hero Section with Carousel -->
+        <hero-section></hero-section>
+
+        <!-- About Section -->
+        <about-section></about-section>
+
+        <!-- Packages Section -->
+        <packages-section></packages-section>
+
+        <!-- CTA Section -->
+        <CTASection></CTASection>
+    </div>
 </template>
 
 <script setup>
-    import AboutLayout from "./Components/AboutLayout.vue";
-    import ImageCarousel from "./Components/ImageCarousel.vue";
-
-    // defineProps(['mobileMarketers']);
-
-    
-
-    
-
+    import HeroSection from "./Components/HeroSection.vue";
+    import AboutSection from "./Components/AboutSection.vue";
+    import PackagesSection from "./Components/PackagesSection.vue";
+    import CTASection from "./Components/CTASection.vue";
 </script>
 
 <script>
 export default {
-    components: { AboutLayout, ImageCarousel }
+    components: { 
+        HeroSection, 
+        AboutSection, 
+        PackagesSection, 
+        CTASection 
+    }
 }
 </script>
-  

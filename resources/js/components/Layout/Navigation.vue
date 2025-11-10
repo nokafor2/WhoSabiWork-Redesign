@@ -4,15 +4,12 @@
         <div class="container-fluid px-3 px-lg-4">
             <!-- Logo -->
             <a class="navbar-brand d-flex align-items-center gap-2" :href="route('home.index')">
-                <div class="d-flex align-items-center justify-content-center rounded bg-danger text-white" style="height: 40px; width: 40px;">
+                <div class="d-flex align-items-center justify-content-center rounded bg-secondary-orange text-white" style="height: 40px; width: 40px;">
                     <span class="fw-bold fs-6">
                         <img src="../../../Images/WhoSabiWorkLogo.png" alt="Website Logo" class="img-fluid" style="height: 45px;">
                     </span>
                 </div>
                 <span class="d-none d-sm-inline-block fw-semibold">WhoSabiWork</span>
-                <!-- <span class="d-none d-sm-inline-block fw-semibold">
-                    <img src="../../../Images/WhoSabiWorkL1.jpg" alt="Website Logo" class="img-fluid" style="height: 45px;">
-                </span> -->
             </a>
 
             <!-- Desktop Navigation Links -->
@@ -101,10 +98,10 @@
 
                 <!-- Guest Buttons -->
                 <template v-else>
-                    <a :href="route('users.index')" class="btn btn-outline-danger btn-sm">
+                    <a :href="route('users.index')" class="btn btn-outline-secondary btn-sm" style="color: var(--secondary-orange); border-color: var(--secondary-orange);">
                         Log in
                     </a>
-                    <a :href="route('users.create')" class="btn btn-danger btn-sm">
+                    <a :href="route('users.create')" class="btn btn-secondary-orange btn-sm text-white">
                         Get Started
                     </a>
                 </template>
@@ -219,14 +216,15 @@
                         <a 
                             :href="route('users.index')" 
                             @click="closeMobileMenu"
-                            class="btn btn-outline-danger w-100"
+                            class="btn btn-outline-secondary w-100"
+                            style="color: var(--secondary-orange); border-color: var(--secondary-orange);"
                         >
                             Log in
                         </a>
                         <a 
                             :href="route('users.create')" 
                             @click="closeMobileMenu"
-                            class="btn btn-danger w-100"
+                            class="btn btn-secondary-orange w-100 text-white"
                         >
                             Get Started
                         </a>
@@ -319,8 +317,8 @@
 }
 
 .hover-link:hover {
-    background-color: rgba(220, 53, 69, 0.1);
-    color: #dc3545 !important;
+    background-color: rgba(201, 116, 72, 0.1);
+    color: var(--secondary-orange) !important;
 }
 
 /* Hover effect for user dropdown button */
@@ -351,11 +349,12 @@
 }
 
 .dropdown-item:hover {
-    background-color: rgba(220, 53, 69, 0.1);
+    background-color: rgba(201, 116, 72, 0.1);
 }
 
 .dropdown-item.text-danger:hover {
     background-color: rgba(220, 53, 69, 0.1);
+    color: #dc3545;
 }
 
 /* Mobile menu animation */
@@ -376,19 +375,14 @@
 }
 
 /* Button hover effects */
-.btn-outline-danger:hover {
+.btn-outline-secondary:hover {
     transform: translateY(-1px);
-    box-shadow: 0 2px 4px rgba(220, 53, 69, 0.2);
-}
-
-.btn-danger:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 2px 4px rgba(220, 53, 69, 0.3);
+    box-shadow: 0 2px 4px rgba(201, 116, 72, 0.2);
 }
 
 /* Avatar image styling */
 img.rounded-circle {
-    border: 2px solid rgba(220, 53, 69, 0.1);
+    border: 2px solid rgba(201, 116, 72, 0.1);
 }
 
 /* Mobile responsive adjustments */

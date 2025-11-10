@@ -20,11 +20,6 @@ class HomeController extends Controller
 
     public function index()
     {
-        // dd(Auth::user());
-        // dd(Auth::id());
-        // dd(Auth::check());
-        // return view('home.index');
-
         return inertia('Index/Index');
     }
     

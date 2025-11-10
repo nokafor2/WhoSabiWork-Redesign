@@ -16,7 +16,7 @@
         @inertiaHead
     </head>
     {{--  class="antialiased" --}}
-    <body class="d-flex flex-column min-vh-100" style="background-color: #040D14">
+    <body class="d-flex flex-column min-vh-100" style="background-color: #fafafa">
         {{-- This inserts a div element that would hold the vue application --}}
         @inertia
         <div id="app"></div>

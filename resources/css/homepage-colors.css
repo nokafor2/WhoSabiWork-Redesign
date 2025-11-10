@@ -1,0 +1,273 @@
+/* V0 Design Color Scheme - Accurate OKLCH to Hex Conversions */
+
+:root {
+    /* Primary - Very Dark Charcoal - oklch(0.24 0.02 85) */
+    --primary-dark: #3a3a3c;
+    --primary-dark-rgb: 58, 58, 60;
+    
+    /* Primary Foreground - White - oklch(0.99 0.003 85) */
+    --primary-foreground: #fcfcfc;
+    --primary-foreground-rgb: 252, 252, 252;
+    
+    /* Secondary - Terracotta/Orange - oklch(0.55 0.18 30) */
+    --secondary-orange: #c97448;
+    --secondary-orange-rgb: 201, 116, 72;
+    
+    /* Secondary Foreground - White - oklch(0.99 0.003 85) */
+    --secondary-foreground: #fcfcfc;
+    --secondary-foreground-rgb: 252, 252, 252;
+    
+    /* Accent - Coral/Orange - oklch(0.65 0.2 35) */
+    --accent-coral: #e89b7a;
+    --accent-coral-rgb: 232, 155, 122;
+    
+    /* Accent Foreground - White - oklch(0.99 0.003 85) */
+    --accent-foreground: #fcfcfc;
+    --accent-foreground-rgb: 252, 252, 252;
+    
+    /* Background - Very Light - oklch(0.985 0.005 85) */
+    --bg-light: #fafafa;
+    --bg-light-rgb: 250, 250, 250;
+    
+    /* Muted Background - oklch(0.94 0.005 85) */
+    --bg-muted: #f5f5f5;
+    --bg-muted-rgb: 245, 245, 245;
+    
+    /* Text Muted - oklch(0.556 0.01 85) */
+    --text-muted: #6b7280;
+    --text-muted-rgb: 107, 114, 128;
+    
+    /* Foreground text - oklch(0.185 0.01 85) */
+    --text-foreground: #2a2a2a;
+    --text-foreground-rgb: 42, 42, 42;
+    
+    /* Card background */
+    --bg-card: #ffffff;
+    
+    /* Border color - oklch(0.88 0.005 85) */
+    --border-color: #e5e5e5;
+}
+
+/* Background Classes */
+.bg-primary-dark {
+    background-color: var(--primary-dark) !important;
+    color: var(--primary-foreground) !important;
+}
+
+.bg-secondary-orange {
+    background-color: var(--secondary-orange) !important;
+    color: var(--secondary-foreground) !important;
+}
+
+.bg-accent-coral {
+    background-color: var(--accent-coral) !important;
+    color: var(--accent-foreground) !important;
+}
+
+.bg-light-custom {
+    background-color: var(--bg-light) !important;
+}
+
+.bg-muted-custom {
+    background-color: var(--bg-muted) !important;
+}
+
+.bg-card-custom {
+    background-color: var(--bg-card) !important;
+}
+
+/* Text Colors */
+.text-primary-dark {
+    color: var(--primary-dark) !important;
+}
+
+.text-primary-foreground {
+    color: var(--primary-foreground) !important;
+}
+
+.text-secondary-orange {
+    color: var(--secondary-orange) !important;
+}
+
+.text-secondary-foreground {
+    color: var(--secondary-foreground) !important;
+}
+
+.text-accent-coral {
+    color: var(--accent-coral) !important;
+}
+
+.text-accent-foreground {
+    color: var(--accent-foreground) !important;
+}
+
+.text-muted-custom {
+    color: var(--text-muted) !important;
+}
+
+.text-foreground-custom {
+    color: var(--text-foreground) !important;
+}
+
+/* Button Styles - Matching V0 .tsx exactly */
+
+/* Primary Dark Button - Used for "Register as Artisan" on orange CTA */
+.btn-primary-dark {
+    background-color: var(--primary-dark) !important;
+    color: var(--primary-foreground) !important;
+    border: none !important;
+    font-weight: 600 !important;
+}
+
+.btn-primary-dark:hover,
+.btn-primary-dark:focus {
+    background-color: #252525 !important;
+    color: var(--primary-foreground) !important;
+    transform: scale(1.05);
+}
+
+/* Secondary Orange Button - Used for "Join Now" in hero */
+.btn-secondary-orange {
+    background-color: var(--secondary-orange) !important;
+    color: var(--secondary-foreground) !important;
+    border: none !important;
+    font-weight: 600 !important;
+}
+
+.btn-secondary-orange:hover,
+.btn-secondary-orange:focus {
+    background-color: #a36342 !important;
+    color: var(--secondary-foreground) !important;
+    transform: scale(1.05);
+}
+
+/* Outline button with white border/text - Used for "Find an Artisan" on orange CTA */
+.btn-outline-secondary-foreground {
+    background-color: transparent !important;
+    color: var(--secondary-foreground) !important;
+    border: 2px solid var(--secondary-foreground) !important;
+    font-weight: 600 !important;
+}
+
+.btn-outline-secondary-foreground:hover,
+.btn-outline-secondary-foreground:focus {
+    background-color: rgba(var(--secondary-foreground-rgb), 0.1) !important;
+    color: var(--secondary-foreground) !important;
+    border-color: var(--secondary-foreground) !important;
+}
+
+/* Legacy - keeping for backward compatibility */
+.btn-outline-light-custom {
+    background-color: transparent !important;
+    color: white !important;
+    border: 2px solid white !important;
+    font-weight: 600 !important;
+}
+
+.btn-outline-light-custom:hover,
+.btn-outline-light-custom:focus {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    color: white !important;
+    border-color: white !important;
+}
+
+/* Hover Effects */
+.hover-secondary:hover {
+    color: var(--secondary-orange) !important;
+}
+
+.hover-scale {
+    transition: transform 0.3s ease;
+}
+
+.hover-scale:hover {
+    transform: scale(1.05);
+}
+
+/* Icon Backgrounds */
+.icon-bg-secondary {
+    background-color: var(--secondary-orange);
+    color: white;
+    width: 56px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.5rem;
+}
+
+.icon-bg-secondary-sm {
+    background-color: var(--secondary-orange);
+    color: white;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.5rem;
+}
+
+/* Card Styles */
+.card-hover {
+    transition: all 0.3s ease;
+    border-color: var(--border-color);
+}
+
+.card-hover:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Hero Overlay - matching .tsx: bg-primary/70 */
+.hero-overlay {
+    background: rgba(var(--primary-dark-rgb), 0.7) !important;
+}
+
+/* Border Colors */
+.border-secondary-orange {
+    border-color: var(--secondary-orange) !important;
+}
+
+.border-custom {
+    border-color: var(--border-color) !important;
+}
+
+/* Section Backgrounds matching V0 exactly */
+section.bg-white {
+    background-color: #ffffff !important;
+}
+
+section.bg-accent-coral {
+    background-color: var(--accent-coral) !important;
+}
+
+section.bg-secondary-orange {
+    background-color: var(--secondary-orange) !important;
+}
+
+/* Ensure homepage sections take full width */
+.homepage-section {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+/* Cards styling for packages */
+.package-card {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+}
+
+.package-card:hover {
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Feature cards styling */
+.feature-card {
+    background-color: var(--bg-card);
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
