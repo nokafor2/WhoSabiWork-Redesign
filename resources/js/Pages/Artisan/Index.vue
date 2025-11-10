@@ -15,6 +15,7 @@
             :addressLine2=artisan.address.address_line_2
             :addressLine3=artisan.address.address_line_3
             :businessName=artisan.business_category.business_name
+            :coverPhoto=artisan.cover_photo
         ></BusinessCard>
     </div>
     
@@ -91,11 +92,9 @@
                 // Simple direct assignment - handle different data sources
                 if (pageProps && pageProps.flash && pageProps.flash.success) {
                     // From search results (flash session)
-                    console.log('✅ Setting artisans2 from flash.success');
                     this.artisans2 = pageProps.flash.success;
                 } else if (pageProps && pageProps.artisans) {
                     // From direct Inertia response
-                    console.log('✅ Setting artisans2 from direct artisans');
                     this.artisans2 = pageProps.artisans;
                     
                     // Update artisan types if provided
@@ -104,20 +103,13 @@
                     }
                 } else if (Array.isArray(pageProps)) {
                     // From dropdown selection (direct array)
-                    console.log('✅ Setting artisans2 from array');
                     this.artisans2 = pageProps;
                 } else {
-                    console.warn('❌ No valid data found, clearing artisans2');
                     this.artisans2 = [];
                 }
-                
-                console.log('✅ Final artisans2:', this.artisans2);
-                console.log('✅ artisans2 length:', this.artisans2.length);
             },
 
             updateSearchedArtisans(pageProps) {
-                console.log('🔍 updateSearchedArtisans called with:', pageProps);
-                
                 // End loading state
                 this.isSearching = false;
                 
@@ -126,25 +118,18 @@
                 
                 if (pageProps && pageProps.data) {
                     // Direct data from Axios response
-                    console.log('✅ Setting artisans2 from Axios response data');
                     searchResults = pageProps.data;
                 } else if (pageProps && pageProps.flash && pageProps.flash.success) {
                     // Fallback to flash session data (if still using redirect)
-                    console.log('✅ Setting artisans2 from flash.success');
                     searchResults = pageProps.flash.success;
                 } else if (Array.isArray(pageProps)) {
                     // Direct array (fallback)
-                    console.log('✅ Setting artisans2 from direct array');
                     searchResults = pageProps;
                 }
                 
                 if (searchResults) {
-                    console.log('✅ Search results found:', searchResults);
                     this.artisans2 = searchResults;
-                    console.log('✅ artisans2 updated:', this.artisans2);
-                    console.log('✅ artisans2 length:', Object.keys(this.artisans2).length);
                 } else {
-                    console.warn('❌ No search results found');
                     this.artisans2 = [];
                 }
             },
@@ -168,25 +153,16 @@
             };
         },
         mounted() {
-            console.log('🚀 Artisan component mounted');
-            console.log('📋 Props received:', {
-                artisans: this.artisans,
-                artisans_length: this.artisans ? this.artisans.length : 0,
-                artisanTypes: this.artisanTypes
-            });
-            
             // Initialize artisans2 from props if available
             if (this.artisans && Array.isArray(this.artisans) && this.artisans.length > 0) {
-                console.log('✅ Initializing artisans2 from props');
                 this.artisans2 = this.artisans;
             } else {
-                console.log('ℹ️ No initial artisans data, starting with empty array');
                 this.artisans2 = [];
             }
             
             // Update store with artisan types
             if (this.$store && this.$store.commit) {
-                this.$store.commit('updateArtisans', { value: this.artisanTypes });
+                this.$store.commit('updateArtisanTypes', { value: this.artisanTypes });
             }
             
             console.log('🏁 Final artisans2 after mount:', this.artisans2);

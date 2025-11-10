@@ -9,7 +9,7 @@ const store = createStore({
     },
     state() {
         return {
-            sellerProducts: [],
+            products: [],
             artisanTypes: [],
             technicalServices: [],
             spareParts: [],
@@ -21,13 +21,15 @@ const store = createStore({
             isAuthenticated: false,
             entrepreneur: [],
             photoFeedData: [],
+            mobileMarketers: [],
+            artisans: [],
         };
     },
     mutations: {
         updateProducts(state, payload) {
-            state.sellerProducts = payload.value;
+            state.products = payload.value;
         },
-        updateArtisans(state, payload) {
+        updateArtisanTypes(state, payload) {
             state.artisanTypes = payload.value;
         },
         updateTechServicess(state, payload) {
@@ -72,13 +74,19 @@ const store = createStore({
                 state.photoFeedData = payload.value;
             }
         },
+        updateMobileMarketers(state, payload) {
+            state.mobileMarketers = payload.value;
+        },
+        updateArtisans(state, payload) {
+            state.artisans = payload.value;
+        },
     },
     actions: {
         updateProducts(context, payload) {
             context.commit('updateProducts', payload);
         },
-        updateArtisans(context, payload) {
-            context.commit('updateArtisans', payload);
+        updateArtisanTypes(context, payload) {
+            context.commit('updateArtisanTypes', payload);
         },
         updateTechServicess(context, payload) {
             context.commit('updateTechServicess', payload);
@@ -113,12 +121,18 @@ const store = createStore({
         appendPhotoFeedData(context, payload) {
             context.commit('appendPhotoFeedData', payload);
         },
+        updateMobileMarketers(context, payload) {
+            context.commit('updateMobileMarketers', payload);
+        },
+        updateArtisans(context, payload) {
+            context.commit('updateArtisans', payload);
+        },
     },
     getters: {
         getProducts(state) {
-            return state.sellerProducts;
+            return state.products;
         },
-        getArtisans(state) {
+        getArtisanTypes(state) {
             return state.artisanTypes;
         },
         getTechServices(state) {
@@ -150,6 +164,12 @@ const store = createStore({
         },
         getPhotoFeedData(state) {
             return state.photoFeedData;
+        },
+        getMobileMarketers(state) {
+            return state.mobileMarketers;
+        },
+        getArtisans(state) {
+            return state.artisans;
         },
     }
 });

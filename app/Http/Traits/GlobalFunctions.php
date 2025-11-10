@@ -91,7 +91,29 @@ trait GlobalFunctions {
         // filter the category ids on the specified state and town
         $refCategoryIds = Address::whereIn('user_id', $categoryIds)->where([['state', '=', $state], ['town', '=', $town]])->select('user_id')->get();
 
-        return User::whereIn('id', $refCategoryIds)->where([['account_type', '=', 'business'], ['account_status', '=', 'active']])->with('address', $categoryTable, 'businessCategory')->get();
+        // Get users with their relationships including cover photo
+        $users = User::whereIn('id', $refCategoryIds)
+            ->where([['account_type', '=', 'business'], ['account_status', '=', 'active']])
+            ->with([
+                'address', 
+                $categoryTable, 
+                'businessCategory',
+                'photographs' => function ($query) {
+                    $query->where('photo_type', 'cover photo')->latest();
+                }
+            ])
+            ->get();
+
+        // Process each user to add cover photo URL
+        $users->each(function ($user) {
+            $coverPhoto = $user->photographs->first();
+            $user->cover_photo = $coverPhoto ? asset('storage/' . $coverPhoto->path) : null;
+            
+            // Remove the photographs collection to keep response clean
+            unset($user->photographs);
+        });
+
+        return $users;
     }
 
     public function getTechServs() {
@@ -273,7 +295,29 @@ trait GlobalFunctions {
         // filter the category ids on the specified state and town
         $refCategoryIds = Address::whereIn('user_id', $vehBrandsId)->where([['state', '=', $state], ['town', '=', $town]])->select('user_id')->get();
 
-        return User::whereIn('id', $refCategoryIds)->where([['account_type', '=', 'business'], ['account_status', '=', 'active']])->with('address', $categoryTable, 'businessCategory')->get();    
+        // Get users with their relationships including cover photo
+        $users = User::whereIn('id', $refCategoryIds)
+            ->where([['account_type', '=', 'business'], ['account_status', '=', 'active']])
+            ->with([
+                'address', 
+                $categoryTable, 
+                'businessCategory',
+                'photographs' => function ($query) {
+                    $query->where('photo_type', 'cover photo')->latest();
+                }
+            ])
+            ->get();
+
+        // Process each user to add cover photo URL
+        $users->each(function ($user) {
+            $coverPhoto = $user->photographs->first();
+            $user->cover_photo = $coverPhoto ? asset('storage/' . $coverPhoto->path) : null;
+            
+            // Remove the photographs collection to keep response clean
+            unset($user->photographs);
+        });
+
+        return $users;    
     }
 
     public function getBussUserState($categoryType, $pageName) {
@@ -374,8 +418,25 @@ trait GlobalFunctions {
                 $result = User::whereIn('id', $searchedResultIds)
                     ->where('account_type', '=', 'business')
                     ->where('account_status', '=', 'active')
-                    ->with(['address', $relationship, 'businessCategory'])
+                    ->with([
+                        'address', 
+                        $relationship, 
+                        'businessCategory',
+                        'photographs' => function ($query) {
+                            $query->where('photo_type', 'cover photo')->latest();
+                        }
+                    ])
                     ->get();
+
+                // Process each user to add cover photo URL
+                $result->each(function ($user) {
+                    $coverPhoto = $user->photographs->first();
+                    $user->cover_photo = $coverPhoto ? asset('storage/' . $coverPhoto->path) : null;
+                
+                    // Remove the photographs collection to keep response clean
+                    unset($user->photographs);
+                });
+                
                 if ($result->isNotEmpty()) {
                     $searchedResult->push($result);
                 }
@@ -394,8 +455,24 @@ trait GlobalFunctions {
             ])
             ->where('account_type', '=', 'business')
             ->where('account_status', '=', 'active')
-            ->with(['address', $relationship, 'businessCategory'])
+            ->with([
+                'address', 
+                $relationship, 
+                'businessCategory',
+                'photographs' => function ($query) {
+                    $query->where('photo_type', 'cover photo')->latest();
+                }
+            ])
             ->get();
+
+            // Process each user to add cover photo URL
+            $result->each(function ($user) {
+                $coverPhoto = $user->photographs->first();
+                $user->cover_photo = $coverPhoto ? asset('storage/' . $coverPhoto->path) : null;
+            
+                // Remove the photographs collection to keep response clean
+                unset($user->photographs);
+            });
             
             if ($result->isNotEmpty()) {
                 $searchedResult->push($result);
@@ -413,9 +490,23 @@ trait GlobalFunctions {
             ])
             ->where('account_type', '=', 'business')
             ->where('account_status', '=', 'active')
-            ->with(['address', $relationship, 'businessCategory'])
+            ->with([
+                'address', $relationship, 'businessCategory',
+                'photographs' => function ($query) {
+                    $query->where('photo_type', 'cover photo')->latest();
+                }
+            ])
             ->get();
+
+            // Process each user to add cover photo URL
+            $result->each(function ($user) {
+                $coverPhoto = $user->photographs->first();
+                $user->cover_photo = $coverPhoto ? asset('storage/' . $coverPhoto->path) : null;
             
+                // Remove the photographs collection to keep response clean
+                unset($user->photographs);
+            });
+
             if ($result->isNotEmpty()) {
                 $searchedResult->push($result);
             }

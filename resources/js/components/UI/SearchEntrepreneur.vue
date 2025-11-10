@@ -67,6 +67,12 @@
 
                     if (response.data) {
                         console.log('✅ Search results received:', response.data);
+                        // Update state of the searched result in Vuex state
+                        if (this.pageName === 'artisan') {
+                            this.$store.dispatch('updateArtisans', { value: response.data.data });
+                        } else if (this.pageName === 'seller') {
+                            this.$store.dispatch('updateMobileMarketers', { value: response.data.data });
+                        }
                         this.$emit('send-search-result', response.data);
                     } else {
                         console.warn('❌ No search results in response');

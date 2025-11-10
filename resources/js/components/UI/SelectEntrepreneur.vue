@@ -96,7 +96,7 @@
                     // this.selectArray = this.$store.getters.getProducts;
 
                 } else if (this.pageName == "artisan") {
-                    // this.selectArray = this.$store.getters.getArtisans;
+                    // this.selectArray = this.$store.getters.getArtisanTypes;
                     
                 }
                 console.log(this.selectedOption);
@@ -132,7 +132,6 @@
                 if (this.pageName === 'artisan') {
                     // Ensure CSRF token is available
                     const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
-                    console.log('CSRF Token found:', csrfToken ? 'Yes' : 'No');
                     
                     // Emit search started event
                     this.$emit('search-started');
@@ -149,11 +148,10 @@
                             console.log('Starting artisans search request...');
                         },
                         onSuccess: (page) => {
-                            console.log('Artisans search success!');
-                            console.log('Data fetched: ');
-                            console.log(page.props.artisans);
                             this.artisans = [];
                             this.artisans = page.props.artisans;
+                            // Update artisan in Vuex state
+                            this.$store.dispatch('updateArtisans', { value: this.artisans });
                             this.$emit('send-category-type', this.artisans);
                         },
                         onError: (errors) => {
@@ -168,7 +166,7 @@
                 } else if (this.pageName === 'seller') {
                     // Ensure CSRF token is available
                     const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
-                    console.log('CSRF Token found:', csrfToken ? 'Yes' : 'No');
+                    // console.log('CSRF Token found:', csrfToken ? 'Yes' : 'No');
                     
                     // Emit search started event
                     this.$emit('search-started');
@@ -190,6 +188,8 @@
                             console.log(page.props.mobileMarketers);
                             this.mobileMarketers = [];
                             this.mobileMarketers = page.props.mobileMarketers;
+                            // Update mobile marketers in Vuex state
+                            this.$store.dispatch('updateMobileMarketers', { value: this.mobileMarketers });
                             this.$emit('send-category-type', this.mobileMarketers);
                         },
                         onError: (errors) => {
@@ -216,7 +216,7 @@
         },
         watch: {
             async selectedOption() {
-                console.log(this.selectedOption);
+                // console.log(this.selectedOption);
                 const formData = reactive({
                     'selectedOption': this.selectedOption,
                     'pageName': this.pageName,
@@ -239,7 +239,7 @@
                         if (response.ok) {
                             const responseData = await response.json();
                             if (responseData && responseData.success) {
-                                console.log(responseData);
+                                // console.log(responseData);
                                 this.technicalServices = responseData.data || responseData;
                                 this.vehServiceVisible = true;
                             } else {
@@ -270,7 +270,7 @@
                         if (response.ok) {
                             const responseData = await response.json();
                             if (responseData && responseData.success) {
-                                console.log(responseData);
+                                // console.log(responseData);
                                 this.spareParts = responseData.data || responseData;
                                 this.stateVisible = true;
                                 this.vehSparePartVisible = true;
@@ -298,7 +298,7 @@
                         
                         if (data.success) {
                             this.states = data.data;
-                            console.log(data);
+                            // console.log(data);
                             this.stateVisible = true;
                             this.vehSparePartVisible = false;
                         } else {
@@ -311,7 +311,7 @@
             },
 
             async selectedVehService() {
-                console.log(this.selectedVehService);
+                // console.log(this.selectedVehService);
                 const formData = reactive({
                     'selectedVehService': this.selectedVehService,
                     'pageName': this.pageName,
@@ -332,7 +332,7 @@
                     });
 
                     if (data.success) {
-                        console.log(data);
+                        // console.log(data);
                         this.vehicleCategories = data.data || data;
                         this.vehTypeVisible = true;
                     } else {
@@ -344,7 +344,7 @@
             },
 
             async selectedVehSparePart() {
-                console.log(this.selectedVehSparePart);
+                // console.log(this.selectedVehSparePart);
                 const formData = reactive({
                     'selectedVehSparePart': this.selectedVehSparePart,
                     'pageName': this.pageName,
@@ -367,7 +367,7 @@
                     });
 
                     if (data.success) {
-                        console.log(data);
+                        // console.log(data);
                         this.vehicleCategories = data.data || data;
                         this.vehTypeVisible = true;
                     } else {
@@ -379,7 +379,7 @@
             },
 
             async selectedVehType() {
-                console.log(this.selectedVehType);
+                // console.log(this.selectedVehType);
                 this.dataToSend = {
                     'selectedVehType': this.selectedVehType,
                     'pageName': this.pageName,
@@ -406,7 +406,7 @@
                     });
 
                     if (data.success) {
-                        console.log(data);
+                        // console.log(data);
                         this.vehicleBrands = data.data || data;
                         this.vehBrandVisible = true;
                     } else {
@@ -418,7 +418,7 @@
             },
 
             async selectedVehBrand() {
-                console.log(this.selectedVehBrand);
+                // console.log(this.selectedVehBrand);
                 this.dataToSend = {
                     'selectedOption': this.selectedOption,
                     'selectedVehType': this.selectedVehType,
@@ -446,7 +446,7 @@
                     });
 
                     if (data.success) {
-                        console.log(data);
+                        // console.log(data);
                         this.states = data.data || data;
                         this.stateVisible = true;
                     } else {
@@ -458,7 +458,7 @@
             },
 
             async selectedState() {
-                console.log(this.selectedState);
+                // console.log(this.selectedState);
                 this.dataToSend = {
                     'selectedOption': this.selectedOption,
                     'selectedState': this.selectedState,
@@ -488,7 +488,7 @@
                     });
 
                     if (data.success) {
-                        console.log(data);
+                        // console.log(data);
                         this.towns = data.data || data;
                         this.townVisible = true;
                     } else {

@@ -14,6 +14,7 @@
             :addressLine2=marketer.address.address_line_2
             :addressLine3=marketer.address.address_line_3
             :businessName=marketer.business_category.business_name
+            :coverPhoto=marketer.cover_photo
         ></BusinessCard>
     </div>
     
