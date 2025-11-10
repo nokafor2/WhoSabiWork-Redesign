@@ -7,6 +7,7 @@ use App\Http\Traits\GlobalFunctions;
 use App\Models\Artisan;
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 
@@ -39,16 +40,24 @@ class SearchController extends Controller
     {
         $searchVal = $request->searchVal;
         $pageName = $request->pageName;
+        $page = $request->get('page', 1);
+        $perPage = 15;
         
-        $searchedResult = $this->searchData($searchVal, $pageName);
-        // dd($searchedResult);
+        // Build cache key based on search parameters
+        $cacheKey = "search_{$pageName}_{$searchVal}_page_{$page}";
+        
+        // Cache search results for 5 minutes (300 seconds)
+        // Shorter cache time for searches since results may be more dynamic
+        $searchedResult = Cache::remember($cacheKey, 300, function () use ($searchVal, $pageName, $perPage) {
+            return $this->searchDataPaginated($searchVal, $pageName, $perPage);
+        });
 
         // return redirect()->back()->with('success', $searchedResult);
         return response()->json([
             'success' => true,
             'data' => $searchedResult,
             'pageName' => $pageName,
-            'count' => count($searchedResult)
+            'count' => $searchedResult->total()
         ]);
     }
 

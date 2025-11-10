@@ -21,7 +21,7 @@
 
     export default {
         props: ['pageName'],
-        emits: ['send-search-result', 'search-started'],
+        emits: ['send-search-result', 'search-started', 'update-search-params'],
         data() {
             return {
                 searchVal: ""
@@ -51,10 +51,12 @@
                 });
 
                 try {
-                    const response = await axios.post(route('search.store'), {
+                    const searchParams = {
                         searchVal: this.searchVal.trim(),
-                        pageName: this.pageName,
-                    }, {
+                        pageName: this.pageName
+                    };
+
+                    const response = await axios.post(route('search.store'), searchParams, {
                         headers: {
                             'X-CSRF-TOKEN': csrfToken,
                             'X-Requested-With': 'XMLHttpRequest',
@@ -74,6 +76,8 @@
                             this.$store.dispatch('updateMobileMarketers', { value: response.data.data });
                         }
                         this.$emit('send-search-result', response.data);
+                        // Emit search params to parent for pagination
+                        this.$emit('update-search-params', searchParams);
                     } else {
                         console.warn('❌ No search results in response');
                         this.$emit('send-search-result', { flash: { success: [] } });

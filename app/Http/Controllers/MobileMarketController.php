@@ -6,6 +6,7 @@ use App\Http\Traits\GlobalFunctions;
 use App\Models\Product;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class MobileMarketController extends Controller
 {
@@ -68,21 +69,44 @@ class MobileMarketController extends Controller
         $categoryType = $request->categoryType;
         $state = $request->state;
         $town = $request->town;
+        $page = $request->get('page', 1);
+        $perPage = 15;
+
+        // Build cache key based on search parameters
+        $cacheKey = "mobile_marketers_{$businessCategory}_{$categoryType}_{$state}_{$town}_page_{$page}";
         
         if ($categoryType === 'spare_parts') {
             $vehSparePart = $request->selectedVehSparePart;
             $vehType = $request->selectedVehType;
             $vehBrand = $request->selectedVehBrand;
             $pageName = $request->pageName;
+            
+            // Update cache key for spare parts search
+            $cacheKey = "mobile_marketers_spare_parts_{$vehSparePart}_{$vehType}_{$vehBrand}_{$state}_{$town}_page_{$page}";
 
-            $mobileMarketers = $this->getTechOrSpareUserDetails($pageName, $vehSparePart, $vehType, $vehBrand, $state, $town);
+            // Cache for 10 minutes (600 seconds)
+            $mobileMarketers = Cache::remember($cacheKey, 600, function () use ($pageName, $vehSparePart, $vehType, $vehBrand, $state, $town, $perPage) {
+                return $this->getTechOrSpareUserDetailsPaginated($pageName, $vehSparePart, $vehType, $vehBrand, $state, $town, $perPage);
+            });
         } else {
-            $mobileMarketers = $this->getSpecifiedUserDetails($businessCategory, $categoryType, $state, $town);
+            // Cache for 10 minutes (600 seconds)
+            $mobileMarketers = Cache::remember($cacheKey, 600, function () use ($businessCategory, $categoryType, $state, $town, $perPage) {
+                return $this->getSpecifiedUserDetailsPaginated($businessCategory, $categoryType, $state, $town, $perPage);
+            });
         }
+
+        // Get product types for the dropdown (cache for 30 minutes)
+        $productObj = new Product();
+        $sellers = Cache::remember('product_types', 1800, function () use ($productObj) {
+            return $this->getTableColumnsWithSort($productObj->table, Product::$columnsToExclude);
+        });
         
         return inertia(
             'MobileMarket/Index', 
-            ['mobileMarketers' => $mobileMarketers,]
+            [
+                'mobileMarketers' => $mobileMarketers,
+                'products' => $sellers
+            ]
         );
     }
 

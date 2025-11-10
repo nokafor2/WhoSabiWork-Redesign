@@ -74,21 +74,37 @@ class ArtisanController extends Controller
         $categoryType = $request->categoryType;
         $state = $request->state;
         $town = $request->town;
+        $page = $request->get('page', 1);
+        $perPage = 15;
 
+        // Build cache key based on search parameters
+        $cacheKey = "artisans_{$businessCategory}_{$categoryType}_{$state}_{$town}_page_{$page}";
+        
         if ($categoryType === 'mechanic') {
             $vehService = $request->selectedVehService;
             $vehType = $request->selectedVehType;
             $vehBrand = $request->selectedVehBrand;
             $pageName = $request->pageName;
+            
+            // Update cache key for mechanic search
+            $cacheKey = "artisans_mechanic_{$vehService}_{$vehType}_{$vehBrand}_{$state}_{$town}_page_{$page}";
 
-            $artisans = $this->getTechOrSpareUserDetails($pageName, $vehService, $vehType, $vehBrand, $state, $town);
+            // Cache for 10 minutes (600 seconds)
+            $artisans = Cache::remember($cacheKey, 600, function () use ($pageName, $vehService, $vehType, $vehBrand, $state, $town, $perPage) {
+                return $this->getTechOrSpareUserDetailsPaginated($pageName, $vehService, $vehType, $vehBrand, $state, $town, $perPage);
+            });
         } else {
-            $artisans = $this->getSpecifiedUserDetails($businessCategory, $categoryType, $state, $town);
+            // Cache for 10 minutes (600 seconds)
+            $artisans = Cache::remember($cacheKey, 600, function () use ($businessCategory, $categoryType, $state, $town, $perPage) {
+                return $this->getSpecifiedUserDetailsPaginated($businessCategory, $categoryType, $state, $town, $perPage);
+            });
         }
 
-        // Get artisan types for the dropdown
+        // Get artisan types for the dropdown (cache for 30 minutes)
         $artisanObj = new Artisan();
-        $artisanTypes = $this->getTableColumnsWithSort($artisanObj->table, Artisan::$columnsToExclude);
+        $artisanTypes = Cache::remember('artisan_types', 1800, function () use ($artisanObj) {
+            return $this->getTableColumnsWithSort($artisanObj->table, Artisan::$columnsToExclude);
+        });
 
         return inertia('Artisan/Index', [ 
             'artisans' => $artisans,

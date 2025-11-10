@@ -116,6 +116,53 @@ trait GlobalFunctions {
         return $users;
     }
 
+    public function getSpecifiedUserDetailsPaginated(String $businessCategory, $categoryType, $state, $town, $perPage = 15) {
+        $businessCategoryIds = BusinessCategory::where($businessCategory, '=', 1)->select('user_id')->get();
+
+        if ($businessCategory === 'artisan') {
+            $categoryTable = 'artisan';
+            // filter the specified artisans
+            $categoryIds = Artisan::whereIn('user_id', $businessCategoryIds)->where($categoryType, '=', 1)->select('user_id')->get();
+        } elseif ($businessCategory === 'seller') {
+            $categoryTable = 'product';
+            // filter the specified mobile marketers
+            $categoryIds = Product::whereIn('user_id', $businessCategoryIds)->where($categoryType, '=', 1)->select('user_id')->get();
+        } elseif ($businessCategory == 'technician') {
+            $categoryTable = 'technicalService';
+        } elseif ($businessCategory == 'spare_part_seller') {
+            $categoryTable = 'sparePart';
+        }
+        
+        // filter the category ids on the specified state and town
+        $refCategoryIds = Address::whereIn('user_id', $categoryIds)->where([['state', '=', $state], ['town', '=', $town]])->select('user_id')->get();
+
+        // Get users with pagination
+        $users = User::whereIn('id', $refCategoryIds)
+            ->where([['account_type', '=', 'business'], ['account_status', '=', 'active']])
+            ->with([
+                'address', 
+                $categoryTable, 
+                'businessCategory',
+                'photographs' => function ($query) {
+                    $query->where('photo_type', 'cover photo')->latest();
+                }
+            ])
+            ->paginate($perPage);
+
+        // Process each user to add cover photo URL
+        $users->getCollection()->transform(function ($user) {
+            $coverPhoto = $user->photographs->first();
+            $user->cover_photo = $coverPhoto ? asset('storage/' . $coverPhoto->path) : null;
+            
+            // Remove the photographs collection to keep response clean
+            unset($user->photographs);
+            
+            return $user;
+        });
+
+        return $users;
+    }
+
     public function getTechServs() {
         // Get all columns of the table
         $allTechServCols = DB::getSchemaBuilder()->getColumnListing('technical_services');
@@ -315,6 +362,55 @@ trait GlobalFunctions {
             
             // Remove the photographs collection to keep response clean
             unset($user->photographs);
+        });
+
+        return $users;    
+    }
+
+    public function getTechOrSpareUserDetailsPaginated($pageName, $vehServOrSpare, $vehType, $vehBrand, $state, $town, $perPage = 15) {
+        if ($pageName === 'artisan') {
+            $categoryTable = 'technicalService';
+            // Get the specified technical service type
+            $specificCategoryType = TechnicalService::where($vehServOrSpare, '=', 1)->select('user_id')->get();
+            // Get the vehicle category
+            $availVehCategoriesId = VehicleCategory::whereIn('user_id', $specificCategoryType)->where('business_category', '=', 'technical_service')->orWhere([['car', '=', 1], ['bus', '=', 1], ['truck', '=', 1]])->select('user_id')->get();
+            // Get the vehicle brands
+            $vehBrandsId = $this->selectedVehBrandIds($pageName, $vehType, $availVehCategoriesId, $vehBrand);
+        } elseif ($pageName === 'seller') {
+            $categoryTable = 'sparePart';
+            // Get the specified mobile marketer type
+            $specificCategoryType = SparePart::where($vehServOrSpare, '=', 1)->select('user_id')->get();
+            // Get the vehicle category
+            $availVehCategoriesId = VehicleCategory::whereIn('user_id', $specificCategoryType)->where('business_category', '=', 'spare_part')->orWhere([['car', '=', 1], ['bus', '=', 1], ['truck', '=', 1]])->select('user_id')->get();
+            // Get the vehicle brands
+            $vehBrandsId = $this->selectedVehBrandIds($pageName, $vehType, $availVehCategoriesId, $vehBrand);
+        }
+
+        // filter the category ids on the specified state and town
+        $refCategoryIds = Address::whereIn('user_id', $vehBrandsId)->where([['state', '=', $state], ['town', '=', $town]])->select('user_id')->get();
+
+        // Get users with pagination
+        $users = User::whereIn('id', $refCategoryIds)
+            ->where([['account_type', '=', 'business'], ['account_status', '=', 'active']])
+            ->with([
+                'address', 
+                $categoryTable, 
+                'businessCategory',
+                'photographs' => function ($query) {
+                    $query->where('photo_type', 'cover photo')->latest();
+                }
+            ])
+            ->paginate($perPage);
+
+        // Process each user to add cover photo URL
+        $users->getCollection()->transform(function ($user) {
+            $coverPhoto = $user->photographs->first();
+            $user->cover_photo = $coverPhoto ? asset('storage/' . $coverPhoto->path) : null;
+            
+            // Remove the photographs collection to keep response clean
+            unset($user->photographs);
+            
+            return $user;
         });
 
         return $users;    
@@ -532,6 +628,76 @@ trait GlobalFunctions {
         }
 
         return $uniqueResults;
+    }
+
+    public function searchDataPaginated($searchVal, $pageName, $perPage = 15) {
+        // Map pageName to correct relationship and business category column
+        $relationshipMap = [
+            'artisan' => 'artisan',
+            'seller' => 'product', // Mobile marketers use 'product' relationship
+            'technician' => 'technicalService',
+            'spare_part_seller' => 'sparePart'
+        ];
+        
+        $relationship = $relationshipMap[$pageName] ?? $pageName;
+        
+        // Split search value into words
+        $searchArray = explode(" ", $searchVal);
+        
+        // Build the query using query builder for pagination
+        $query = User::where('account_type', '=', 'business')
+            ->where('account_status', '=', 'active')
+            ->where(function ($q) use ($searchArray, $searchVal, $pageName) {
+                // Search by business name
+                if (count($searchArray) >= 1) {
+                    $q->orWhereHas('businessCategory', function ($businessQuery) use ($searchArray, $pageName) {
+                        $businessQuery->where('business_name', 'LIKE', '%' . $searchArray[0] . '%')
+                            ->where($pageName, '=', 1);
+                    });
+                }
+                
+                // Search by full name (first + last name combination)
+                if (count($searchArray) > 1) {
+                    $q->orWhere(function ($nameQuery) use ($searchArray) {
+                        $nameQuery->where('first_name', 'LIKE', '%' . $searchArray[0] . '%')
+                            ->where('last_name', 'LIKE', '%' . $searchArray[1] . '%');
+                    })->orWhere(function ($nameQuery) use ($searchArray) {
+                        $nameQuery->where('first_name', 'LIKE', '%' . $searchArray[1] . '%')
+                            ->where('last_name', 'LIKE', '%' . $searchArray[0] . '%');
+                    });
+                }
+                
+                // Search by individual fields (first name, last name, username, phone, email)
+                foreach ($searchArray as $value) {
+                    $q->orWhere('first_name', 'LIKE', '%' . $value . '%')
+                      ->orWhere('last_name', 'LIKE', '%' . $value . '%')
+                      ->orWhere('username', 'LIKE', '%' . $value . '%')
+                      ->orWhere('phone_number', 'LIKE', '%' . $value . '%')
+                      ->orWhere('email', 'LIKE', '%' . $value . '%');
+                }
+            })
+            ->with([
+                'address',
+                $relationship,
+                'businessCategory',
+                'photographs' => function ($query) {
+                    $query->where('photo_type', 'cover photo')->latest();
+                }
+            ])
+            ->paginate($perPage);
+
+        // Process each user to add cover photo URL
+        $query->getCollection()->transform(function ($user) {
+            $coverPhoto = $user->photographs->first();
+            $user->cover_photo = $coverPhoto ? asset('storage/' . $coverPhoto->path) : null;
+            
+            // Remove the photographs collection to keep response clean
+            unset($user->photographs);
+            
+            return $user;
+        });
+
+        return $query;
     }
 
 

@@ -63,7 +63,7 @@
     export default {
         // inject: ['products'],
         props: ['pageName', 'selectArray'],
-        emits: ['send-artisans', 'send-category-type', 'search-started'],
+        emits: ['send-artisans', 'send-category-type', 'search-started', 'update-search-params'],
         data() {
             return {
                 selectedOption: 'default',
@@ -152,7 +152,9 @@
                             this.artisans = page.props.artisans;
                             // Update artisan in Vuex state
                             this.$store.dispatch('updateArtisans', { value: this.artisans });
-                            this.$emit('send-category-type', this.artisans);
+                            this.$emit('send-category-type', page.props);
+                            // Emit search params to parent for pagination
+                            this.$emit('update-search-params', this.dataToSend);
                         },
                         onError: (errors) => {
                             console.log('Artisans search error: ', errors);
@@ -190,7 +192,9 @@
                             this.mobileMarketers = page.props.mobileMarketers;
                             // Update mobile marketers in Vuex state
                             this.$store.dispatch('updateMobileMarketers', { value: this.mobileMarketers });
-                            this.$emit('send-category-type', this.mobileMarketers);
+                            this.$emit('send-category-type', page.props);
+                            // Emit search params to parent for pagination
+                            this.$emit('update-search-params', this.dataToSend);
                         },
                         onError: (errors) => {
                             console.log('Mobilemarketers search error: ', errors);

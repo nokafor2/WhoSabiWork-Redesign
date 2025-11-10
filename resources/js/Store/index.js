@@ -9,6 +9,8 @@ const store = createStore({
     },
     state() {
         return {
+            mobileMarketers: [],
+            artisans: [],
             products: [],
             artisanTypes: [],
             technicalServices: [],
@@ -21,8 +23,6 @@ const store = createStore({
             isAuthenticated: false,
             entrepreneur: [],
             photoFeedData: [],
-            mobileMarketers: [],
-            artisans: [],
         };
     },
     mutations: {
@@ -80,6 +80,22 @@ const store = createStore({
         updateArtisans(state, payload) {
             state.artisans = payload.value;
         },
+        appendArtisans(state, payload) {
+            // Append new artisans to existing data
+            if (Array.isArray(state.artisans) && Array.isArray(payload.value)) {
+                state.artisans = [...state.artisans, ...payload.value];
+            } else {
+                state.artisans = payload.value;
+            }
+        },
+        appendMobileMarketers(state, payload) {
+            // Append new mobile marketers to existing data
+            if (Array.isArray(state.mobileMarketers) && Array.isArray(payload.value)) {
+                state.mobileMarketers = [...state.mobileMarketers, ...payload.value];
+            } else {
+                state.mobileMarketers = payload.value;
+            }
+        },
     },
     actions: {
         updateProducts(context, payload) {
@@ -126,6 +142,12 @@ const store = createStore({
         },
         updateArtisans(context, payload) {
             context.commit('updateArtisans', payload);
+        },
+        appendArtisans(context, payload) {
+            context.commit('appendArtisans', payload);
+        },
+        appendMobileMarketers(context, payload) {
+            context.commit('appendMobileMarketers', payload);
         },
     },
     getters: {
