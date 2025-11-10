@@ -2,7 +2,7 @@
     <div class="card m-3 shadow bg-light" style="width: 20rem;">
         <img src="../../../Images/photoSample.jpg" style="height: 18rem;" class="card-img-top mt-2 img-fluid" alt="...">
         <div class="card-body px-0">
-            <a :href="route('entrepreneur.show', userId)" class="text-decoration-none text-dark text-center"><h5 class="card-title">{{ businessName }}</h5></a>
+            <a :href="route('entrepreneur.show', userId)" class="text-dark text-center"><h5 class="card-title">{{ businessName }}</h5></a>
             <p class="card-text mb-1 border px-2 rounded-pill"><i class="fa-regular fa-user"></i> {{ fullName }}</p>
             <p class="card-text mb-1 border px-2 rounded-pill"><i class="fa-solid fa-location-dot"></i> {{ addressLine1 }}</p>
             <p class="card-text mb-1 border px-2 rounded-pill"><i class="fa-solid fa-phone"></i> {{ phoneNumber }}</p>
