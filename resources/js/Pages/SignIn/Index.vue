@@ -106,11 +106,14 @@
 
                 <div class="row gx-2">
                     <div class="col-sm-6 mb-2 mb-sm-0">
-                        <button class="col btn btn-primary text-light w-100"><i class="fa-brands fa-facebook pe-2"></i>Facebook</button>
+                        <a :href="route('oauth.redirect', { provider: 'facebook' })" class="col btn btn-primary text-light w-100">
+                            <i class="fa-brands fa-facebook pe-2"></i>Facebook
+                        </a>
                     </div>
                     <div class="col-sm-6">
-                        <!-- <button class="col btn btn-light text-primary border-primary w-100"><i class="fa-brands fa-google pe-2"></i>Google</button> -->
-                        <button class="col btn btn-light text-primary border-primary w-100 align-middle"><img class="pe-2" style="width:25px;" src="https://developers.google.com/identity/images/g-logo.png">Google</button>
+                        <a :href="route('oauth.redirect', { provider: 'google' })" class="col btn btn-light text-primary border-primary w-100 align-middle">
+                            <img class="pe-2" style="width:25px;" src="https://developers.google.com/identity/images/g-logo.png">Google
+                        </a>
                     </div>
                 </div>
 
