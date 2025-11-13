@@ -61,12 +61,8 @@ Replace the placeholders with your actual credentials:
 ```env
 APP_URL=http://localhost  # or your production URL
 
-GOOGLE_CLIENT_ID=123456789-abcdefghijklmnop.apps.googleusercontent.com
-GOOGLE_CLIENT_SECRET=GOCSPX-abcdefghijklmnopqrstuvwxyz
-GOOGLE_REDIRECT_URL="${APP_URL}/auth/google/callback"
 
-GOOGLE_CLIENT_ID=705286549634-gc4ug6t8t8732kcbikj0b6fuuma6joi3.apps.googleusercontent.com
-GOOGLE_CLIENT_SECRET=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
+GOOGLE_REDIRECT_URL="${APP_URL}/auth/google/callback"
 ```
 
 ### Step 5: Install Laravel Socialite
