@@ -50,7 +50,7 @@ class UserFactory extends Factory
             'first_name' => 'John',
             'last_name' => 'Felix',
             'gender' => 'male',
-            'email' => 'johnfelix@gmail.com',
+            'email' => 'nokafor2@gmail.com',
             'username' => 'johnFelix',
             'password' => Hash::make('Password123$'),
             'phone_number' => '08057368560',

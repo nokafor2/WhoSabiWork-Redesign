@@ -21,6 +21,7 @@ use App\Http\Controllers\PhotographLikeController;
 use App\Http\Controllers\PhotographReplyController;
 use App\Http\Controllers\ReplyController;
 use App\Http\Controllers\SearchController;
+use App\Http\Controllers\SocialAuthController;
 use App\Http\Controllers\SparePartController;
 use App\Http\Controllers\TechnicalServiceController;
 use App\Http\Controllers\TruckBrandController;
@@ -123,6 +124,15 @@ Route::get('userlogin', [AuthController::class, 'create'])->name('login');
 Route::post('userlogin', [AuthController::class, 'store'])->name('login.store');
 
 Route::delete('userlogout', [AuthController::class, 'destroy'])->name('logout');
+
+// OAuth Routes
+Route::get('auth/{provider}/redirect', [SocialAuthController::class, 'redirect'])
+    ->where('provider', 'google|facebook')
+    ->name('oauth.redirect');
+
+Route::get('auth/{provider}/callback', [SocialAuthController::class, 'callback'])
+    ->where('provider', 'google|facebook')
+    ->name('oauth.callback');
 
 Route::post('/upload', UploadTemporaryImageController::class);
 Route::post('/revert', DeleteTemporaryImageController::class)->name('deleteimage');
