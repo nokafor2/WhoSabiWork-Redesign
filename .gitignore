@@ -10,3 +10,6 @@ Homestead.json
 Homestead.yaml
 npm-debug.log
 yarn-error.log
+GOOGLE_OAUTH_ENV_SETUP.md
+GOOGLE_OAUTH_IMPLEMENTATION_COMPLETE.md
+SOCIAL_LOGIN_IMPLEMENTATION_PLAN.md

@@ -61,7 +61,8 @@ Replace the placeholders with your actual credentials:
 ```env
 APP_URL=http://localhost  # or your production URL
 
-
+GOOGLE_CLIENT_ID=123456789-abcdefghijklmnop.apps.googleusercontent.com
+GOOGLE_CLIENT_SECRET=GOCSPX-abcdefghijklmnopqrstuvwxyz
 GOOGLE_REDIRECT_URL="${APP_URL}/auth/google/callback"
 ```
 
