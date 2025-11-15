@@ -158,8 +158,12 @@ ssh_deploy:
     # Sync files but exclude .env files (they'll be handled separately)
     - rsync -avz --exclude node_modules --exclude .env --exclude .env.production --delete-after ./ $SSH_HOST:/var/www/html/WhoSabiWork-Redesign/
     
+    # Google OAuth credentials have been included in AWS EC2 already, so no need for injection here
+    # Also the .env and .env.production files have been excluded from the rsync command, so no need for copying them here
+
+    # Google OAuth credentials have been included in AWS EC2 already, so no need for injection here
     # Copy .env.production to .env
-    - ssh $SSH_HOST "cp /var/www/html/WhoSabiWork-Redesign/.env.production /var/www/html/WhoSabiWork-Redesign/.env"
+    # - ssh $SSH_HOST "cp /var/www/html/WhoSabiWork-Redesign/.env.production /var/www/html/WhoSabiWork-Redesign/.env"
     
     # Inject OAuth credentials from GitLab CI/CD Variables into .env file
     # - ssh $SSH_HOST "cd /var/www/html/WhoSabiWork-Redesign && echo '' >> .env"
@@ -169,7 +173,7 @@ ssh_deploy:
     # - ssh $SSH_HOST "cd /var/www/html/WhoSabiWork-Redesign && echo 'GOOGLE_REDIRECT_URL=${GOOGLE_REDIRECT_URL}' >> .env"
     
     # Verify OAuth credentials were injected (masked for security)
-    - ssh $SSH_HOST "cd /var/www/html/WhoSabiWork-Redesign && echo '✅ Verifying OAuth configuration...' && grep -q 'GOOGLE_CLIENT_ID' .env && echo '✅ Google OAuth credentials injected successfully' || echo '❌ OAuth injection failed!'"
+    # - ssh $SSH_HOST "cd /var/www/html/WhoSabiWork-Redesign && echo '✅ Verifying OAuth configuration...' && grep -q 'GOOGLE_CLIENT_ID' .env && echo '✅ Google OAuth credentials injected successfully' || echo '❌ OAuth injection failed!'"
     
     # Run Laravel commands
     - ssh $SSH_HOST "cd /var/www/html/WhoSabiWork-Redesign; php artisan vendor:publish --provider='Laravel\Sanctum\SanctumServiceProvider' --tag='sanctum-migrations' --force || true; php artisan session:table || true; php artisan storage:link || true; php artisan migrate:fresh --seed --force; php artisan config:clear; php artisan cache:clear; php artisan route:clear; php artisan view:clear; sudo php artisan config:cache; sudo php artisan route:cache;"
