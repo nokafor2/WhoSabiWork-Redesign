@@ -3,7 +3,7 @@
         <div class="image-container" @click="openModal">
             <img :src="imageObj.src" class="card-image" alt="">
         </div>
-        <p class="card-text mb-1 px-2">{{ imageObj.caption }}</p>
+        <p class="card-text mb-1 px-2 caption-truncate">{{ imageObj.caption }}</p>
         
         <!-- Feedback Modal -->
         <FeedbackModal
@@ -788,5 +788,17 @@
 /* Prevent scrolling when modal is open */
 body.modal-open {
     overflow: hidden;
+}
+
+/* Caption truncation - limit to 3 lines with ellipsis */
+.caption-truncate {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.5;
+    max-height: 4.5em; /* 3 lines × 1.5 line-height */
 }
 </style>

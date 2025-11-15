@@ -1,23 +1,26 @@
 <template>
+    <!-- Advertisement Card -->
     <div class="card m-3 shadow bg-light" style="width: 20rem;">
         <div class="d-flex mt-2 mb-1 align-middle">
             <img class="rounded-circle me-2" style="height: 25px; width: 25px;" :src="userAvatar">
             <a :href="route('entrepreneur.show', userId)" class="me-3 text-dark"><h5 class="card-title">{{ businessName }}</h5></a>
         </div>
         <img :src="imagePath" style="height: 18rem;" class="card-img-top" alt="...">
-        <p class="card-text mb-1">{{ photoCaption }}</p>
+        <p class="card-text mb-1 caption-truncate">{{ photoCaption }}</p>
         <div class="card-body px-0 pt-1">
-            <span>
-                <a href="#" class="text-decoration-none me-3 text-body"><i class="fa-solid fa-thumbs-up pe-2"></i>{{ photoLikes }}</a>
-                <a href="#" class="text-decoration-none me-3 text-body"><i class="fa-solid fa-thumbs-down pe-2"></i>{{ photoDislikes }}</a>
-                <a href="#" class="text-decoration-none text-body"><i class="fa-solid fa-comment pe-2"></i>{{ commentCount }}</a>
-            </span>
-            <p class="card-text mb-1" style="font-size: 10px;">{{ photoDate }}</p>
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <span>
+                    <a href="#" class="text-decoration-none me-3 text-body"><i class="fa-solid fa-thumbs-up pe-2"></i>{{ photoLikes }}</a>
+                    <a href="#" class="text-decoration-none me-3 text-body"><i class="fa-solid fa-thumbs-down pe-2"></i>{{ photoDislikes }}</a>
+                    <a href="#" class="text-decoration-none text-body"><i class="fa-solid fa-comment pe-2"></i>{{ commentCount }}</a>
+                </span>
+                <span class="text-muted" style="font-size: 10px;">{{ photoDate }}</span>
+            </div>
             <!-- Button Style (Original) -->
             <!-- <button v-if="commentsAvailable" class="btn btm-sm border border-light text-light"  style="background-color: #040D14" @click="toggleCommentsModal">View Comments</button> -->
             
             <!-- Link Style (New) -->
-            <a v-if="commentsAvailable" href="#" class="text-decoration-none" style="color: #040D14; font-weight: 500;" @click.prevent="toggleCommentsModal">
+            <a v-if="commentsAvailable" href="#" class="text-decoration-none mt-3" style="color: #040D14; font-weight: 500;" @click.prevent="toggleCommentsModal">
                 <i class="fas fa-comments me-1"></i>View Comments
             </a>
         </div>
@@ -32,7 +35,7 @@
                     <div class="modal-header d-flex justify-content-between align-items-center">
                         <div class="d-flex align-items-center">
                             <img class="rounded-circle me-2" style="height: 30px; width: 30px;" :src="userAvatar" alt="User Avatar">
-                            <h5 class="modal-title mb-0">{{ businessName }}</h5>
+                            <a :href="route('entrepreneur.show', userId)" class="text-dark"><h5 class="modal-title mb-0">{{ businessName }}</h5></a>
                         </div>
                         <button type="button" class="btn-close" @click="toggleCommentsModal" aria-label="Close"></button>
                     </div>
@@ -490,5 +493,17 @@
 /* Prevent scrolling when modal is open */
 body.modal-open {
     overflow: hidden;
+}
+
+/* Caption truncation - limit to 2 lines with ellipsis */
+.caption-truncate {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.5;
+    max-height: 3em; /* 2 lines × 1.5 line-height */
 }
 </style>

@@ -1,163 +1,294 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> a4aa1a46cbbd1050d9a25b087ae54b28d1a40e8f
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
+# WhoSabiWork
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A Laravel + Vue.js platform connecting entrepreneurs, artisans, and customers for service discovery and appointments.
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## 📋 About
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+WhoSabiWork is a comprehensive web application that helps users find and connect with local service providers, artisans, and businesses. Built with Laravel backend and Vue.js frontend, the platform features:
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- **User Authentication** - Password, Google OAuth, Facebook OAuth
+- **Service Discovery** - Find artisans, mobile marketers, technicians, and spare part sellers
+- **Photo Feed** - Social media-style feed with likes, comments, and replies
+- **Appointments** - Schedule and manage appointments with service providers
+- **Real-time Interaction** - Comments, replies, likes/dislikes with instant updates
+- **Business Profiles** - Detailed profiles with galleries, ratings, and availability
 
-## Learning Laravel
+---
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## 🚀 Tech Stack
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 1500 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### Backend
+- **Laravel 9.x** - PHP Framework
+- **MySQL** - Database
+- **Laravel Sanctum** - API Authentication
+- **Laravel Socialite** - OAuth Integration
 
-## Laravel Sponsors
+### Frontend
+- **Vue 3** - JavaScript Framework
+- **Inertia.js** - SPA without API
+- **Vuex** - State Management
+- **Bootstrap 5** - CSS Framework
+- **FontAwesome** - Icons
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+### DevOps
+- **GitLab CI/CD** - Continuous Integration/Deployment
+- **AWS EC2** - Production Hosting
+- **Nginx/Apache** - Web Server
+- **PHP-FPM** - Process Manager
 
-### Premium Partners
+---
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[OP.GG](https://op.gg)**
+## 📚 Documentation
 
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
-<<<<<<< HEAD
-=======
-# whosabiwork
-
-
-
-## Getting started
-
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
-
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
-
-## Add your files
-
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/topics/git/add_files/#add-files-to-a-git-repository) or push an existing Git repository with the following command:
+**⚠️ ALL TECHNICAL DOCUMENTATION IS IN THE `Z-CursorAI-ReadMe/` FOLDER**
 
 ```
-cd existing_repo
-git remote add origin https://gitlab.com/nokafor2-group/whosabiwork.git
-git branch -M main
-git push -uf origin main
+📁 Z-CursorAI-ReadMe/
+├── 📄 INDEX.md                          # Documentation index
+├── 📄 QUICK_REFERENCE.md                # Quick reference guide
+├── 📄 CHANGELOG.md                      # Project history
+├── 📄 MULTI_PROVIDER_OAUTH_IMPLEMENTATION.md
+├── 📄 CAPTION_TRUNCATION_IMPLEMENTATION.md
+├── 📄 AWS_EC2_OAUTH_FIX.md
+├── 📄 COLOR_ACCURACY_FIX.md
+├── 📄 aws-ec2-development-setup.md
+└── 📜 Shell Scripts (deploy.sh, setup scripts, etc.)
 ```
 
-## Integrate with your tools
+### Quick Links:
+- **[📖 Documentation Index](Z-CursorAI-ReadMe/INDEX.md)** - Start here
+- **[⚡ Quick Reference](Z-CursorAI-ReadMe/QUICK_REFERENCE.md)** - Commands & tips
+- **[📜 Changelog](Z-CursorAI-ReadMe/CHANGELOG.md)** - What's new
+- **[🔐 OAuth Guide](Z-CursorAI-ReadMe/MULTI_PROVIDER_OAUTH_IMPLEMENTATION.md)** - Google/Facebook setup
 
-- [ ] [Set up project integrations](https://gitlab.com/nokafor2-group/whosabiwork/-/settings/integrations)
+---
 
-## Collaborate with your team
+## ⚙️ Installation
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Set auto-merge](https://docs.gitlab.com/user/project/merge_requests/auto_merge/)
+### Prerequisites
+- PHP >= 8.0
+- Composer
+- Node.js >= 16.x
+- MySQL >= 5.7
 
-## Test and Deploy
+### Setup Steps
 
-Use the built-in continuous integration in GitLab.
+1. **Clone the repository**
+```bash
+git clone https://gitlab.com/nokafor2-group/whosabiwork.git
+cd whosabiwork
+```
 
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+2. **Install PHP dependencies**
+```bash
+composer install
+```
 
-***
+3. **Install JavaScript dependencies**
+```bash
+npm install
+```
 
-# Editing this README
+4. **Configure environment**
+```bash
+cp .env.example .env
+php artisan key:generate
+```
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
+5. **Configure database in `.env`**
+```
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=whosabiwork
+DB_USERNAME=root
+DB_PASSWORD=
+```
 
-## Suggestions for a good README
+6. **Run migrations and seeders**
+```bash
+php artisan migrate:fresh --seed
+```
 
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
+7. **Build frontend assets**
+```bash
+npm run dev
+# or for production
+npm run build
+```
 
-## Name
-Choose a self-explaining name for your project.
+8. **Start development server**
+```bash
+php artisan serve
+```
 
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
+Visit: `http://localhost:8000`
 
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
+---
 
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
+## 🔐 OAuth Configuration
 
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+### Google OAuth
+```bash
+GOOGLE_CLIENT_ID=your_client_id
+GOOGLE_CLIENT_SECRET=your_client_secret
+GOOGLE_REDIRECT_URL=http://localhost:8000/auth/google/callback
+```
 
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
+### Facebook OAuth
+```bash
+FACEBOOK_CLIENT_ID=your_app_id
+FACEBOOK_CLIENT_SECRET=your_app_secret
+FACEBOOK_REDIRECT_URL=http://localhost:8000/auth/facebook/callback
+```
 
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
+See `Z-CursorAI-ReadMe/` folder for detailed OAuth setup guides.
 
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
+---
 
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
+## 📁 Project Structure
 
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
+```
+whosabiwork/
+├── app/
+│   ├── Http/
+│   │   ├── Controllers/
+│   │   ├── Middleware/
+│   │   └── Traits/
+│   └── Models/
+├── database/
+│   ├── migrations/
+│   └── seeders/
+├── resources/
+│   ├── js/
+│   │   ├── Pages/         # Vue pages
+│   │   ├── components/    # Vue components
+│   │   └── Store/         # Vuex store
+│   ├── css/
+│   └── views/
+├── routes/
+│   ├── web.php
+│   └── api.php
+├── public/
+└── Z-CursorAI-ReadMe/     # Technical documentation
+```
 
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
+---
 
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
+## 🌟 Key Features
 
-## License
-For open source projects, say how it is licensed.
+### Authentication
+- ✅ Email/Password Login
+- ✅ Google OAuth
+- ✅ Facebook OAuth
+- ✅ Remember Me (30 days)
+- ✅ Multi-Provider Account Linking
 
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
->>>>>>> e8c9eb0 (Initial commit)
-=======
->>>>>>> a4aa1a46cbbd1050d9a25b087ae54b28d1a40e8f
+### User Profiles
+- ✅ Avatar & Cover Photos
+- ✅ Business Details
+- ✅ Gallery Management
+- ✅ Ratings & Reviews
+- ✅ Availability Scheduling
+
+### Social Features
+- ✅ Photo Feed with Pagination
+- ✅ Like/Dislike System
+- ✅ Comments & Replies
+- ✅ Real-time Updates
+- ✅ Infinite Scroll
+
+### Search & Discovery
+- ✅ Advanced Search
+- ✅ Category Filtering
+- ✅ Location-based Search
+- ✅ Cached Results
+- ✅ Pagination
+
+### Appointments
+- ✅ Schedule Management
+- ✅ Time Slot Selection
+- ✅ Status Tracking
+- ✅ Accept/Decline/Cancel
+
+---
+
+## 🧪 Development Commands
+
+### Backend
+```bash
+php artisan serve              # Start dev server
+php artisan migrate           # Run migrations
+php artisan migrate:fresh --seed  # Fresh DB with seed data
+php artisan tinker            # Interactive console
+php artisan cache:clear       # Clear cache
+```
+
+### Frontend
+```bash
+npm run dev                   # Development build (watch mode)
+npm run build                 # Production build
+npm run lint                  # Run linter
+```
+
+---
+
+## 🚢 Deployment
+
+Deployment is automated via GitLab CI/CD pipeline.
+
+### Production Deployment
+```bash
+git push origin main
+# Pipeline automatically deploys to AWS EC2
+```
+
+See `Z-CursorAI-ReadMe/` for detailed deployment guides.
+
+---
+
+## 🤝 Contributing
+
+1. Create a feature branch
+2. Make your changes
+3. Test thoroughly
+4. Create a merge request
+5. Wait for review
+
+---
+
+## 📝 License
+
+This project is proprietary software. All rights reserved.
+
+---
+
+## 👥 Authors
+
+**WhoSabiWork Development Team**
+
+---
+
+## 📧 Support
+
+For issues and questions, please contact the development team.
+
+---
+
+## 🗂️ Documentation Index
+
+All detailed technical documentation is in `Z-CursorAI-ReadMe/`:
+
+- Multi-Provider OAuth Implementation
+- Database Schema & Migrations
+- Frontend Component Documentation
+- API Endpoints
+- Deployment Guides
+- Troubleshooting Guides
+- Shell Scripts & Automation
+
+---
+
+**Built with Laravel ❤️ Vue.js**
