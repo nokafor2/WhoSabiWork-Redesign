@@ -157,8 +157,8 @@ ssh_deploy:
     # - rsync -avz --exclude node_modules --exclude vendor --delete-after ./ $REMOTE_DEPLOY_USER@$REMOTE_DEPLOY_HOST:/var/www/html/WhoSabiWork-Redesign/
     - rsync -avz --exclude node_modules --delete-after ./ $SSH_HOST:/var/www/html/WhoSabiWork-Redesign/
     
-    # - ssh $SSH_HOST "cp /var/www/html/WhoSabiWork-Redesign/.env.production /var/www/html/WhoSabiWork-Redesign/.env; cd /var/www/html/WhoSabiWork-Redesign"
-    - ssh $SSH_HOST "cp /var/www/html/WhoSabiWork-Redesign/.env.production /var/www/html/WhoSabiWork-Redesign/.env"
+    # - ssh $SSH_HOST "cp /var/www/html/WhoSabiWork-Redesign/.env.production /var/www/html/WhoSabiWork-Redesign/.env; cd /var/www/html/WhoSabiWork-Redesign" #remove duplicate copy of .env file
+    # - ssh $SSH_HOST "cp /var/www/html/WhoSabiWork-Redesign/.env.production /var/www/html/WhoSabiWork-Redesign/.env"
     - ssh $SSH_HOST "cd /var/www/html/WhoSabiWork-Redesign; php artisan vendor:publish --provider='Laravel\Sanctum\SanctumServiceProvider' --tag='sanctum-migrations' --force || true; php artisan session:table || true; php artisan storage:link || true; php artisan migrate:fresh --seed --force; php artisan config:clear; php artisan cache:clear; php artisan route:clear; php artisan view:clear; sudo php artisan config:cache; sudo php artisan route:cache;"
     - ssh $SSH_HOST "sudo chown -R nginx:nginx /var/www/html/WhoSabiWork-Redesign/storage"
     - ssh $SSH_HOST "sudo chown -R nginx:nginx /var/www/html/WhoSabiWork-Redesign/bootstrap"
