@@ -155,23 +155,12 @@ ssh_deploy:
     # - chown -R ec2-user:ec2-user /var/www/html/WhoSabiWork-Redesign/
     - ssh $SSH_HOST "sudo chown -R ec2-user:ec2-user /var/www/html/WhoSabiWork-Redesign/"
     # - rsync -avz --exclude node_modules --exclude vendor --delete-after ./ $REMOTE_DEPLOY_USER@$REMOTE_DEPLOY_HOST:/var/www/html/WhoSabiWork-Redesign/
+    # - rsync -avz --exclude node_modules --delete-after ./ $SSH_HOST:/var/www/html/WhoSabiWork-Redesign/
     # Sync files but exclude .env files (they'll be handled separately)
-    - rsync -avz --exclude node_modules --exclude .env --exclude .env.backup --delete-after ./ $SSH_HOST:/var/www/html/WhoSabiWork-Redesign/
+    - rsync -avz --exclude node_modules --exclude .env --exclude .env.production --delete-after ./ $SSH_HOST:/var/www/html/WhoSabiWork-Redesign/
     
-    # Copy .env.production to .env
+    # - ssh $SSH_HOST "cp /var/www/html/WhoSabiWork-Redesign/.env.production /var/www/html/WhoSabiWork-Redesign/.env; cd /var/www/html/WhoSabiWork-Redesign" #remove duplicate copy of .env file
     - ssh $SSH_HOST "cp /var/www/html/WhoSabiWork-Redesign/.env.production /var/www/html/WhoSabiWork-Redesign/.env"
-    
-    # Inject OAuth credentials from GitLab CI/CD Variables into .env file
-    - ssh $SSH_HOST "cd /var/www/html/WhoSabiWork-Redesign && echo '' >> .env"
-    - ssh $SSH_HOST "cd /var/www/html/WhoSabiWork-Redesign && echo '# Google OAuth Configuration (Injected by GitLab CI/CD)' >> .env"
-    - ssh $SSH_HOST "cd /var/www/html/WhoSabiWork-Redesign && echo 'GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}' >> .env"
-    - ssh $SSH_HOST "cd /var/www/html/WhoSabiWork-Redesign && echo 'GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}' >> .env"
-    - ssh $SSH_HOST "cd /var/www/html/WhoSabiWork-Redesign && echo 'GOOGLE_REDIRECT_URL=${GOOGLE_REDIRECT_URL}' >> .env"
-    
-    # Verify OAuth credentials were injected (masked for security)
-    - ssh $SSH_HOST "cd /var/www/html/WhoSabiWork-Redesign && echo '✅ Verifying OAuth configuration...' && grep -q 'GOOGLE_CLIENT_ID' .env && echo '✅ Google OAuth credentials injected successfully' || echo '❌ OAuth injection failed!'"
-    
-    # Run Laravel commands
     - ssh $SSH_HOST "cd /var/www/html/WhoSabiWork-Redesign; php artisan vendor:publish --provider='Laravel\Sanctum\SanctumServiceProvider' --tag='sanctum-migrations' --force || true; php artisan session:table || true; php artisan storage:link || true; php artisan migrate:fresh --seed --force; php artisan config:clear; php artisan cache:clear; php artisan route:clear; php artisan view:clear; sudo php artisan config:cache; sudo php artisan route:cache;"
     - ssh $SSH_HOST "sudo chown -R nginx:nginx /var/www/html/WhoSabiWork-Redesign/storage"
     - ssh $SSH_HOST "sudo chown -R nginx:nginx /var/www/html/WhoSabiWork-Redesign/bootstrap"
