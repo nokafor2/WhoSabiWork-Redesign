@@ -12,6 +12,7 @@
             <button v-if="businessAccount" class="nav-link text-start" id="availability-tab" data-bs-toggle="pill" data-bs-target="#availability" type="button" role="tab" aria-controls="availability" aria-selected="false">Set Availability</button>
             <button v-if="businessAccount" class="nav-link text-start" id="customersAppointments-tab" data-bs-toggle="pill" data-bs-target="#customersAppointments" type="button" role="tab" aria-controls="customersAppointments" aria-selected="false">Customers Appointments</button>
             <button class="nav-link text-start" id="myAppointments-tab" data-bs-toggle="pill" data-bs-target="#myAppointments" type="button" role="tab" aria-controls="myAppointments" aria-selected="false">My Appointments</button>
+            <button class="nav-link text-start" id="settings-tab" data-bs-toggle="pill" data-bs-target="#settings" type="button" role="tab" aria-controls="settings" aria-selected="false">Settings</button>
         </div>
         <div class="tab-content col-9 col-md-8 mb-3" id="v-pills-tabContent">
             <!-- Business details pane -->
@@ -212,6 +213,22 @@
                 </div>
             </div>
             <!-- End of Contents for My Appointments -->
+
+            <!-- Contents for Settings -->
+            <div class="tab-pane fade" id="settings" role="tabpanel" aria-labelledby="settings-tab" tabindex="0">
+                <div class="row justify-content-center">
+                    <div class="col-md-10 col-xl-8">
+                        <h4 class="mb-4">Settings</h4>
+                        
+                        <!-- Connected Accounts Section -->
+                        <ConnectedAccountsSection :user="profileUser" :socialAccounts="socialAccountsData"></ConnectedAccountsSection>
+                        
+                        <!-- Future: Account Type Switch Section -->
+                        <!-- Will be added here later for switching between regular and business accounts -->
+                    </div>
+                </div>
+            </div>
+            <!-- End of Contents for Settings -->
         </div>
     </div>
 </template>
@@ -253,6 +270,7 @@
     import PhotoUpload from './Components/PhotoUpload.vue';
     import DateAndTimeSelect from './Components/DateAndTimeSelect.vue';
     import UserAvailability from './Components/UserAvailability.vue';
+    import ConnectedAccountsSection from './Components/ConnectedAccountsSection.vue';
 
     // import Mixins
     import MethodsMixin from './Mixins/MethodsMixin.js';
@@ -268,7 +286,7 @@
             ArtisansSection, MobileMarketSection, TechnicalServiceSection, SparePartSection,
             CarBrandsSection, BusBrandsSection, TruckBrandsSection, VehicleCategorySection,
             BusinessPageSection, ImageCard, PhotoCommentAndReplyCard, PhotoUpload, DateAndTimeSelect,
-            UserAvailability, AppointmentDetails2, CommentAndReplyCard
+            UserAvailability, AppointmentDetails2, CommentAndReplyCard, ConnectedAccountsSection
         },
         mixins: [MethodsMixin],
         props: ['profileUser', 'userCategories', 'techVehCategories', 'sPartVehCategories', 'vehicleBrands', 
@@ -276,7 +294,7 @@
             'allCarBrands', 'allBusBrands', 'allTruckBrands', 'schedules', 'neutralAppointments', 
             'acceptedAppointments', 'declinedAppointments', 'cancelledAppointments', 'neutralAppointmentsSchdlr', 
             'acceptedAppointmentsSchdlr', 'declinedAppointmentsSchdlr', 'cancelledAppointmentsSchdlr', 'galleryPhotos', 
-            'customerCommentsAndReplies', 'userCommentsAndReplies'
+            'customerCommentsAndReplies', 'userCommentsAndReplies', 'socialAccounts'
         ],
         emits: [],
         data() {
@@ -356,6 +374,10 @@
             },
             userCommentsAndRepliesData() {
                 return this.$store.getters.getUserCommentsAndReplies;
+            },
+            socialAccountsData() {
+                // Return social accounts data, defaulting to empty array if not provided
+                return this.socialAccounts || [];
             },
             flashSuccess() {
                 return this.page.props.flash.success;

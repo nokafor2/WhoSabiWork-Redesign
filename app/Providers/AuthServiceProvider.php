@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Auth;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -26,6 +27,11 @@ class AuthServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->registerPolicies();
+
+        // Set "Remember Me" cookie lifetime to 30 days (43200 minutes)
+        // This is the industry standard for "Remember Me" functionality
+        // Without "Remember Me", session expires based on SESSION_LIFETIME (default: 2 hours)
+        Auth::setRememberDuration(43200); // 30 days * 24 hours * 60 minutes
 
         // Setting gate authorization for a route
         Gate::define('home.secret', function($user) {

@@ -72,12 +72,12 @@
                         </li>
                         <li>
                             <a 
-                                v-if="user && user.id"
+                                v-if="user && user.id && isBusinessAccount"
                                 :href="route('entrepreneur.show', user.id)" 
                                 class="dropdown-item py-2 px-3 d-flex align-items-center gap-2"
                             >
                                 <i class="fas fa-briefcase text-muted" style="width: 16px;"></i>
-                                <span>Entrepreneur Profile</span>
+                                <span>Entrepreneur Home</span>
                             </a>
                         </li>
                         <li><hr class="dropdown-divider my-1"></li>
@@ -299,6 +299,9 @@
                 }
                 
                 return this.user.firstName || this.user.username || 'User';
+            },
+            isBusinessAccount() {
+                return this.user.account_type === 'business';
             }
         }
     }

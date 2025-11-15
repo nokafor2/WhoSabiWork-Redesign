@@ -134,6 +134,11 @@ Route::get('auth/{provider}/callback', [SocialAuthController::class, 'callback']
     ->where('provider', 'google|facebook')
     ->name('oauth.callback');
 
+Route::delete('auth/{provider}/unlink', [SocialAuthController::class, 'unlinkProvider'])
+    ->where('provider', 'google|facebook')
+    ->middleware('auth')
+    ->name('oauth.unlink');
+
 Route::post('/upload', UploadTemporaryImageController::class);
 Route::post('/revert', DeleteTemporaryImageController::class)->name('deleteimage');
 

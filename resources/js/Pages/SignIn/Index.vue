@@ -71,14 +71,41 @@
                         Detected: {{ inputTypeDetected }}
                     </small>
                 </div>
-                <div class="form-floating my-2">
-                    <input type="password" class="form-control" id="password" placeholder="" v-model="password.val">
+                <div class="form-floating my-2 position-relative">
+                    <input 
+                        :type="showPassword ? 'text' : 'password'" 
+                        class="form-control pe-5" 
+                        id="password" 
+                        placeholder="" 
+                        v-model="password.val">
                     <label for="password">Password</label>
+                    <button 
+                        type="button" 
+                        class="btn btn-sm position-absolute end-0 top-50 translate-middle-y me-2"
+                        @click="showPassword = !showPassword"
+                        style="z-index: 10; background: transparent; border: none;"
+                        :title="showPassword ? 'Hide password' : 'Show password'">
+                        <i :class="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'" class="text-muted"></i>
+                    </button>
                     <p v-if="formData.errors.password" :class="{'text-danger': formData.errors.password}"> {{ formData.errors.password }} </p>
                 </div>
-                <button class="btn btn-sm bg-white" type="submit">
-                    Forgot password?
-                </button>
+
+                <!-- Remember Me and Forgot Password -->
+                <div class="d-flex justify-content-between align-items-center my-3">
+                    <div class="form-check">
+                        <input 
+                            class="form-check-input" 
+                            type="checkbox" 
+                            id="rememberMe" 
+                            v-model="rememberMe">
+                        <label class="form-check-label" for="rememberMe">
+                            <small>Remember me</small>
+                        </label>
+                    </div>
+                    <button class="btn btn-sm btn-link text-decoration-none" type="button">
+                        <small>Forgot password?</small>
+                    </button>
+                </div>
                 
                 <div class="my-3">
                     <button 
@@ -175,6 +202,8 @@
                     val: '',
                     isValid: true,
                 },
+                showPassword: false, // Toggle for password visibility
+                rememberMe: false, // Remember me checkbox state
                 loginMethod: 'web', // Default to web login to maintain existing behavior
                 loading: false,
                 apiSuccess: '',
@@ -250,6 +279,7 @@
                 this.formData = useForm({
                     email: this.username.val,
                     password: this.password.val,
+                    remember: this.rememberMe, // Include remember me state
                 });
                 
                 this.formData.post(route('login.store'), {

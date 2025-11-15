@@ -3,7 +3,7 @@
         <p class="display-6 text-center mb-0 mb-lg-3 "> {{ businessName }}</p>
         <div class="row justify-content-evenly">
             <div class="col-4 align-middle text-center my-auto pe-2">
-                <img class="rounded-circle" style="height: 120px; width: 120px;" :src=imagePath(0)>
+                <img class="rounded-circle" style="height: 120px; width: 120px;" :src="avatar">
             </div>
             <div class="col-8">
                 <p class="text-center fs-3 mb-0 mb-lg-3 rounded-pill">{{ fullName }}</p>
@@ -118,6 +118,9 @@
             },
             phoneNumber() {
                 return this.user.userDetails.phone_number;
+            },
+            avatar() {
+                return this.user.userDetails.avatar;
             },
             email() {
                 return this.user.userDetails.email;

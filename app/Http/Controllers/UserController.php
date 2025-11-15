@@ -13,6 +13,7 @@ use App\Models\TechnicalService;
 use App\Models\TruckBrand;
 use App\Models\User;
 use App\Models\VehicleCategory;
+use App\Models\SocialAccount;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rules\Password;
@@ -317,6 +318,9 @@ class UserController extends Controller
         $customerCommentsAndReplies = $this->getCommentsAndReplies($user, 'customer');
         $userCommentsAndReplies = $this->getCommentsAndReplies($user, 'user');
         
+        // Get user's social accounts
+        $socialAccounts = SocialAccount::where('user_id', $user->id)->get();
+        
         // Determine if it's a regular user or business user
         $userType = $user->account_type;
         
@@ -328,6 +332,7 @@ class UserController extends Controller
                 'declinedAppointmentsSchdlr' => $this->getAppointments('declined', null, $user->id),
                 'cancelledAppointmentsSchdlr' => $this->getAppointments('cancelled', null, $user->id),
                 'userCommentsAndReplies' => $userCommentsAndReplies,
+                'socialAccounts' => $socialAccounts,
             ]);
         } elseif ($userType === 'business') {
             $userDetails = $this->getUserDetails($user->id);
@@ -357,6 +362,7 @@ class UserController extends Controller
                 'galleryPhotos' => $galleryPhotos,
                 'customerCommentsAndReplies' => $customerCommentsAndReplies,
                 'userCommentsAndReplies' => $userCommentsAndReplies,
+                'socialAccounts' => $socialAccounts,
             ]);
         }
     }

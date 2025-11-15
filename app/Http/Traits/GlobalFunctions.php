@@ -731,7 +731,18 @@ trait GlobalFunctions {
             }
         }
         
-        $foundUser = User::whereIn('id', [$userId])->where([['account_type', '=', 'business'], ['account_status', '=', 'active']])->with($models)->first()->toArray();
+        $foundUser = User::whereIn('id', [$userId])->where([['account_type', '=', 'business'], ['account_status', '=', 'active']])->with($models)->first();
+        
+        // Get user's avatar photo
+        $userAvatar = $foundUser->photographs()
+            ->where('photo_type', 'avatar')
+            ->latest()
+            ->first();
+        
+        // Convert to array and add avatar
+        $foundUser = $foundUser->toArray();
+        $foundUser['avatar'] = $userAvatar ? asset('storage/' . $userAvatar->path) : null;
+        
         // dd($foundUser);
         $refinedCategoryArray = array();
         $refVehBrand = array();
@@ -822,6 +833,9 @@ trait GlobalFunctions {
             }
             $avgRating = round($ratingSum / $ratingCount);
             $userRating = ['ratingCount' => $ratingCount, 'avgRating' => $avgRating];
+
+            // Unset the users_rating array from the foundUser array
+            unset($foundUser['users_rating']);
         }
 
         return [

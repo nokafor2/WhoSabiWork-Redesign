@@ -21,6 +21,8 @@ class CreateUsersTable extends Migration
             $table->string('gender')->nullable();
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
+            $table->string('alternate_email')->nullable()->comment('Secondary email for OAuth providers with different emails');
+            $table->timestamp('alternate_email_verified_at')->nullable();
             $table->string('password')->nullable(); // Made nullable for OAuth users
             $table->string('phone_number')->unique()->nullable();
             $table->timestamp('phone_verified_at')->nullable();
@@ -38,6 +40,7 @@ class CreateUsersTable extends Migration
             $table->softDeletes();
             
             // Indexes for better performance
+            $table->index('alternate_email');
             $table->index(['provider', 'provider_id']);
             $table->index('account_status');
             $table->index('account_type');

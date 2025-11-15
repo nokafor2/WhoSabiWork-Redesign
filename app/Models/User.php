@@ -30,7 +30,8 @@ class User extends Authenticatable
     protected $fillable = [
         'first_name', 'last_name', 'gender', 'email', 'password', 'username',
         'phone_number', 'account_status', 'account_type', 'is_admin',
-        'provider', 'provider_id', 'provider_token', // OAuth fields
+        'provider', 'provider_id', 'provider_token', // OAuth fields (legacy - kept for backward compatibility)
+        'alternate_email', 'alternate_email_verified_at', // Multiple email support
     ];
 
     /**
@@ -50,6 +51,7 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'alternate_email_verified_at' => 'datetime',
     ];
 
     public function address() {
@@ -175,6 +177,52 @@ class User extends Authenticatable
 
     public function repliesReceived() {
         return $this->hasMany('App\Models\Reply', 'user_id_reply');
+    }
+
+    /**
+     * Get all social accounts linked to this user
+     */
+    public function socialAccounts() {
+        return $this->hasMany('App\Models\SocialAccount');
+    }
+
+    /**
+     * Check if user has linked a specific OAuth provider
+     */
+    public function hasLinkedProvider($provider) {
+        return $this->socialAccounts()->where('provider', $provider)->exists();
+    }
+
+    /**
+     * Get social account for a specific provider
+     */
+    public function getSocialAccount($provider) {
+        return $this->socialAccounts()->where('provider', $provider)->first();
+    }
+
+    /**
+     * Check if an email belongs to this user (primary or alternate)
+     */
+    public function ownsEmail($email) {
+        return $this->email === $email || $this->alternate_email === $email;
+    }
+
+    /**
+     * Get all emails associated with this user (primary, alternate, and provider emails)
+     */
+    public function getAllEmails() {
+        $emails = collect([$this->email]);
+        
+        if ($this->alternate_email) {
+            $emails->push($this->alternate_email);
+        }
+        
+        // Add provider emails from social accounts
+        $providerEmails = $this->socialAccounts()
+            ->whereNotNull('provider_email')
+            ->pluck('provider_email');
+        
+        return $emails->merge($providerEmails)->unique()->values();
     }
 
     public function fullName($id) {

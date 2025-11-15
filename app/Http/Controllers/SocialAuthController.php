@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\SocialAccount;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -13,7 +14,7 @@ use Exception;
 class SocialAuthController extends Controller
 {
     /**
-     * Redirect user to Google OAuth page
+     * Redirect user to OAuth provider
      *
      * @param string $provider
      * @return \Illuminate\Http\Response
@@ -23,6 +24,8 @@ class SocialAuthController extends Controller
         try {
             return Socialite::driver($provider)->redirect();
         } catch (Exception $e) {
+            \Log::error('OAuth Redirect Error (' . $provider . '): ' . $e->getMessage());
+            
             return redirect()->route('login')->with('error', [
                 'message' => 'Unable to connect to ' . ucfirst($provider) . '. Please try again later.'
             ]);
@@ -30,7 +33,7 @@ class SocialAuthController extends Controller
     }
 
     /**
-     * Handle callback from Google OAuth
+     * Handle OAuth provider callback - ENHANCED with multi-provider support
      *
      * @param string $provider
      * @return \Illuminate\Http\Response
@@ -40,45 +43,68 @@ class SocialAuthController extends Controller
         try {
             // Get user info from provider
             $socialUser = Socialite::driver($provider)->user();
+            $providerEmail = $socialUser->getEmail();
+            $providerId = $socialUser->getId();
             
-            // Check if user already exists with this provider
-            $user = User::where('provider', $provider)
-                ->where('provider_id', $socialUser->getId())
+            \Log::info('OAuth Callback (' . $provider . '): User email = ' . $providerEmail . ', ID = ' . $providerId);
+            
+            // STEP 1: Check if this provider account is already linked to ANY user
+            $socialAccount = SocialAccount::where('provider', $provider)
+                ->where('provider_id', $providerId)
                 ->first();
 
-            if ($user) {
-                // User exists with this provider, update token and login
-                $user->update([
+            if ($socialAccount) {
+                // Provider already linked - just update token and login
+                \Log::info('OAuth: Provider account already linked to user ID ' . $socialAccount->user_id);
+                
+                $socialAccount->update([
                     'provider_token' => $socialUser->token,
+                    'provider_email' => $providerEmail,
+                    'avatar' => $socialUser->getAvatar(),
                 ]);
-            } else {
-                // Check if user exists with this email
-                $existingUser = User::where('email', $socialUser->getEmail())->first();
-
-                if ($existingUser) {
-                    // Link OAuth to existing account
-                    $existingUser->update([
-                        'provider' => $provider,
-                        'provider_id' => $socialUser->getId(),
-                        'provider_token' => $socialUser->token,
-                    ]);
-                    $user = $existingUser;
-                } else {
-                    // Create new user
-                    $user = $this->createUser($socialUser, $provider);
-                }
+                
+                Auth::login($socialAccount->user, true);
+                
+                return redirect()->intended('/')->with('success', [
+                    'message' => 'Welcome back! Logged in with ' . ucfirst($provider)
+                ]);
             }
 
-            // Log the user in
-            Auth::login($user, true);
+            // STEP 2: Check if user is already logged in (manual account linking)
+            if (Auth::check()) {
+                \Log::info('OAuth: User is already logged in, attempting to link provider');
+                return $this->linkProviderToLoggedInUser($provider, $socialUser);
+            }
 
-            // Redirect to intended page or home
+            // STEP 3: Try to find user by email (primary or alternate)
+            $user = $this->findUserByEmail($providerEmail);
+
+            if ($user) {
+                // User found - auto-link this provider to their account
+                \Log::info('OAuth: Found existing user with email, auto-linking provider');
+                $this->createSocialAccount($user, $provider, $socialUser);
+                
+                Auth::login($user, true);
+                
+                return redirect()->intended('/')->with('success', [
+                    'message' => 'Linked ' . ucfirst($provider) . ' account and logged in!'
+                ]);
+            }
+
+            // STEP 4: No user found - create new user account
+            \Log::info('OAuth: No existing user found, creating new account');
+            $user = $this->createUser($socialUser, $provider);
+            $this->createSocialAccount($user, $provider, $socialUser);
+            
+            Auth::login($user, true);
+            
             return redirect()->intended('/')->with('success', [
-                'message' => 'Successfully logged in with ' . ucfirst($provider) . '!'
+                'message' => 'Account created and logged in with ' . ucfirst($provider) . '!'
             ]);
 
         } catch (Exception $e) {
-            \Log::error('OAuth Error: ' . $e->getMessage());
+            \Log::error('OAuth Callback Error (' . $provider . '): ' . $e->getMessage());
+            \Log::error($e->getTraceAsString());
             
             return redirect()->route('login')->with('error', [
                 'message' => 'Authentication failed. Please try again or use email/password login.'
@@ -87,11 +113,93 @@ class SocialAuthController extends Controller
     }
 
     /**
-     * Create a new user from OAuth provider data
+     * Find user by email (checks primary and alternate email)
+     *
+     * @param string $email
+     * @return User|null
+     */
+    protected function findUserByEmail($email)
+    {
+        return User::where('email', $email)
+            ->orWhere('alternate_email', $email)
+            ->first();
+    }
+
+    /**
+     * Link OAuth provider to currently logged-in user
+     *
+     * @param string $provider
+     * @param \Laravel\Socialite\Contracts\User $socialUser
+     * @return \Illuminate\Http\Response
+     */
+    protected function linkProviderToLoggedInUser($provider, $socialUser)
+    {
+        $user = Auth::user();
+        $providerEmail = $socialUser->getEmail();
+        
+        // Check if this provider is already linked to this user
+        $existingLink = $user->socialAccounts()
+            ->where('provider', $provider)
+            ->first();
+        
+        if ($existingLink) {
+            \Log::info('OAuth: Provider already linked to this user');
+            return redirect()->back()->with('info', [
+                'message' => ucfirst($provider) . ' is already linked to your account'
+            ]);
+        }
+        
+        // Check if provider email is different from user's primary and alternate emails
+        if (!$user->ownsEmail($providerEmail)) {
+            \Log::info('OAuth: Provider email is different, saving as alternate email');
+            
+            // Save provider email as alternate email if not already set
+            if (!$user->alternate_email) {
+                $user->update([
+                    'alternate_email' => $providerEmail,
+                    // Mark as verified since it's verified by OAuth provider
+                    'alternate_email_verified_at' => now(),
+                ]);
+            }
+        }
+        
+        // Create the social account link
+        $this->createSocialAccount($user, $provider, $socialUser);
+        
+        return redirect()->back()->with('success', [
+            'message' => ucfirst($provider) . ' account linked successfully!'
+        ]);
+    }
+
+    /**
+     * Create social account record
+     *
+     * @param User $user
+     * @param string $provider
+     * @param \Laravel\Socialite\Contracts\User $socialUser
+     * @return SocialAccount
+     */
+    protected function createSocialAccount(User $user, $provider, $socialUser)
+    {
+        \Log::info('Creating social account link: User ' . $user->id . ' -> ' . $provider);
+        
+        return SocialAccount::create([
+            'user_id' => $user->id,
+            'provider' => $provider,
+            'provider_id' => $socialUser->getId(),
+            'provider_token' => $socialUser->token,
+            'provider_email' => $socialUser->getEmail(),
+            'provider_email_verified' => true, // Verified by OAuth provider
+            'avatar' => $socialUser->getAvatar(),
+        ]);
+    }
+
+    /**
+     * Create new user from OAuth provider data
      *
      * @param \Laravel\Socialite\Contracts\User $socialUser
      * @param string $provider
-     * @return \App\Models\User
+     * @return User
      */
     protected function createUser($socialUser, $provider)
     {
@@ -104,17 +212,14 @@ class SocialAuthController extends Controller
         $baseUsername = Str::slug($firstName . '-' . $lastName);
         $username = $this->generateUniqueUsername($baseUsername);
 
-        // Create the user
+        // Create the user (no provider fields on user model anymore)
         return User::create([
             'first_name' => $firstName,
             'last_name' => $lastName,
             'email' => $socialUser->getEmail(),
             'username' => $username,
-            'password' => null, // OAuth users don't have passwords
-            'provider' => $provider,
-            'provider_id' => $socialUser->getId(),
-            'provider_token' => $socialUser->token,
-            'email_verified_at' => now(), // OAuth emails are verified by provider
+            'password' => null, // OAuth users don't have passwords initially
+            'email_verified_at' => now(), // Verified by OAuth provider
             'account_type' => 'regular',
             'account_status' => 'active',
         ]);
@@ -141,6 +246,47 @@ class SocialAuthController extends Controller
     }
 
     /**
+     * Unlink a provider from user account
+     *
+     * @param Request $request
+     * @param string $provider
+     * @return \Illuminate\Http\Response
+     */
+    public function unlinkProvider(Request $request, $provider)
+    {
+        $user = Auth::user();
+        
+        if (!$user) {
+            return redirect()->route('login')->with('error', [
+                'message' => 'Please login first'
+            ]);
+        }
+        
+        // Safety check: Don't allow unlinking if it's the only login method and no password
+        $linkedProvidersCount = $user->socialAccounts()->count();
+        
+        if (!$user->password && $linkedProvidersCount === 1) {
+            return redirect()->back()->with('error', [
+                'message' => 'Cannot unlink. This is your only login method. Set a password first or link another provider.'
+            ]);
+        }
+        
+        $deleted = $user->socialAccounts()->where('provider', $provider)->delete();
+        
+        if ($deleted) {
+            \Log::info('Unlinked ' . $provider . ' from user ' . $user->id);
+            
+            return redirect()->back()->with('success', [
+                'message' => ucfirst($provider) . ' account unlinked successfully'
+            ]);
+        }
+        
+        return redirect()->back()->with('error', [
+            'message' => ucfirst($provider) . ' was not linked to your account'
+        ]);
+    }
+
+    /**
      * Handle API OAuth callback
      * 
      * @param Request $request
@@ -162,30 +308,32 @@ class SocialAuthController extends Controller
 
             // Get user info from provider using the token
             $socialUser = Socialite::driver($provider)->userFromToken($token);
+            $providerEmail = $socialUser->getEmail();
+            $providerId = $socialUser->getId();
             
-            // Check if user exists with this provider
-            $user = User::where('provider', $provider)
-                ->where('provider_id', $socialUser->getId())
+            // Check if this provider account is already linked
+            $socialAccount = SocialAccount::where('provider', $provider)
+                ->where('provider_id', $providerId)
                 ->first();
 
-            if ($user) {
+            if ($socialAccount) {
                 // Update token
-                $user->update(['provider_token' => $token]);
+                $socialAccount->update([
+                    'provider_token' => $token,
+                    'provider_email' => $providerEmail,
+                ]);
+                $user = $socialAccount->user;
             } else {
-                // Check if email exists
-                $existingUser = User::where('email', $socialUser->getEmail())->first();
+                // Try to find user by email
+                $user = $this->findUserByEmail($providerEmail);
 
-                if ($existingUser) {
-                    // Link OAuth to existing account
-                    $existingUser->update([
-                        'provider' => $provider,
-                        'provider_id' => $socialUser->getId(),
-                        'provider_token' => $token,
-                    ]);
-                    $user = $existingUser;
+                if ($user) {
+                    // Link provider to existing user
+                    $this->createSocialAccount($user, $provider, $socialUser);
                 } else {
                     // Create new user
                     $user = $this->createUser($socialUser, $provider);
+                    $this->createSocialAccount($user, $provider, $socialUser);
                 }
             }
 
@@ -208,7 +356,7 @@ class SocialAuthController extends Controller
             ]);
 
         } catch (Exception $e) {
-            \Log::error('API OAuth Error: ' . $e->getMessage());
+            \Log::error('API OAuth Error (' . $provider . '): ' . $e->getMessage());
             
             return response()->json([
                 'success' => false,
@@ -217,4 +365,3 @@ class SocialAuthController extends Controller
         }
     }
 }
-
