@@ -162,11 +162,11 @@ ssh_deploy:
     - ssh $SSH_HOST "cp /var/www/html/WhoSabiWork-Redesign/.env.production /var/www/html/WhoSabiWork-Redesign/.env"
     
     # Inject OAuth credentials from GitLab CI/CD Variables into .env file
-    - ssh $SSH_HOST "cd /var/www/html/WhoSabiWork-Redesign && echo '' >> .env"
-    - ssh $SSH_HOST "cd /var/www/html/WhoSabiWork-Redesign && echo '# Google OAuth Configuration (Injected by GitLab CI/CD)' >> .env"
-    - ssh $SSH_HOST "cd /var/www/html/WhoSabiWork-Redesign && echo 'GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}' >> .env"
-    - ssh $SSH_HOST "cd /var/www/html/WhoSabiWork-Redesign && echo 'GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}' >> .env"
-    - ssh $SSH_HOST "cd /var/www/html/WhoSabiWork-Redesign && echo 'GOOGLE_REDIRECT_URL=${GOOGLE_REDIRECT_URL}' >> .env"
+    # - ssh $SSH_HOST "cd /var/www/html/WhoSabiWork-Redesign && echo '' >> .env"
+    # - ssh $SSH_HOST "cd /var/www/html/WhoSabiWork-Redesign && echo '# Google OAuth Configuration (Injected by GitLab CI/CD)' >> .env"
+    # - ssh $SSH_HOST "cd /var/www/html/WhoSabiWork-Redesign && echo 'GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}' >> .env"
+    # - ssh $SSH_HOST "cd /var/www/html/WhoSabiWork-Redesign && echo 'GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}' >> .env"
+    # - ssh $SSH_HOST "cd /var/www/html/WhoSabiWork-Redesign && echo 'GOOGLE_REDIRECT_URL=${GOOGLE_REDIRECT_URL}' >> .env"
     
     # Verify OAuth credentials were injected (masked for security)
     - ssh $SSH_HOST "cd /var/www/html/WhoSabiWork-Redesign && echo '✅ Verifying OAuth configuration...' && grep -q 'GOOGLE_CLIENT_ID' .env && echo '✅ Google OAuth credentials injected successfully' || echo '❌ OAuth injection failed!'"
